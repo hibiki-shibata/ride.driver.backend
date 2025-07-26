@@ -4,7 +4,7 @@ import java.util.UUID
 
 import com.ride.driver.backend.models.*
 
-data class Driver(
+data class DriverDetails(
     val id: UUID,
     val phoneNumber: String,
     val name: String,
