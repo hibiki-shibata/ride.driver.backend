@@ -19,6 +19,7 @@ import com.ride.driver.backend.services.CourierLoginService
 @RestController
 @RequestMapping("api/v1/couriers")
 class courirRequestController {
+    
     @GetMapping("/login")
     fun courierLogin(@RequestParam("name") name: String): String { 
         return CourierLoginService().courierLogin(name)
