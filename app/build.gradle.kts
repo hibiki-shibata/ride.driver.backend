@@ -4,6 +4,7 @@ plugins {
 	id("org.springframework.boot") version "3.5.4"
 	id("io.spring.dependency-management") version "1.1.7"
 	id ("application")
+	// id("java")
 }
 
 
@@ -27,6 +28,7 @@ dependencies {
 
 	// CORS configuration
 	implementation("org.springframework:spring-webmvc")
+
 
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -58,3 +60,7 @@ tasks.withType<Test> {
 application {
 	mainClass.set("com.ride.driver.backend.RideDriverBackendApplicationKt")
 }
+
+
+
+
