@@ -1,5 +1,5 @@
 // Doc https://spring.io/guides/gs/rest-service-cors#global-cors-configuration
-package com.ride.driver.backend.middlewares
+package com.ride.driver.backend.config
 
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry
