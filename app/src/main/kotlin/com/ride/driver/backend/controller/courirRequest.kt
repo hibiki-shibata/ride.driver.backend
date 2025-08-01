@@ -9,20 +9,22 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 
+
 import org.springframework.http.ResponseEntity
-
-
+import com.ride.driver.backend.exceptions.HibikiSpecialException
 
 
 import com.ride.driver.backend.services.CourierLoginService
 
 @RestController
 @RequestMapping("api/v1/couriers")
-class courirRequestController {
+class courirRequestController (
+    private val service: CourierLoginService
+){
     
     @GetMapping("/login")
     fun courierLogin(@RequestParam("name") name: String): String { 
-        return CourierLoginService().courierLogin(name)
+        return service.courierLogin(name)
     }
 
     @PostMapping("/refresh-token")
@@ -31,9 +33,10 @@ class courirRequestController {
         return ResponseEntity.ok("Token refreshed successfully for user: $refreshToken")
     }
 
+
     @PostMapping("/logout")
     fun logout(@RequestHeader ("Authorization") token: String): ResponseEntity<String> {
-        if(token != "123") return ResponseEntity.status(403).body("Invalid token: $token")
+        if(token != "123") throw HibikiSpecialException("logout Failed!!!!!")
         return ResponseEntity.ok("Logout successfully: $token")
     }
             

@@ -1,5 +1,7 @@
+package com.ride.driver.backend.exceptions
+
 import com.ride.driver.backend.exceptions.httpException
 
-open class customException(
+open class HibikiSpecialException(
     message: String? = "Custom exception occurred"
 ) : httpException("400", message)

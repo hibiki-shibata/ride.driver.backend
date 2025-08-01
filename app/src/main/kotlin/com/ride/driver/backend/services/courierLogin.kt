@@ -1,7 +1,9 @@
 package com.ride.driver.backend.services
 
 import com.ride.driver.backend.models.Location
+import org.springframework.stereotype.Service
 
+@Service
 class CourierLoginService {
 
     fun courierLogin(name: String): String {

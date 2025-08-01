@@ -38,11 +38,11 @@ dependencies {
 
 }
 
-// kotlin {
-// 	compilerOptions {
-// 		freeCompilerArgs.addAll("-Xjsr305=strict")
-// 	}
-// }
+kotlin {
+	compilerOptions {
+		freeCompilerArgs.addAll("-Xjsr305=strict")
+	}
+}
 
 tasks.withType<Test> {
 	useJUnitPlatform()
