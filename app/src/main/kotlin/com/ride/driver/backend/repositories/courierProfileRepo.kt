@@ -5,19 +5,19 @@ package com.ride.driver.backend.repositories
 
 // import java.util.List;
 
-import org.springframework.data.repository.CrudRepository;
 import com.ride.driver.backend.models.DriverDetails
+import com.ride.driver.backend.models.DriverStatus
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.Repository
 
-// open interface CustomerRepository extends CrudRepository<Customer, Long> {
-
-//   List<Customer> findByLastName(String lastName);
-
-//   Customer findById(long id);
-// }
 
 
 open interface CourierProfileRepository : CrudRepository<DriverDetails, Long> {
-    open fun findById(id: String): DriverDetails?
+    open fun findDriverById(id: String): DriverDetails?
+    open fun findDriversByStatus(status: String): List<DriverDetails>
+}
 
-    open fun findByStatus(status: String): List<DriverDetails>
+
+open interface CourierProfileRepositoryCustom: Repository<DriverDetails, Long> {
+    open fun findDriversByStatus(status: DriverStatus): List<DriverDetails>    
 }
