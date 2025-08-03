@@ -6,13 +6,16 @@ import java.util.UUID
 import com.ride.driver.backend.models.*
 import org.springframework.data.annotation.Id
 
+
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.validation.constraints.NotBlank
+import jakarta.persistence.Table
 
 
 
 @Entity
+@Table(name = "bookmarks")
 data class DriverDetails(
     
     @Id
