@@ -18,6 +18,6 @@ open interface CourierProfileRepository : CrudRepository<DriverDetails, Long> {
 }
 
 
-open interface CourierProfileRepositoryCustom: Repository<DriverDetails, Long> {
-    open fun findDriversByStatus(status: DriverStatus): List<DriverDetails>    
-}
+// open interface CourierProfileRepositoryCustom: Repository<DriverDetails, Long> {
+//     open fun findDriversByStatus(status: DriverStatus): List<DriverDetails>    
+// }

@@ -9,9 +9,13 @@ import com.ride.driver.backend.models.DriverStatus
 import com.ride.driver.backend.models.Location
 import com.ride.driver.backend.models.VehicleType
 import java.util.UUID
+import org.springframework.beans.factory.annotation.Autowired
 
 
-open class CourierDataService {
+open class CourierDataService (
+    @Autowired
+    private val courierProfileRepository: CourierProfileRepository
+){
 
     fun getCourierData(
         courierProfileRepository: CourierProfileRepository
@@ -45,35 +49,21 @@ open class CourierDataService {
         }
     
 
-        fun saveCoureirData(
-            phoneNumber: String,
-            name: String,
-            vehicleType: VehicleType,
-            location: Location,
-            assignID: String,
-            rate: Double,
-            status: DriverStatus,
-            area: String,
-            driverComments: String = "",
-            courierProfileRepository: CourierProfileRepository,
-            driverDetails: DriverDetails
-            
-            ): DriverDetails {
+        fun saveCoureirData(): DriverDetails {
                 val driverDetails = DriverDetails(
                     id = UUID.randomUUID(),
-                    phoneNumber = driverDetails.phoneNumber,
-                    name = driverDetails.name,
-                    vehicleType = driverDetails.vehicleType,
-                    location = driverDetails.location,
-                    assignID = driverDetails.assignID,
-                    rate = driverDetails.rate,
-                    status = driverDetails.status,
-                    area = driverDetails.area,
-                    driverComments = driverDetails.driverComments
+                    phoneNumber = "123-456-7890",
+                    name = "John Doe",
+                    vehicleType = VehicleType.BIKE,
+                    location = Location(37.7749, -122.4194), // Example coordinates
+                    assignID = "assign123",
+                    rate = 5.0,
+                    status = DriverStatus.AVAILABLE,
+                    area = "Downtown",
+                    driverComments = "Ready to deliver"
                 )
                 return courierProfileRepository.save(driverDetails)
         }   
-    
 
     
     }

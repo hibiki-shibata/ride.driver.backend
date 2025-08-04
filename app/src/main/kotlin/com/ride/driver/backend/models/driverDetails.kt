@@ -15,7 +15,7 @@ import jakarta.persistence.Table
 
 
 @Entity
-@Table(name = "bookmarks")
+@Table(name = "DriverDetails")
 data class DriverDetails(
     
     @Id

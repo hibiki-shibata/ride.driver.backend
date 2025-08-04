@@ -34,8 +34,9 @@ dependencies {
 	implementation("org.springframework.data:spring-data-jpa")
     
 	// PostgreSQL database
-	implementation ("org.flywaydb:flyway-core")
-	implementation ("org.flywaydb:flyway-database-postgresql")
+	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-database-postgresql")
+	runtimeOnly("org.postgresql:postgresql")
 
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
