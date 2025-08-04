@@ -15,11 +15,14 @@ import com.ride.driver.backend.exceptions.HibikiSpecialException
 
 
 import com.ride.driver.backend.services.CourierLoginService
+import com.ride.driver.backend.services.CourierDataService
 
 @RestController
 @RequestMapping("api/v1/couriers")
 class courirRequestController (
-    private val service: CourierLoginService
+    private val service: CourierLoginService,
+    private val dataService: CourierDataService
+    
 ){
     
     @GetMapping("/login")
@@ -33,13 +36,19 @@ class courirRequestController (
         return ResponseEntity.ok("Token refreshed successfully for user: $refreshToken")
     }
 
-
     @PostMapping("/logout")
     fun logout(@RequestHeader ("Authorization") token: String): ResponseEntity<String> {
         if(token != "123") throw HibikiSpecialException("logout Failed!!!!!")
         return ResponseEntity.ok("Logout successfully: $token")
     }
             
+    @PostMapping("/register")
+    fun registerCourier(@RequestBody courierDetails: Map<String, String>): ResponseEntity<String> {
+        println(courierDetails)
+        dataService.saveCoureirData()
+        return ResponseEntity.ok("Courier registered successfully")            
+
+    }
     
     // e.g. http://localhost:4000/api/v1/couriers/login?name=This-is-the-name
 

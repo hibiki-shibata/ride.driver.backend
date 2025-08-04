@@ -11,15 +11,13 @@ import com.ride.driver.backend.models.VehicleType
 import java.util.UUID
 import org.springframework.beans.factory.annotation.Autowired
 
-
+@Service
 open class CourierDataService (
     @Autowired
     private val courierProfileRepository: CourierProfileRepository
 ){
 
-    fun getCourierData(
-        courierProfileRepository: CourierProfileRepository
-    ): DriverDetailsDto {
+    fun getCourierData(): DriverDetailsDto {
             // Fetching driver details from the repository
             val driverDetails = courierProfileRepository.findDriverById("randomID") ?: return DriverDetailsDto(
                 id = UUID.randomUUID(),

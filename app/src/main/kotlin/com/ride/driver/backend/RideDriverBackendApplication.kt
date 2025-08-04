@@ -6,7 +6,7 @@ package com.ride.driver.backend
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = ["com.ride.driver.backend.services.CourierDataService", "com.ride.driver.backend.controller.courirRequestController"])
 class RideDriverBackendApplication
 
 fun main(args: Array<String>) {
