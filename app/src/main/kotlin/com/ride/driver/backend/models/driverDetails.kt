@@ -3,25 +3,18 @@ package com.ride.driver.backend.models
 
 import java.util.UUID
 
-import com.ride.driver.backend.models.*
-
-
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.GeneratedValue
 import jakarta.validation.constraints.NotBlank
 import jakarta.persistence.GenerationType
 
-import com.ride.driver.backend.models.VehicleType
-import com.ride.driver.backend.models.Location
-import com.ride.driver.backend.models.DriverStatus
-
 
 @Entity
 data class DriverDetails(
     
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     @Id
-    @GeneratedValue(generator = "UUID", strategy = jakarta.persistence.GenerationType.AUTO)
     val id: UUID,
 
     @NotBlank
@@ -39,10 +32,6 @@ data class DriverDetails(
     val area: String,
     val driverComments: String = "",
 ) 
-
-
-
-
 
 
 
