@@ -16,13 +16,13 @@ import com.ride.driver.backend.exceptions.HibikiSpecialException
 
 
 import com.ride.driver.backend.services.CourierLoginService
-import com.ride.driver.backend.services.CourierDataService
+// import com.ride.driver.backend.services.CourierDataService
 
 @RestController
 @RequestMapping("api/v1/couriers")
 class courirRequestController (
     private val service: CourierLoginService, 
-    private val dataService: CourierDataService   
+    // private val dataService: CourierDataService   
 ){
     
     @GetMapping("/login")
@@ -45,7 +45,7 @@ class courirRequestController (
     @PostMapping("/register")
     fun registerCourier(@RequestBody courierDetails: Map<String, String>): ResponseEntity<String> {
         println(courierDetails)
-        dataService.saveCoureirData()
+        // dataService.saveCoureirData()
         return ResponseEntity.ok("Courier registered successfully")            
 
     }
