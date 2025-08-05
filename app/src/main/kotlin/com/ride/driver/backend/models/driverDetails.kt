@@ -8,10 +8,11 @@ import jakarta.persistence.Id
 import jakarta.persistence.GeneratedValue
 import jakarta.validation.constraints.NotBlank
 import jakarta.persistence.GenerationType
+import jakarta.persistence.ManyToOne
 
 
 @Entity
-data class DriverDetails(
+class DriverDetails(
     
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     @Id
@@ -23,6 +24,8 @@ data class DriverDetails(
     @NotBlank
     val name: String,
     val vehicleType: VehicleType,
+
+    @ManyToOne
     val location: Location,
     val assignID: String,
     val rate: Double,

@@ -2,17 +2,12 @@
 package com.ride.driver.backend.repositories
 
 import com.ride.driver.backend.models.DriverDetails
-import org.springframework.data.repository.Repository
+import org.springframework.data.repository.CrudRepository
 import java.util.UUID
 
 
-open interface CourierProfileRepository : Repository<DriverDetails, UUID> {
-   fun save(driverDetails: DriverDetails): DriverDetails
+open interface CourierProfileRepository : CrudRepository<DriverDetails, Long> {
    fun findById(id: UUID): DriverDetails?
 }
 
 
-
-// open interface CourierProfileRepositoryCustom: Repository<DriverDetails, Long> {
-//     open fun findDriversByStatus(status: DriverStatus): List<DriverDetails>    
-// }
