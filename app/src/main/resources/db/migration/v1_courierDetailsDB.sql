@@ -1,8 +1,11 @@
-CREATE SEQUENCE IF NOT EXISTS driver_details_seq
-    START WITH 1
-    INCREMENT BY 1;
+-- CREATE SEQUENCE IF NOT EXISTS driver_details_seq
+--     START WITH 1
+--     INCREMENT BY 1;
 
-CREATE TABLE DriverDetails (
+DROP TABLE IF EXISTS driver_details;
+ALTER TABLE driver_details ADD COLUMN version INT DEFAULT 0;
+
+CREATE TABLE driver_details (
   id BIGINT,
   PRIMARY KEY (id),
   phoneNumber VARCHAR(15) NOT NULL,
