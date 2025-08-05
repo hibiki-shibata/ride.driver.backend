@@ -21,7 +21,7 @@ class BlogConfiguration {
         // Initialize the database with some default data
         courierProfileRepository.save(
             DriverDetails(
-                id = UUID.randomUUID(),
+                id = null,
                 phoneNumber = "111-111-1111",
                 name = "Initial Driver",
                 vehicleType = VehicleType.BIKE,

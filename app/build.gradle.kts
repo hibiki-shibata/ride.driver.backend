@@ -3,7 +3,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.25"
 	id("org.springframework.boot") version "3.5.4"
 	id("io.spring.dependency-management") version "1.1.7"
-	id ("application")
+	// id ("application")
 	
 	
 	kotlin("plugin.allopen") version "1.9.25"
@@ -36,16 +36,20 @@ dependencies {
 	// JPA and database
 	// implementation("org.springframework.data:spring-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	// runtimeOnly("org.postgresql:postgresql")
-	runtimeOnly("com.h2database:h2")
+	runtimeOnly("org.postgresql:postgresql")
+	// runtimeOnly("com.h2database:h2")
 
+
+	implementation("org.springframework.boot:spring-boot-starter-mustache")
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	runtimeOnly("org.springframework.boot:spring-boot-devtools")
 	kapt("org.springframework.boot:spring-boot-configuration-processor")
 
 
 
-	implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
-	implementation("jakarta.validation:jakarta.validation-api")
+	// implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
+	// implementation("jakarta.validation:jakarta.validation-api")
 
 }
 
@@ -68,10 +72,15 @@ tasks.withType<Test> {
 //     // finalizedBy("stopServer")
 // }
 
-application {
-	mainClass.set("com.ride.driver.backend.RideDriverBackendApplicationKt")
+// application {
+// 	mainClass.set("com.ride.driver.backend.RideDriverBackendApplicationKt")
+// }
+
+
+
+
+allOpen {
+	annotation("jakarta.persistence.Entity")
+	annotation("jakarta.persistence.Embeddable")
+	annotation("jakarta.persistence.MappedSuperclass")
 }
-
-
-
-

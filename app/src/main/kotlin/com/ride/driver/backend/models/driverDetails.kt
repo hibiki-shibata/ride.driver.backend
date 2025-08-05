@@ -6,9 +6,10 @@ import java.util.UUID
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.GeneratedValue
-import jakarta.validation.constraints.NotBlank
-import jakarta.persistence.GenerationType
-import jakarta.persistence.ManyToOne
+// import jakarta.validation.constraints.NotBlank
+// import jakarta.persistence.GenerationType
+import jakarta.persistence.Embedded
+import jakarta.persistence.Version
 
 
 @Entity
@@ -16,24 +17,25 @@ class DriverDetails(
     
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.AUTO)
     @Id
-    val id: UUID,
+    val id: UUID? = null,
 
-    @NotBlank
+    // @NotBlank
     val phoneNumber: String,
 
-    @NotBlank
+    // @NotBlank
     val name: String,
     val vehicleType: VehicleType,
 
-    @ManyToOne
+    @Embedded
     val location: Location,
     val assignID: String,
     val rate: Double,
-
-    @NotBlank
     val status: DriverStatus = DriverStatus.AVAILABLE,
     val area: String,
-    val driverComments: String = "",
+    val driverComments: String,
+
+     @Version
+    val version: Int = 0
 ) 
 
 

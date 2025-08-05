@@ -1,10 +1,9 @@
 package com.ride.driver.backend.models
 
-import jakarta.persistence.Entity
+import jakarta.persistence.Embeddable
 
-
-@Entity
-class Location(
+@Embeddable
+data class Location(
     val latitude: Double,
     val longitude: Double
 )
