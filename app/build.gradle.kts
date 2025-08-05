@@ -34,10 +34,12 @@ dependencies {
 	implementation("org.springframework:spring-webmvc")
 
 	// JPA and database
-	// implementation("org.springframework.data:spring-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
 	// runtimeOnly("com.h2database:h2")
+  // implementation("org.springframework.data:spring-data-jpa")
+  // implementation("org.springframework.data:spring-data-relational")
+
 
 
 	implementation("org.springframework.boot:spring-boot-starter-mustache")
