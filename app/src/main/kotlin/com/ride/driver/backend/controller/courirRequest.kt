@@ -17,18 +17,22 @@ import com.ride.driver.backend.exceptions.HibikiSpecialException
 
 import com.ride.driver.backend.services.CourierLoginService
 import com.ride.driver.backend.services.CourierDataService
+import com.ride.driver.backend.repositories.CourierProfileRepository
 
 @RestController
 @RequestMapping("api/v1/couriers")
-class courirRequestController (
+class courirRequestController (   
     private val service: CourierLoginService, 
-    private val dataService: CourierDataService   
+    private val repository: CourierProfileRepository
 ){
     
+
     @GetMapping("/login")
     fun courierLogin(@RequestParam("name") name: String): String { 
         return service.courierLogin(name)
     }
+
+
 
     @PostMapping("/refresh-token")
     fun refreshToken(@RequestBody request: Map<String, String>): ResponseEntity<String> {
@@ -36,16 +40,18 @@ class courirRequestController (
         return ResponseEntity.ok("Token refreshed successfully for user: $refreshToken")
     }
 
+
     @PostMapping("/logout")
     fun logout(@RequestHeader ("Authorization") token: String): ResponseEntity<String> {
         if(token != "123") throw HibikiSpecialException("logout Failed!!!!!")
         return ResponseEntity.ok("Logout successfully: $token")
     }
-            
-    @PostMapping("/register")
-    fun registerCourier(@RequestBody courierDetails: Map<String, String>): ResponseEntity<String> {
-        println(courierDetails)
-        dataService.saveCoureirData()
+
+
+    @GetMapping("/findall")
+    fun findCourier(): ResponseEntity<String> {        
+        println("Finding all couriers...")
+        repository.findAll().forEach { println(it) }
         return ResponseEntity.ok("Courier registered successfully")            
 
     }
