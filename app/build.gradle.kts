@@ -4,7 +4,11 @@ plugins {
 	id("org.springframework.boot") version "3.5.4"
 	id("io.spring.dependency-management") version "1.1.7"
 	id ("application")
-	// id("java")
+	
+	
+	kotlin("plugin.allopen") version "1.9.25"
+	kotlin("plugin.jpa") version "1.9.25"
+	kotlin("kapt") version "1.9.25"
 }
 
 
@@ -35,8 +39,8 @@ dependencies {
 	// runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("com.h2database:h2")
 
-	// runtimeOnly("org.springframework.boot:spring-boot-devtools")
-	// kapt("org.springframework.boot:spring-boot-configuration-processor")
+	runtimeOnly("org.springframework.boot:spring-boot-devtools")
+	kapt("org.springframework.boot:spring-boot-configuration-processor")
 
 
 
