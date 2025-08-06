@@ -1,7 +1,8 @@
 This is a backend for Ride Driver App
 
-For Mac/Linux
+You can use `make run` to see simplify your CLI ops.
 
+For Mac/Linux
 1. `./gradlew bootRun` - Run with Spring plugin (Recommended)
 2. `./gradlew run` - Compile and Run Script (Enable "application" plugin)
 3. `./gradle build` - Compile jar file with required classpath & MainClass spec
