@@ -13,10 +13,8 @@ import java.util.UUID
 
 
 @Service
-open class CourierDataService(
-    private val db: CourierProfileRepository
-){    
-
+open class CourierDataService(){
+        
         fun saveCoureirData(): DriverDetails {
 
                 // Example data to save
@@ -33,7 +31,8 @@ open class CourierDataService(
                     driverComments = "Ready to deliver"
                 )
 
-                return db.save(driverDetails)
+                return driverDetails
+                // return courierProfileRepository.save(driverDetails)
         }   
 
     

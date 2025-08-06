@@ -16,14 +16,17 @@ import com.ride.driver.backend.exceptions.HibikiSpecialException
 
 
 import com.ride.driver.backend.services.CourierLoginService
+
 import com.ride.driver.backend.services.CourierDataService
 import com.ride.driver.backend.repositories.CourierProfileRepository
+
 
 @RestController
 @RequestMapping("api/v1/couriers")
 class courirRequestController (   
     private val service: CourierLoginService, 
     private val repository: CourierProfileRepository
+
 ){
     
 
@@ -52,6 +55,7 @@ class courirRequestController (
     fun findCourier(): ResponseEntity<String> {        
         println("Finding all couriers...")
         repository.findAll().forEach { println(it) }
+
         return ResponseEntity.ok("Courier registered successfully")            
 
     }
