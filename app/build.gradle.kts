@@ -3,7 +3,7 @@ plugins {
 	kotlin("plugin.spring") version "1.9.25"
 	id("org.springframework.boot") version "3.5.4"
 	id("io.spring.dependency-management") version "1.1.7"
-	id ("application")
+	// id ("application")
 	
 	
 	// kotlin("plugin.allopen") version "1.9.25"
@@ -71,9 +71,9 @@ tasks.withType<Test> {
 // }
 
 
-application {
-	mainClass.set("com.ride.driver.backend.RideDriverBackendApplicationKt")
-}
+// application {
+// 	mainClass.set("com.ride.driver.backend.RideDriverBackendApplicationKt")
+// }
 
 
 
