@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service
 class CourierLoginService {
 
     fun courierLogin(name: String): String {
-        // return "Hello, $name! \nWelcome to the Courier Service!\nYour login was successful."
 
         return Location(
             latitude = 0.0,
