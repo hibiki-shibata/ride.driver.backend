@@ -20,14 +20,14 @@ clean:
 
 
 
-.PHONEY: postgres
+.PHONY: postgres
 postgres:
 	nerdctl container start hibiki-postgr
 	@echo "ATTENTION: PostgreSQL password is krakenkey"
 	psql -h localhost -p 5432 -U krakenadmin -d krakendb
 
 
-.PHONEY: prodrun
+.PHONY: prodrun
 prodrun:
 	./gradlew clean && ./gradlew build && java -jar build/libs/app.jar --spring.profiles.active=prod
 
