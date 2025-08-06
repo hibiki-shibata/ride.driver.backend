@@ -27,6 +27,11 @@ postgres:
 	psql -h localhost -p 5432 -U krakenadmin -d krakendb
 
 
+.PHONEY: prodrun
+prodrun:
+	./gradlew clean && ./gradlew build && java -jar build/libs/app.jar --spring.profiles.active=prod
+
+
 
 .PHONY: help
 help:
@@ -36,3 +41,4 @@ help:
 	@echo "  clean     - Clean build artifacts"
 	@echo "  Postgres  - Start PostgreSQL and connect to it"
 	@echo "  help      - Show this help message"
+	@echo "  prodrun   - Build and run the application in production mode"
