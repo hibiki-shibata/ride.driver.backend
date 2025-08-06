@@ -33,10 +33,12 @@ dependencies {
 	implementation("org.springframework:spring-webmvc")
 
 	// JPA and database
+  // implementation("org.springframework.data:spring-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
 	// implementation("org.springframework.data:spring-data-jpa")
 	// runtimeOnly("com.h2database:h2")
+
 
 	implementation("jakarta.validation:jakarta.validation-api")
 	implementation("jakarta.persistence:jakarta.persistence-api")
@@ -44,6 +46,7 @@ dependencies {
   
 
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+
 
 	// runtimeOnly("org.springframework.boot:spring-boot-devtools")
 	// kapt("org.springframework.boot:spring-boot-configuration-processor")
