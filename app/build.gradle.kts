@@ -1,6 +1,6 @@
 plugins {
-	kotlin("jvm") version "1.9.25"
-	kotlin("plugin.spring") version "1.9.25"
+	kotlin("jvm") version "2.2.0"
+	kotlin("plugin.spring") version "2.2.0"
 	id("org.springframework.boot") version "3.5.4"
 	id("io.spring.dependency-management") version "1.1.7"
 	// id ("application")
@@ -8,7 +8,7 @@ plugins {
 	
 	// kotlin("plugin.allopen") version "1.9.25"
 	// kotlin("kapt") version "1.9.25"
-	kotlin("plugin.jpa") version "1.9.25"
+	kotlin("plugin.jpa") version "2.2.0"
 }
 
 group = "com.ride.driver"
@@ -36,11 +36,12 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
 	// runtimeOnly("com.h2database:h2")
+	implementation("jakarta.validation:jakarta.validation-api")
 
-
+	// implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+	implementation("jakarta.persistence:jakarta.persistence-api")
 	// implementation("org.springframework.boot:spring-boot-starter-mustache")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	// implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	// runtimeOnly("org.springframework.boot:spring-boot-devtools")
 	// kapt("org.springframework.boot:spring-boot-configuration-processor")
 
