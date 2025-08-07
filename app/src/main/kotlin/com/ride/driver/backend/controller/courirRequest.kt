@@ -28,7 +28,6 @@ class courirRequestController (
     private val repository: CourierProfileRepository
 
 ){
-    
 
     @GetMapping("/login")
     fun courierLogin(@RequestParam("name") name: String): String { 
@@ -60,10 +59,11 @@ class courirRequestController (
         if (couriers.none()) {
             return ResponseEntity.ok("No couriers found")
         }
-        val courierNames = couriers.map { it.area }.toString()
-        println("Found couriers: $courierNames")
+        val courierAreas = couriers.map { it.area }.toString()
+        val courierName = couriers.map { it.name }.toString()
+        // println("Found couriers: $courierNames")
 
-        return ResponseEntity.ok("Courier registered successfully")            
+        return ResponseEntity.ok("Found couriers: $courierName in areas: $courierAreas HIHIHIH")
 
     }
     

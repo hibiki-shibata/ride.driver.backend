@@ -2,10 +2,11 @@
 package com.ride.driver.backend.services
 import org.springframework.stereotype.Service
 
-import com.ride.driver.backend.models.VehicleType
-import com.ride.driver.backend.models.Location
-import com.ride.driver.backend.models.DriverStatus 
 import com.ride.driver.backend.models.DriverDetails
+import com.ride.driver.backend.models.Location
+import com.ride.driver.backend.models.Area
+import com.ride.driver.backend.models.VehicleType
+import com.ride.driver.backend.models.DriverStatus 
 
 import com.ride.driver.backend.repositories.CourierProfileRepository
 
@@ -27,7 +28,7 @@ open class CourierDataService(){
                     assignID = "assign123",
                     rate = 5.0,
                     status = DriverStatus.AVAILABLE,
-                    area = "Downtown",
+                    area = Area(name = "Downtown"), // Example of setting an area
                     driverComments = "Ready to deliver"
                 )
 
