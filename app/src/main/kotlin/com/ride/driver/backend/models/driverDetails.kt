@@ -10,10 +10,12 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Embedded
 import jakarta.persistence.Version
+import jakarta.persistence.ManyToOne
+
 
 
 @Entity
-class DriverDetails(
+data class DriverDetails(
     
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
@@ -31,7 +33,9 @@ class DriverDetails(
     val assignID: String,
     val rate: Double,
     val status: DriverStatus = DriverStatus.AVAILABLE,
-    val area: String,
+    
+    @ManyToOne
+    val area: Area? = null,
     val driverComments: String,
 
      @Version
@@ -40,4 +44,12 @@ class DriverDetails(
 
 
 
-
+@Entity
+data class Area (
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    val id: Long? = null,
+    
+    @NotBlank
+    val name: String,
+)

@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 
-
 import org.springframework.http.ResponseEntity
 import com.ride.driver.backend.exceptions.HibikiSpecialException
 
-
 import com.ride.driver.backend.services.CourierLoginService
-
 import com.ride.driver.backend.services.CourierDataService
+
 import com.ride.driver.backend.repositories.CourierProfileRepository
+
+import com.ride.driver.backend.models.DriverDetails
 
 
 @RestController
@@ -28,7 +28,6 @@ class courirRequestController (
     private val repository: CourierProfileRepository
 
 ){
-    
 
     @GetMapping("/login")
     fun courierLogin(@RequestParam("name") name: String): String { 
@@ -44,6 +43,7 @@ class courirRequestController (
     }
 
 
+
     @PostMapping("/logout")
     fun logout(@RequestHeader ("Authorization") token: String): ResponseEntity<String> {
         if(token != "123") throw HibikiSpecialException("logout Failed!!!!!")
@@ -51,12 +51,19 @@ class courirRequestController (
     }
 
 
+
     @GetMapping("/findall")
     fun findCourier(): ResponseEntity<String> {        
         println("Finding all couriers...")
-        repository.findAll().forEach { println(it) }
+        val couriers: Iterable<DriverDetails> = repository.findAll()
+        if (couriers.none()) {
+            return ResponseEntity.ok("No couriers found")
+        }
+        val courierAreas = couriers.map { it.area }.toString()
+        val courierName = couriers.map { it.name }.toString()
+        // println("Found couriers: $courierNames")
 
-        return ResponseEntity.ok("Courier registered successfully")            
+        return ResponseEntity.ok("Found couriers: $courierName in areas: $courierAreas HIHIHIH")
 
     }
     
