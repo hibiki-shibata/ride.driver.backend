@@ -25,7 +25,7 @@ open class CourierDataService(){
                     name = "John Doe",
                     vehicleType = VehicleType.BIKE,
                     location = Location(37.7749, -122.4194), 
-                    assignID = "assign123",
+                    assignId = "assign123",
                     rate = 5.0,
                     status = DriverStatus.AVAILABLE,
                     area = Area(name = "Downtown"), // Example of setting an area

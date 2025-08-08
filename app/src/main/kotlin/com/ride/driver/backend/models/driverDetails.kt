@@ -13,8 +13,25 @@ import jakarta.persistence.Version
 import jakarta.persistence.ManyToOne
 
 
+import jakarta.persistence.Table
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+
 
 @Entity
+@Table(name = "area")
+data class Area (
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    val id: Long? = null,
+    
+    @NotBlank
+    val name: String,
+)
+
+
+@Entity
+@Table(name = "driver_details")
 data class DriverDetails(
     
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -26,12 +43,16 @@ data class DriverDetails(
 
     @NotBlank
     val name: String,
+
+    @Enumerated(EnumType.STRING)
     val vehicleType: VehicleType,
 
     @Embedded
     val location: Location,
-    val assignID: String,
+    val assignId: String,
     val rate: Double,
+
+    @Enumerated(EnumType.STRING)
     val status: DriverStatus = DriverStatus.AVAILABLE,
     
     @ManyToOne
@@ -42,14 +63,3 @@ data class DriverDetails(
     val version: Int = 0
 ) 
 
-
-
-@Entity
-data class Area (
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long? = null,
-    
-    @NotBlank
-    val name: String,
-)
