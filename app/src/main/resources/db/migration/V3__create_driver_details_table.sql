@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS driver_details (
     phone_number VARCHAR NOT NULL,
     name VARCHAR NOT NULL,
     vehicle_type VARCHAR,
+
     
     -- Embedded location fields (add actual fields)
     latitude DOUBLE PRECISION,    -- example field
@@ -13,6 +14,7 @@ CREATE TABLE IF NOT EXISTS driver_details (
 
     assign_id VARCHAR,
     rate DOUBLE PRECISION,
+
     status VARCHAR DEFAULT 'AVAILABLE',
 
     area_id BIGSERIAL REFERENCES area(id),

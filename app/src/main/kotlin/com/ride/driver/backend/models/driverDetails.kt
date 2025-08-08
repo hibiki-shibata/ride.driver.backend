@@ -64,6 +64,3 @@ data class DriverDetails(
     val version: Int = 0
 ) 
 
-
-
-

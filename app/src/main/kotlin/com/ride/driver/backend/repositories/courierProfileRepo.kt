@@ -4,8 +4,10 @@ package com.ride.driver.backend.repositories
 import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.util.UUID
+
 import com.ride.driver.backend.models.DriverDetails
 import com.ride.driver.backend.models.Area
+
 
 
 // Spring's reflection mechanism will automatically read the annotations of the DriverDetails class

@@ -8,7 +8,7 @@ plugins {
 	
 	// kotlin("plugin.allopen") version "1.9.25"
 	// kotlin("kapt") version "1.9.25"
-	kotlin("plugin.jpa") version "2.2.0"
+	// kotlin("plugin.jpa") version "2.2.0"
 
 }
 
@@ -45,7 +45,6 @@ dependencies {
 	implementation("jakarta.validation:jakarta.validation-api")
 	implementation("jakarta.persistence:jakarta.persistence-api")
 
-  
 	
 	// For reflection, Spring need to read the Entity data class passed in the Repo args (e.g. obj:class.memberProperties)
 	implementation("org.jetbrains.kotlin:kotlin-reflect") 

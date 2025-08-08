@@ -1,0 +1,3 @@
+CREATE TYPE driver_status AS ENUM ('AVAILABLE', 'UNAVAILABLE', 'OFFLINE');
+CREATE TYPE vehicle_type AS ENUM ('CAR', 'BIKE', 'TRUCK');
+
