@@ -36,10 +36,15 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
 
+	// DB migration
+	implementation("org.flywaydb:flyway-database-postgresql")
+	implementation("org.flywaydb:flyway-core")
+
 
 	// Kotlin support - used for models and services
 	implementation("jakarta.validation:jakarta.validation-api")
 	implementation("jakarta.persistence:jakarta.persistence-api")
+
   
 	
 	// For reflection, Spring need to read the Entity data class passed in the Repo args (e.g. obj:class.memberProperties)
