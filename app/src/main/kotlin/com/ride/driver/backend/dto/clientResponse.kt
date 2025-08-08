@@ -5,16 +5,24 @@ import com.ride.driver.backend.models.Location
 import com.ride.driver.backend.models.VehicleType
 import java.util.UUID
 
-data class DriverDetailsDto(
-    val id: UUID,
-    val phoneNumber: String,
-    val name: String,
-    val vehicleType: VehicleType,
-    val location: Location,
-    val assignID: String,
-    val rate: Double,
-    val status: DriverStatus = DriverStatus.AVAILABLE,
-    val area: String,
-    val driverComments: String = "",
-) 
+import kotlinx.serialization.Serializable
 
+@Serializable
+data class DeliveryDetailsDTO(
+    val id: UUID? = null,
+    val name: String,
+    val phoneNumber: String,
+    val vehicleType: String,
+    val location: LocationDTO,
+    val assignId: String?,
+    val rate: Double,
+    val status: String,
+    val area: AreaDTO?,
+    val driverComments: String?
+)
+
+@Serializable
+data class LocationDTO(val latitude: Double, val longitude: Double)
+
+@Serializable
+data class AreaDTO(val name: String?)

@@ -14,11 +14,18 @@ import org.springframework.http.ResponseEntity
 import com.ride.driver.backend.exceptions.HibikiSpecialException
 
 import com.ride.driver.backend.services.CourierLoginService
-import com.ride.driver.backend.services.CourierDataService
+// import com.ride.driver.backend.services.CourierDataService
 
 import com.ride.driver.backend.repositories.CourierProfileRepository
-
 import com.ride.driver.backend.models.DriverDetails
+import com.ride.driver.backend.dto.DeliveryDetailsDTO
+import com.ride.driver.backend.dto.LocationDTO
+import com.ride.driver.backend.dto.AreaDTO
+
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
+
 
 
 @RestController
@@ -53,19 +60,38 @@ class courirRequestController (
 
 
     @GetMapping("/findall")
-    fun findCourier(): ResponseEntity<String> {        
+    fun findCourier(): ResponseEntity<List<DeliveryDetailsDTO>> {        
         println("Finding all couriers...")
         val couriers: List<DriverDetails> = repository.findAll()
+        
         if (couriers.none()) {
-            return ResponseEntity.ok("No couriers found")
+            throw HibikiSpecialException("No couriers found")
         }
      
-        val toJson = couriers.joinToString(separator = ", ") { 
-            """{ "id": "${it.id}", "name": "${it.name}", "phoneNumber": "${it.phoneNumber}", "vehicleType": "${it.vehicleType}", "location": { "latitude": "${it.location.latitude}", "longitude": "${it.location.longitude}" }, "assignId": "${it.assignId}", "rate": "${it.rate}", "status": "${it.status}", "area": { "name": "${it.area?.name}" }, "driverComments": "${it.driverComments}" }"""
-        }
-        val responseJson = """{ "couriers": [$toJson] }"""
+        // val toJson = couriers.joinToString(separator = ", ") { 
+        //     """{ "id": "${it.id}", "name": "${it.name}", "phoneNumber": "${it.phoneNumber}", "vehicleType": "${it.vehicleType}", "location": { "latitude": "${it.location.latitude}", "longitude": "${it.location.longitude}" }, "assignId": "${it.assignId}", "rate": "${it.rate}", "status": "${it.status}", "area": { "name": "${it.area?.name}" }, "driverComments": "${it.driverComments}" }"""
+        // }
+        // val responseJson = """{ "couriers": [$toJson] }"""
+
+        val result = couriers.map { courier ->
+        DeliveryDetailsDTO(
+            id = courier.id,
+            name = courier.name,
+            phoneNumber = courier.phoneNumber,
+            vehicleType = courier.vehicleType.toString(),
+            location = LocationDTO(
+                latitude = courier.location.latitude,
+                longitude = courier.location.longitude
+            ),
+            assignId = courier.assignId,
+            rate = courier.rate,
+            status = courier.status.toString(),
+            area = courier.area?.let { AreaDTO(name = it.name) },
+            driverComments = courier.driverComments
+        )
+    }
         
-        return ResponseEntity.ok(responseJson)
+        return ResponseEntity.ok(result)
 
     }
     
