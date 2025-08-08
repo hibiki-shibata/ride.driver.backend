@@ -12,10 +12,11 @@ import jakarta.persistence.Embedded
 import jakarta.persistence.Version
 import jakarta.persistence.ManyToOne
 
-
 import jakarta.persistence.Table
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
+
+import jakarta.persistence.Column
 
 
 @Entity
