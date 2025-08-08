@@ -38,7 +38,7 @@ dependencies {
 
 	// DB migration
 	implementation("org.flywaydb:flyway-database-postgresql")
-	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-core") // core is included in starter-data-jpa, but explicitly adding for clarity
 
 
 	// Kotlin support - used for models and services

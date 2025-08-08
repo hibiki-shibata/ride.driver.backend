@@ -55,15 +55,17 @@ class courirRequestController (
     @GetMapping("/findall")
     fun findCourier(): ResponseEntity<String> {        
         println("Finding all couriers...")
-        val couriers: Iterable<DriverDetails> = repository.findAll()
+        val couriers: List<DriverDetails> = repository.findAll()
         if (couriers.none()) {
             return ResponseEntity.ok("No couriers found")
         }
-        val courierAreas = couriers.map { it.area }.toString()
-        val courierName = couriers.map { it.name }.toString()
-        // println("Found couriers: $courierNames")
-
-        return ResponseEntity.ok("Found couriers: $courierName in areas: $courierAreas HIHIHIH")
+     
+        val toJson = couriers.joinToString(separator = ", ") { 
+            """{ "id": "${it.id}", "name": "${it.name}", "phoneNumber": "${it.phoneNumber}", "vehicleType": "${it.vehicleType}", "location": { "latitude": "${it.location.latitude}", "longitude": "${it.location.longitude}" }, "assignId": "${it.assignId}", "rate": "${it.rate}", "status": "${it.status}", "area": { "name": "${it.area?.name}" }, "driverComments": "${it.driverComments}" }"""
+        }
+        val responseJson = """{ "couriers": [$toJson] }"""
+        
+        return ResponseEntity.ok(responseJson)
 
     }
     
