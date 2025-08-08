@@ -1,5 +1,6 @@
 
 
+
 -- Table: driver_details
 CREATE TABLE IF NOT EXISTS driver_details (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),  -- Use gen_random_uuid() if pgcrypto extension is enabled

@@ -8,7 +8,7 @@ plugins {
 	
 	// kotlin("plugin.allopen") version "1.9.25"
 	// kotlin("kapt") version "1.9.25"
-	// kotlin("plugin.jpa") version "2.2.0"
+	kotlin("plugin.jpa") version "2.2.0" // for config/dbInitializerConf.kt
 
 }
 
