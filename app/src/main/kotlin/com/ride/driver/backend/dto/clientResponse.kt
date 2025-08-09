@@ -5,9 +5,9 @@ import com.ride.driver.backend.models.Location
 import com.ride.driver.backend.models.VehicleType
 import java.util.UUID
 
-import kotlinx.serialization.Serializable
+// import kotlinx.serialization.Serializable
 
-@Serializable
+// @Serializable
 data class DeliveryDetailsDTO(
     val id: UUID? = null,
     val name: String,
@@ -21,8 +21,8 @@ data class DeliveryDetailsDTO(
     val driverComments: String?
 )
 
-@Serializable
+// @Serializable
 data class LocationDTO(val latitude: Double, val longitude: Double)
 
-@Serializable
+// @Serializable
 data class AreaDTO(val name: String?)

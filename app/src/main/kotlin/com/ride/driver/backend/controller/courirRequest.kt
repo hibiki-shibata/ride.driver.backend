@@ -17,7 +17,10 @@ import com.ride.driver.backend.services.CourierLoginService
 // import com.ride.driver.backend.services.CourierDataService
 
 import com.ride.driver.backend.repositories.CourierProfileRepository
+import com.ride.driver.backend.repositories.AreaRepository
+
 import com.ride.driver.backend.models.DriverDetails
+
 import com.ride.driver.backend.dto.DeliveryDetailsDTO
 import com.ride.driver.backend.dto.LocationDTO
 import com.ride.driver.backend.dto.AreaDTO
@@ -27,12 +30,12 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 
 
-
 @RestController
 @RequestMapping("api/v1/couriers")
 class courirRequestController (   
     private val service: CourierLoginService, 
-    private val repository: CourierProfileRepository
+    private val repository: CourierProfileRepository,
+    private val areaRepository: AreaRepository
 
 ){
 
@@ -59,6 +62,29 @@ class courirRequestController (
 
 
 
+    @PostMapping("/register")
+    fun registerCourier(@RequestBody courier: DriverDetails): ResponseEntity<String> {
+        if (courier.name.isBlank() || courier.phoneNumber.isBlank()) {
+            throw HibikiSpecialException("Name and phone number are required")
+        }
+
+        val areaExists = courier.area?.let { area ->
+            areaRepository.findByName(area.name)?.isNotEmpty() ?: false
+        } ?: false
+
+        if (!areaExists) {
+            areaRepository.save(courier.area)
+        }
+
+        
+        println("Registering courier: ${courier.name}")
+        println(courier)
+        repository.save(courier)
+        return ResponseEntity.ok("Courier registered successfully: ${courier.name}")
+    }
+
+
+
     @GetMapping("/findall")
     fun findCourier(): ResponseEntity<List<DeliveryDetailsDTO>> {        
         println("Finding all couriers...")
@@ -74,27 +100,27 @@ class courirRequestController (
         // val responseJson = """{ "couriers": [$toJson] }"""
 
         val result = couriers.map { courier ->
-        DeliveryDetailsDTO(
-            id = courier.id,
-            name = courier.name,
-            phoneNumber = courier.phoneNumber,
-            vehicleType = courier.vehicleType.toString(),
-            location = LocationDTO(
-                latitude = courier.location.latitude,
-                longitude = courier.location.longitude
-            ),
-            assignId = courier.assignId,
-            rate = courier.rate,
-            status = courier.status.toString(),
-            area = courier.area?.let { AreaDTO(name = it.name) },
-            driverComments = courier.driverComments
-        )
-    }
-        
-        return ResponseEntity.ok(result)
-
-    }
+            DeliveryDetailsDTO(
+                id = courier.id,
+                name = courier.name,
+                phoneNumber = courier.phoneNumber,
+                vehicleType = courier.vehicleType.toString(),
+                location = LocationDTO(
+                    latitude = courier.location.latitude,
+                    longitude = courier.location.longitude
+                ),
+                assignId = courier.assignId,
+                rate = courier.rate,
+                status = courier.status.toString(),
+                area = courier.area?.let { AreaDTO(name = it.name) },
+                driverComments = courier.driverComments
+            )
+        }
     
+        return ResponseEntity.ok(result)
+    }
+
+
     // e.g. http://localhost:4000/api/v1/couriers/login?name=This-is-the-name
 
 }

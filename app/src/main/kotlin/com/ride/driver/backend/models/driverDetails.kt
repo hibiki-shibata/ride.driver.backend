@@ -16,7 +16,7 @@ import jakarta.persistence.Table
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 
-import jakarta.persistence.Column
+import jakarta.persistence.JoinColumn
 
 
 @Entity
@@ -57,6 +57,7 @@ data class DriverDetails(
     val status: DriverStatus = DriverStatus.AVAILABLE,
     
     @ManyToOne
+    @JoinColumn(name = "area_id")
     val area: Area? = null,
     val driverComments: String,
 
