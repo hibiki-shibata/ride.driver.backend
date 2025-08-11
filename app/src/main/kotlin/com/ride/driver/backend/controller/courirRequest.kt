@@ -20,6 +20,7 @@ import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.AreaRepository
 
 import com.ride.driver.backend.models.DriverDetails
+import com.ride.driver.backend.models.Area
 
 import com.ride.driver.backend.dto.DeliveryDetailsDTO
 import com.ride.driver.backend.dto.LocationDTO
@@ -63,19 +64,14 @@ class courirRequestController (
 
 
     @PostMapping("/register")
-    fun registerCourier(@RequestBody courier: DriverDetails): ResponseEntity<String> {
-        if (courier.name.isBlank() || courier.phoneNumber.isBlank()) {
-            throw HibikiSpecialException("Name and phone number are required")
+        fun registerCourier(@RequestBody courier: DriverDetails): ResponseEntity<String> {
+        val verifiedArea: Area? = courier.area?.let { requestArea ->
+            areaRepository.findByName(requestArea.name)?.firstOrNull()
+                ?: areaRepository.save(requestArea)
         }
 
-        val areaExists = courier.area?.let { area ->
-            areaRepository.findByName(area.name)?.isNotEmpty() ?: false
-        } ?: false
 
-        if (!areaExists) {
-            areaRepository.save(courier.area)
-        }
-
+        courier.copy(area = verifiedArea)
         
         println("Registering courier: ${courier.name}")
         println(courier)

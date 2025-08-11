@@ -17,22 +17,20 @@ import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.Index
+
+
 
 
 @Entity
-@Table(name = "area")
-data class Area (
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long? = null,
-    
-    @NotBlank
-    val name: String,
+@Table(
+    name = "driver_details",
+    indexes = [
+        Index(name = "idx_driver_phone_number", columnList = "phoneNumber"),
+        Index(name = "idx_driver_area_id", columnList = "area_id"),
+        Index(name = "idx_driver_status", columnList = "status")
+    ]
 )
-
-
-@Entity
-@Table(name = "driver_details")
 data class DriverDetails(
     
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -57,11 +55,11 @@ data class DriverDetails(
     val status: DriverStatus = DriverStatus.AVAILABLE,
     
     @ManyToOne
-    @JoinColumn(name = "area_id")
+    // @JoinColumn(name = "area_id")
     val area: Area? = null,
     val driverComments: String,
 
-     @Version
-    val version: Int = 0
+    //  @Version
+    // val version: Int = 0
 ) 
 

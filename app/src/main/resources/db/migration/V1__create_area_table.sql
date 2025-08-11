@@ -1,6 +1,6 @@
 
 -- Table: area
-CREATE  TABLE IF NOT EXISTS area (
+CREATE TABLE IF NOT EXISTS area (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR NOT NULL
 );
