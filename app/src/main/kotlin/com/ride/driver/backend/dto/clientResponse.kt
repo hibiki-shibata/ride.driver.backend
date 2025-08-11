@@ -21,8 +21,3 @@ data class DeliveryDetailsDTO(
     val driverComments: String?
 )
 
-// @Serializable
-data class LocationDTO(val latitude: Double, val longitude: Double)
-
-// @Serializable
-data class AreaDTO(val name: String?)

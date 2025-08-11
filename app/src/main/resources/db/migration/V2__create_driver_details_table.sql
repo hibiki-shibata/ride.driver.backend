@@ -8,18 +8,18 @@ CREATE TABLE IF NOT EXISTS driver_details (
     name VARCHAR NOT NULL,
     vehicle_type VARCHAR,
 
-    
-    -- Embedded location fields (add actual fields)
-    latitude DOUBLE PRECISION,    -- example field
-    longitude DOUBLE PRECISION,   -- example field
+    latitude DOUBLE PRECISION,    
+    longitude DOUBLE PRECISION,  
 
     assign_id VARCHAR,
     rate DOUBLE PRECISION,
 
     status VARCHAR DEFAULT 'AVAILABLE',
 
-    area_id BIGSERIAL REFERENCES area(id),
-    driver_comments TEXT,
+    area_id BIGSERIAL REFERENCES area(id) ON DELETE CASCADE,
+    driver_comments TEXT
+
+    -- CONSTRAINT fk_area FOREIGN KEY (area_id) REFERENCES area(id)
+
     
-    version INTEGER DEFAULT 0
 );

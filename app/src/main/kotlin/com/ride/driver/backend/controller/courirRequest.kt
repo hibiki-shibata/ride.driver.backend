@@ -65,17 +65,17 @@ class courirRequestController (
 
     @PostMapping("/register")
         fun registerCourier(@RequestBody courier: DriverDetails): ResponseEntity<String> {
-        val area: Area? = courier.area?.let { requestArea ->
+        val verifiedArea: Area? = courier.area?.let { requestArea ->
             areaRepository.findByName(requestArea.name)?.firstOrNull()
                 ?: areaRepository.save(requestArea)
         }
 
-        val managedCourier = courier.copy(area = area)
 
+        courier.copy(area = verifiedArea)
         
-        println("Registering courier: ${managedCourier.name}")
-        println(managedCourier)
-        repository.save(managedCourier)
+        println("Registering courier: ${courier.name}")
+        println(courier)
+        repository.save(courier)
         return ResponseEntity.ok("Courier registered successfully: ${courier.name}")
     }
 
