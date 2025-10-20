@@ -17,7 +17,7 @@ group = "com.ride.driver"
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
+		languageVersion = JavaLanguageVersion.of(17)
 	}
 }
 
@@ -40,15 +40,13 @@ dependencies {
 	implementation("org.flywaydb:flyway-database-postgresql")
 	implementation("org.flywaydb:flyway-core") // core is included in starter-data-jpa, but explicitly adding for clarity
 
-
 	// Kotlin support - used for models and services
 	implementation("jakarta.validation:jakarta.validation-api")
 	implementation("jakarta.persistence:jakarta.persistence-api")
 
 	//JSON serialization
-	    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 
-	
 	// For reflection, Spring need to read the Entity data class passed in the Repo args (e.g. obj:class.memberProperties)
 	implementation("org.jetbrains.kotlin:kotlin-reflect") 
 }

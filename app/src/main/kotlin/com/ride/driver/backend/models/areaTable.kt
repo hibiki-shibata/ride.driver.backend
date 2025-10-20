@@ -8,7 +8,6 @@ import jakarta.persistence.Table
 import jakarta.persistence.Index
 import jakarta.validation.constraints.NotBlank
 
-
 @Entity
 @Table(
     name = "area",
@@ -16,6 +15,7 @@ import jakarta.validation.constraints.NotBlank
         Index(name = "idx_area_name", columnList = "name")
     ]
     )
+    
 data class Area (
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

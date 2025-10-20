@@ -2,7 +2,6 @@
 package com.ride.driver.backend.models
 
 import java.util.UUID
-
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.GeneratedValue
@@ -11,16 +10,11 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Embedded
 import jakarta.persistence.Version
 import jakarta.persistence.ManyToOne
-
 import jakarta.persistence.Table
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
-
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.Index
-
-
-
 
 @Entity
 @Table(
@@ -31,8 +25,8 @@ import jakarta.persistence.Index
         Index(name = "idx_driver_status", columnList = "status")
     ]
 )
-data class DriverDetails(
-    
+
+data class DriverDetails(    
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     val id: UUID? = null,
