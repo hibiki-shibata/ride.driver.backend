@@ -14,15 +14,15 @@ import org.springframework.http.ResponseEntity
 import com.ride.driver.backend.exceptions.HibikiSpecialException
 
 import com.ride.driver.backend.services.CourierLoginService
-// import com.ride.driver.backend.services.CourierDataService
+import com.ride.driver.backend.services.CourierDataService
 
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.AreaRepository
 
-import com.ride.driver.backend.models.DriverDetails
+import com.ride.driver.backend.models.CourierProfile
 import com.ride.driver.backend.models.Area
 
-import com.ride.driver.backend.dto.DeliveryDetailsDTO
+import com.ride.driver.backend.dto.CourierProfileDTO
 import com.ride.driver.backend.dto.LocationDTO
 import com.ride.driver.backend.dto.AreaDTO
 
@@ -64,12 +64,11 @@ class courirRequestController (
 
 
     @PostMapping("/register")
-        fun registerCourier(@RequestBody courier: DriverDetails): ResponseEntity<String> {
+        fun registerCourier(@RequestBody courier: CourierProfile): ResponseEntity<String> {
         val verifiedArea: Area? = courier.area?.let { requestArea ->
             areaRepository.findByName(requestArea.name)?.firstOrNull()
                 ?: areaRepository.save(requestArea)
         }
-
 
         courier.copy(area = verifiedArea)
         
@@ -82,9 +81,9 @@ class courirRequestController (
 
 
     @GetMapping("/findall")
-    fun findCourier(): ResponseEntity<List<DeliveryDetailsDTO>> {        
+    fun findCourier(): ResponseEntity<List<CourierProfileDTO>> {        
         println("Finding all couriers...")
-        val couriers: List<DriverDetails> = repository.findAll()
+        val couriers: List<CourierProfile> = repository.findAll()
         
         if (couriers.none()) {
             throw HibikiSpecialException("No couriers found")
@@ -96,20 +95,15 @@ class courirRequestController (
         // val responseJson = """{ "couriers": [$toJson] }"""
 
         val result = couriers.map { courier ->
-            DeliveryDetailsDTO(
+            CourierProfileDTO(
                 id = courier.id,
                 name = courier.name,
                 phoneNumber = courier.phoneNumber,
                 vehicleType = courier.vehicleType.toString(),
-                location = LocationDTO(
-                    latitude = courier.location.latitude,
-                    longitude = courier.location.longitude
-                ),
-                assignId = courier.assignId,
                 rate = courier.rate,
                 status = courier.status.toString(),
                 area = courier.area?.let { AreaDTO(name = it.name) },
-                driverComments = courier.driverComments
+                comments = courier.comments
             )
         }
     

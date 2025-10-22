@@ -5,18 +5,17 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 import java.util.UUID
 
-import com.ride.driver.backend.models.DriverDetails
+import com.ride.driver.backend.models.CourierProfile
 import com.ride.driver.backend.models.Area
 
 
 // Spring's reflection mechanism will automatically read the annotations of the DriverDetails class
 @Repository
-open interface CourierProfileRepository : CrudRepository<DriverDetails, Long> {
-   override fun findAll(): List<DriverDetails>
-   fun findById(id: UUID): DriverDetails?
-   fun save(courier: DriverDetails): DriverDetails
+open interface CourierProfileRepository : CrudRepository<CourierProfile, Long> {
+   override fun findAll(): List<CourierProfile>
+   fun findById(id: UUID): CourierProfile?
+   fun save(courier: CourierProfile): CourierProfile
 }
-
 
 @Repository
 open interface AreaRepository : CrudRepository<Area, Long> {

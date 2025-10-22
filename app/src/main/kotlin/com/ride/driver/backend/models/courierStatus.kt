@@ -1,6 +1,6 @@
 package com.ride.driver.backend.models
 
-enum class DriverStatus {
+enum class CourierStatus {
     AVAILABLE,
     UNAVAILABLE,
     ON_DUTY,

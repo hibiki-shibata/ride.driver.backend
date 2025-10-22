@@ -26,7 +26,7 @@ import jakarta.persistence.Index
     ]
 )
 
-data class DriverDetails(    
+data class CourierProfile(    
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     val id: UUID? = null,
@@ -40,18 +40,15 @@ data class DriverDetails(
     @Enumerated(EnumType.STRING)
     val vehicleType: VehicleType,
 
-    @Embedded
-    val location: Location,
-    val assignId: String,
     val rate: Double,
 
     @Enumerated(EnumType.STRING)
-    val status: DriverStatus = DriverStatus.AVAILABLE,
+    val status: CourierStatus = CourierStatus.AVAILABLE,
     
     @ManyToOne
     // @JoinColumn(name = "area_id")
     val area: Area? = null,
-    val driverComments: String,
+    val comments: String,
 
     //  @Version
     // val version: Int = 0
