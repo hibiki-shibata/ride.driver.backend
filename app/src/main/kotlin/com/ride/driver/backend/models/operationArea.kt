@@ -16,7 +16,7 @@ import jakarta.validation.constraints.NotBlank
     ]
     )
 
-data class Area (
+data class OperationArea (
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long? = null,

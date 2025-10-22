@@ -5,11 +5,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 import com.ride.driver.backend.repositories.CourierProfileRepository
-import com.ride.driver.backend.repositories.AreaRepository
+import com.ride.driver.backend.repositories.OperationAreaRepository
 
 import com.ride.driver.backend.models.CourierProfile
-import com.ride.driver.backend.models.Area
-import com.ride.driver.backend.models.Location
+import com.ride.driver.backend.models.OperationArea
 import com.ride.driver.backend.models.VehicleType
 import com.ride.driver.backend.models.CourierStatus
 import java.util.UUID
@@ -19,15 +18,15 @@ import java.util.UUID
 class BlogConfiguration {
 
 	@Bean
-	fun databaseInitializer(courierProfileRepository: CourierProfileRepository, areaRepository: AreaRepository ) = ApplicationRunner {
+	fun databaseInitializer(courierProfileRepository: CourierProfileRepository, operationAreaRepository: OperationAreaRepository ) = ApplicationRunner {
 
         // Initialize the database with some default data
-        val savedArea = areaRepository.save(
-            Area(
+        val savedArea = operationAreaRepository.save(
+            OperationArea(
                 name = "Tokyo")
         )
 
-        val tokyoArea = areaRepository.findByName("Tokyo")
+        val tokyoArea = operationAreaRepository.findByName("Tokyo")
             ?: throw IllegalStateException("Area 'Tokyo' not found")
         
         
@@ -39,7 +38,7 @@ class BlogConfiguration {
                 vehicleType = VehicleType.BIKE,
                 rate = 5.0,
                 status = CourierStatus.AVAILABLE,
-                area = tokyoArea[0],
+                operationArea = tokyoArea[0],
                 comments = "Ready to deliver"
             )
         )

@@ -11,20 +11,18 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 
 import org.springframework.http.ResponseEntity
-import com.ride.driver.backend.exceptions.HibikiSpecialException
+import com.ride.driver.backend.exceptions.CustomExceptionDemo
 
 import com.ride.driver.backend.services.CourierLoginService
 import com.ride.driver.backend.services.CourierDataService
 
 import com.ride.driver.backend.repositories.CourierProfileRepository
-import com.ride.driver.backend.repositories.AreaRepository
+import com.ride.driver.backend.repositories.OperationAreaRepository
 
 import com.ride.driver.backend.models.CourierProfile
-import com.ride.driver.backend.models.Area
+import com.ride.driver.backend.models.OperationArea
 
 import com.ride.driver.backend.dto.CourierProfileDTO
-import com.ride.driver.backend.dto.LocationDTO
-import com.ride.driver.backend.dto.AreaDTO
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -36,7 +34,7 @@ import kotlinx.serialization.encodeToString
 class courirRequestController (   
     private val service: CourierLoginService, 
     private val repository: CourierProfileRepository,
-    private val areaRepository: AreaRepository
+    private val operationAreaRepository: OperationAreaRepository
 
 ){
 
@@ -57,7 +55,7 @@ class courirRequestController (
 
     @PostMapping("/logout")
     fun logout(@RequestHeader ("Authorization") token: String): ResponseEntity<String> {
-        if(token != "123") throw HibikiSpecialException("logout Failed!!!!!")
+        if(token != "123") throw CustomExceptionDemo("logout Failed!!!!!")
         return ResponseEntity.ok("Logout successfully: $token")
     }
 
@@ -65,12 +63,12 @@ class courirRequestController (
 
     @PostMapping("/register")
         fun registerCourier(@RequestBody courier: CourierProfile): ResponseEntity<String> {
-        val verifiedArea: Area? = courier.area?.let { requestArea ->
-            areaRepository.findByName(requestArea.name)?.firstOrNull()
-                ?: areaRepository.save(requestArea)
+        val verifiedArea: OperationArea? = courier.operationArea?.let { requestArea ->
+            operationAreaRepository.findByName(requestArea.name)?.firstOrNull()
+                ?: operationAreaRepository.save(requestArea)
         }
 
-        courier.copy(area = verifiedArea)
+        courier.copy(operationArea = verifiedArea)
         
         println("Registering courier: ${courier.name}")
         println(courier)
@@ -86,7 +84,7 @@ class courirRequestController (
         val couriers: List<CourierProfile> = repository.findAll()
         
         if (couriers.none()) {
-            throw HibikiSpecialException("No couriers found")
+            throw CustomExceptionDemo("No couriers found")
         }
      
         // val toJson = couriers.joinToString(separator = ", ") { 
@@ -102,7 +100,7 @@ class courirRequestController (
                 vehicleType = courier.vehicleType.toString(),
                 rate = courier.rate,
                 status = courier.status.toString(),
-                area = courier.area?.let { AreaDTO(name = it.name) },
+                operationArea = courier.operationArea?.let { OperationArea(name = it.name) },
                 comments = courier.comments
             )
         }

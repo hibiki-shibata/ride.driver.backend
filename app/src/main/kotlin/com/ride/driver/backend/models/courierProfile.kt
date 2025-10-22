@@ -20,9 +20,9 @@ import jakarta.persistence.Index
 @Table(
     name = "driver_details",
     indexes = [
-        Index(name = "idx_driver_phone_number", columnList = "phoneNumber"),
-        Index(name = "idx_driver_area_id", columnList = "area_id"),
-        Index(name = "idx_driver_status", columnList = "status")
+        Index(name = "idx_courier_phone_number", columnList = "phoneNumber"),
+        Index(name = "idx_courier_area_id", columnList = "operationArea_id"),
+        Index(name = "idx_courier_status", columnList = "status")
     ]
 )
 
@@ -47,7 +47,7 @@ data class CourierProfile(
     
     @ManyToOne
     // @JoinColumn(name = "area_id")
-    val area: Area? = null,
+    val operationArea: OperationArea? = null,
     val comments: String,
 
     //  @Version

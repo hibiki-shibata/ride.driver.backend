@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 import java.util.UUID
 
 import com.ride.driver.backend.models.CourierProfile
-import com.ride.driver.backend.models.Area
+import com.ride.driver.backend.models.OperationArea
 
 
 // Spring's reflection mechanism will automatically read the annotations of the DriverDetails class
@@ -18,8 +18,8 @@ open interface CourierProfileRepository : CrudRepository<CourierProfile, Long> {
 }
 
 @Repository
-open interface AreaRepository : CrudRepository<Area, Long> {
-    override fun findAll(): List<Area>
-    fun findByName(name: String): List<Area>?
-    fun save(area: Area?): Area
+open interface OperationAreaRepository : CrudRepository<OperationArea, Long> {
+    override fun findAll(): List<OperationArea>
+    fun findByName(name: String): List<OperationArea>?
+    fun save(area: OperationArea?): OperationArea
 }

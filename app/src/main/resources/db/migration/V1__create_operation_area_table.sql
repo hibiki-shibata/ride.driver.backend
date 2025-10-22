@@ -1,6 +1,4 @@
-
--- Table: area
-CREATE TABLE IF NOT EXISTS area (
+CREATE TABLE IF NOT EXISTS operation_area (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR NOT NULL
 );
