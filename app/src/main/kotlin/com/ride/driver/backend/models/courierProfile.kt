@@ -34,6 +34,8 @@ data class CourierProfile(
     @NotBlank
     val phoneNumber: String,
 
+    val passwordHash: String,
+
     @NotBlank
     val name: String,
 

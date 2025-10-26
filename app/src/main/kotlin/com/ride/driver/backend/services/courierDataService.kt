@@ -17,6 +17,7 @@ open class CourierDataService(){
                 val courierProfile = CourierProfile(
                     id = UUID.randomUUID(),
                     phoneNumber = "123-456-7890",
+                    passwordHash = "hashed_password",
                     name = "John Doe",
                     vehicleType = VehicleType.BIKE,
                     rate = 5.0,

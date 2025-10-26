@@ -4,16 +4,12 @@ plugins {
 	id("org.springframework.boot") version "3.5.4"
 	id("io.spring.dependency-management") version "1.1.7"
 	// id ("application")
-	
-	
 	// kotlin("plugin.allopen") version "1.9.25"
 	// kotlin("kapt") version "1.9.25"
 	kotlin("plugin.jpa") version "2.2.0" // for config/dbInitializerConf.kt
-
 }
 
 group = "com.ride.driver"
-
 
 java {
 	toolchain {
@@ -51,7 +47,6 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-reflect") 
 }
 
-
 kotlin {
 	compilerOptions {
 		freeCompilerArgs.addAll("-Xjsr305=strict")
@@ -61,7 +56,6 @@ kotlin {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
-
 
 // tasks.test {
 //     testLogging {
