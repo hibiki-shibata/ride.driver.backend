@@ -1,47 +1,47 @@
-package com.ride.driver.backend.config
+// package com.ride.driver.backend.config
 
-import org.springframework.boot.ApplicationRunner
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
+// import org.springframework.boot.ApplicationRunner
+// import org.springframework.context.annotation.Bean
+// import org.springframework.context.annotation.Configuration
 
-import com.ride.driver.backend.repositories.CourierProfileRepository
-import com.ride.driver.backend.repositories.OperationAreaRepository
+// import com.ride.driver.backend.repositories.CourierProfileRepository
+// import com.ride.driver.backend.repositories.OperationAreaRepository
 
-import com.ride.driver.backend.models.CourierProfile
-import com.ride.driver.backend.models.OperationArea
-import com.ride.driver.backend.models.VehicleType
-import com.ride.driver.backend.models.CourierStatus
-import java.util.UUID
+// import com.ride.driver.backend.models.CourierProfile
+// import com.ride.driver.backend.models.OperationArea
+// import com.ride.driver.backend.models.VehicleType
+// import com.ride.driver.backend.models.CourierStatus
+// import java.util.UUID
 
 
-@Configuration
-class BlogConfiguration {
+// @Configuration
+// class BlogConfiguration {
 
-	@Bean
-	fun databaseInitializer(courierProfileRepository: CourierProfileRepository, operationAreaRepository: OperationAreaRepository ) = ApplicationRunner {
+// 	@Bean
+// 	fun databaseInitializer(courierProfileRepository: CourierProfileRepository, operationAreaRepository: OperationAreaRepository ) = ApplicationRunner {
 
-        // Initialize the database with some default data
-        val savedArea = operationAreaRepository.save(
-            OperationArea(
-                name = "Tokyo")
-        )
+//         // Initialize the database with some default data
+//         val savedArea = operationAreaRepository.save(
+//             OperationArea(
+//                 name = "Tokyo")
+//         )
 
-        val tokyoArea = operationAreaRepository.findByName("Tokyo")
-            ?: throw IllegalStateException("Area 'Tokyo' not found")
+//         val tokyoArea = operationAreaRepository.findByName("Tokyo")
+//             ?: throw IllegalStateException("Area 'Tokyo' not found")
         
         
-        courierProfileRepository.save(
-            CourierProfile(
-                id = null,
-                phoneNumber = "111-111-1111",
-                name = "Initial Driver",
-                vehicleType = VehicleType.BIKE,
-                rate = 5.0,
-                status = CourierStatus.AVAILABLE,
-                operationArea = tokyoArea[0],
-                comments = "Ready to deliver"
-            )
-        )
+//         courierProfileRepository.save(
+//             CourierProfile(
+//                 id = null,
+//                 phoneNumber = "111-111-1111",
+//                 name = "Initial Driver",
+//                 vehicleType = VehicleType.BIKE,
+//                 rate = 5.0,
+//                 status = CourierStatus.AVAILABLE,
+//                 operationArea = tokyoArea[0],
+//                 comments = "Ready to deliver"
+//             )
+//         )
 	
-	}
-}
+// 	}
+// }
