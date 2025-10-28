@@ -4,8 +4,10 @@
 package com.ride.driver.backend
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.boot.runApplication
 
+@EnableWebSecurity
 @SpringBootApplication
 class RideDriverBackendApplication
 

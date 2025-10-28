@@ -43,8 +43,15 @@ dependencies {
 	//JSON serialization
 	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
 
+	// Security
+	implementation("org.springframework.boot:spring-boot-starter-security")
+	implementation("io.jsonwebtoken:jjwt-api:0.13.0") 
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0") 
+	implementation("io.jsonwebtoken:jjwt-jackson:0.13.0") // for JSON parsing
+	
 	// For reflection, Spring need to read the Entity data class passed in the Repo args (e.g. obj:class.memberProperties)
-	implementation("org.jetbrains.kotlin:kotlin-reflect") 
+	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	// implementation("org.jetbrains.kotlin:kotlin-stdlib")
 }
 
 kotlin {

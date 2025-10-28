@@ -23,18 +23,15 @@ import com.ride.driver.backend.dto.CourierProfileDTO
 @RestController
 @RequestMapping("api/v1/couriers")
 class courirRequestController (   
-    private val service: CourierLoginService, 
+    private val courierLoginService: CourierLoginService, 
     private val repository: CourierProfileRepository,
     private val operationAreaRepository: OperationAreaRepository
 
 ){
-
     @GetMapping("/login")
     fun courierLogin(@RequestParam("name") name: String): String { 
-        return service.courierLogin(name)
+        return courierLoginService.courierLogin(name)
     }
-
-
 
     @PostMapping("/refresh-token")
     fun refreshToken(@RequestBody request: Map<String, String>): ResponseEntity<String> {
@@ -42,15 +39,11 @@ class courirRequestController (
         return ResponseEntity.ok("Token refreshed successfully for user: $refreshToken")
     }
 
-
-
     @PostMapping("/logout")
     fun logout(@RequestHeader ("Authorization") token: String): ResponseEntity<String> {
         if(token != "123") throw CustomExceptionDemo("logout Failed!!!!!")
         return ResponseEntity.ok("Logout successfully: $token")
     }
-
-
 
     @PostMapping("/register")
         fun registerCourier(@RequestBody courier: CourierProfile): ResponseEntity<String> {
@@ -66,8 +59,6 @@ class courirRequestController (
         repository.save(courier)
         return ResponseEntity.ok("Courier registered successfully: ${courier.name}")
     }
-
-
 
     @GetMapping("/findall")
     fun findCourier(): ResponseEntity<List<CourierProfileDTO>> {        
@@ -95,7 +86,6 @@ class courirRequestController (
                 comments = courier.comments
             )
         }
-    
         return ResponseEntity.ok(result)
     }
 
