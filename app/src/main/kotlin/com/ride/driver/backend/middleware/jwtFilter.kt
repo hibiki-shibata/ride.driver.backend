@@ -1,0 +1,55 @@
+package com.ride.driver.backend.middleware
+
+import org.springframework.stereotype.Component
+import org.springframework.security.core.userdetails.UserDetailsService
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.web.filter.OncePerRequestFilter
+import jakarta.servlet.FilterChain
+import com.ride.driver.backend.util.JwtTokenUtil
+
+@Component 
+class JwtFilter(
+    private val jwtTokenUtil: JwtTokenUtil,
+    private val userDetailsService: UserDetailsService
+) : OncePerRequestFilter() {
+    override fun doFilterInternal(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        filterChain: FilterChain
+    ) {
+    try{
+        val authHeader = request.getHeader("Authorization")
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            val jwtToken: String = authHeader.substringAfter("Bearer ")
+    
+            if (SecurityContextHolder.getContext().authentication == null && jwtTokenUtil.isTokenValid(jwtToken)) {
+                val username = jwtTokenUtil.extractUsername(jwtToken)
+                val userRoles = jwtTokenUtil.extractRoles(jwtToken)
+                val userDetails = jwtTokenUtil.extractUserDetails(jwtToken)
+
+                if (jwtToken != null && jwtTokenUtil.isTokenValid(jwtToken)) {
+                    val authenticationToken = UsernamePasswordAuthenticationToken(
+                        userDetails, // principal
+                        null, // credentials
+                        userRoles.map { role -> SimpleGrantedAuthority(role) } // authorities
+                    )
+                    authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
+                    SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that  business logic can use it
+                }
+            }
+        }
+        filterChain.doFilter(request, response)
+    } catch (ex: Exception) {
+        response.writer.write(
+                """{"error": "Filter Authorization error: 
+                |${ex.message ?: "unknown error"}"}""".trimMargin()
+            )   
+        }
+    }
+}

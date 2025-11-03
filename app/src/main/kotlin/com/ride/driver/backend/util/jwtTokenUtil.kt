@@ -1,4 +1,4 @@
-package com.ride.driver.backend.services
+package com.ride.driver.backend.util
 
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
@@ -9,7 +9,7 @@ import java.util.Base64
 import java.util.Date
 
 @Service
-open class JwtTokenService(
+open class JwtTokenUtil(
   @Value("0.13.0") private val secret: String = ""
 ) {
     private val signingKey: SecretKeySpec
@@ -32,11 +32,34 @@ open class JwtTokenService(
         return extractAllClaims(token).subject
     }
 
+    fun extractRoles(token: String): List<String> {
+        val claims = extractAllClaims(token)
+        return claims["roles"] as? List<String> ?: emptyList()
+    }
+
+    fun extractUserDetails(token: String): Claims {
+        return extractAllClaims(token)
+    }
+
+    fun isTokenValid(token: String): Boolean {
+        val isTokenExpired = extractAllClaims(token).expiration.before(Date())
+        return !isTokenExpired
+    }
+
     private fun extractAllClaims(token: String): Claims {
-        return Jwts.parser()
-          .setSigningKey(signingKey)
-          .build()
-          .parseClaimsJws(token)
-          .body
+        try {
+            val claims = Jwts.parser()
+              .setSigningKey(signingKey)
+              .build()
+              .parseClaimsJws(token)
+              .body
+            return claims
+        } catch (ex: Exception) {
+            throw IllegalArgumentException("Invalid JWT token: ${ex.message}")
+        }
+    }
+
+    private fun isTokenExpired(token: String): Boolean {
+        return extractAllClaims(token).expiration.before(Date())
     }
 }
