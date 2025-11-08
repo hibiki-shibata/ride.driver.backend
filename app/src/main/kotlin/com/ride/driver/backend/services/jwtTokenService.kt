@@ -1,4 +1,4 @@
-package com.ride.driver.backend.util
+package com.ride.driver.backend.service
 
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
@@ -9,7 +9,7 @@ import java.util.Base64
 import java.util.Date
 
 @Service
-open class JwtTokenUtil(
+open class JwtTokenService(
   @Value("0.13.0") private val secret: String = ""
 ) {
     private val signingKey: SecretKeySpec
@@ -18,12 +18,25 @@ open class JwtTokenUtil(
             return SecretKeySpec(keyBytes, 0, keyBytes.size, "HmacSHA256")
         }
 
-    fun generateToken(subject: String, expiration: Date, additionalClaims: Map<String, Any> = emptyMap()): String {
+    fun generateAccessToken( additionalClaims: Map<String, Any>, userName: String ): String {
+        val now = Date()
+        val expiryDate = Date(now.time + 15 * 60 * 1000) // 15 minutes
         return Jwts.builder()
           .setClaims(additionalClaims)
-          .setSubject(subject)
-          .setIssuedAt(Date(System.currentTimeMillis()))
-          .setExpiration(expiration)
+          .setSubject(userName)
+          .setIssuedAt(now)
+          .setExpiration(expiryDate)
+          .signWith(signingKey)
+          .compact()
+    }
+
+    fun generateRefreshToken(userName: String): String {
+        val now = Date()
+        val expiryDate = Date(now.time + 7 * 24 * 60 * 60 * 1000) // 7 days
+        return Jwts.builder()
+          .setSubject(userName)
+          .setIssuedAt(now)
+          .setExpiration(expiryDate)
           .signWith(signingKey)
           .compact()
     }
@@ -42,8 +55,7 @@ open class JwtTokenUtil(
     }
 
     fun isTokenValid(token: String): Boolean {
-        val isTokenExpired = extractAllClaims(token).expiration.before(Date())
-        return !isTokenExpired
+        return !isTokenExpired(token)
     }
 
     private fun extractAllClaims(token: String): Claims {

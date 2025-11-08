@@ -10,11 +10,11 @@ import org.springframework.web.filter.OncePerRequestFilter
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.FilterChain
-import com.ride.driver.backend.util.JwtTokenUtil
+import com.ride.driver.backend.service.JwtTokenService
 
 @Component 
 class JwtFilter(
-    private val jwtTokenUtil: JwtTokenUtil,
+    private val jwtTokenService: JwtTokenService,
     private val userDetailsService: UserDetailsService
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
@@ -27,10 +27,10 @@ class JwtFilter(
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val jwtToken: String = authHeader.substringAfter("Bearer ")
 
-            if (SecurityContextHolder.getContext().authentication == null && jwtTokenUtil.isTokenValid(jwtToken)) {
-                val username = jwtTokenUtil.extractUsername(jwtToken)
-                val userRoles = jwtTokenUtil.extractRoles(jwtToken)
-                val userDetails = jwtTokenUtil.extractUserDetails(jwtToken)
+            if (SecurityContextHolder.getContext().authentication == null && jwtTokenService.isTokenValid(jwtToken)) {
+                val username = jwtTokenService.extractUsername(jwtToken)
+                val userRoles = jwtTokenService.extractRoles(jwtToken)
+                val userDetails = jwtTokenService.extractUserDetails(jwtToken)
 
                 val authenticationToken = UsernamePasswordAuthenticationToken(
                     userDetails, // Principal

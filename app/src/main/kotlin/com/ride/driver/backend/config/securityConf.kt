@@ -17,10 +17,11 @@ class SecurityConfig {
     @Bean
     fun securityFilterChain(http: HttpSecurity, jwtFilter: JwtFilter): SecurityFilterChain {
         http
-            .csrf { it.disable() } // if using cookies, configure CSRF token; with JWT header clients, disable
+            .csrf { it.disable() }
+            .cors { it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
-                it.requestMatchers("/auth/**", "/public/**").permitAll()
+                it.requestMatchers("/api/v1/auth/**").permitAll()
                 it.anyRequest().authenticated()
             }
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)

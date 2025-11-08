@@ -22,7 +22,7 @@ import com.ride.driver.backend.dto.CourierProfileDTO
 
 @RestController
 @RequestMapping("api/v1/couriers")
-class courirRequestController (   
+class businessLogicController (   
     private val courierLoginService: CourierLoginService, 
     private val repository: CourierProfileRepository,
     private val operationAreaRepository: OperationAreaRepository
@@ -68,12 +68,6 @@ class courirRequestController (
         if (couriers.none()) {
             throw CustomExceptionDemo("No couriers found")
         }
-     
-        // val toJson = couriers.joinToString(separator = ", ") { 
-        //     """{ "id": "${it.id}", "name": "${it.name}", "phoneNumber": "${it.phoneNumber}", "vehicleType": "${it.vehicleType}", "location": { "latitude": "${it.location.latitude}", "longitude": "${it.location.longitude}" }, "assignId": "${it.assignId}", "rate": "${it.rate}", "status": "${it.status}", "area": { "name": "${it.area?.name}" }, "driverComments": "${it.driverComments}" }"""
-        // }
-        // val responseJson = """{ "couriers": [$toJson] }"""
-
         val result = couriers.map { courier ->
             CourierProfileDTO(
                 id = courier.id,
@@ -90,21 +84,3 @@ class courirRequestController (
     }
     // e.g. http://localhost:4000/api/v1/couriers/login?name=This-is-the-name
 }
-
-
-// @RestController
-// @RequestMapping("/api/auth")
-// class AuthController(
-//     private val authenticationService: AuthenticationService
-// ) {
-//     @PostMapping
-//     fun authenticate(
-//       @RequestBody authRequest: AuthenticationRequest
-//     ): AuthenticationResponse =
-//         authenticationService.authentication(authRequest)
-
-//     @PostMapping("/refresh")
-//     fun refreshAccessToken(
-//       @RequestBody request: RefreshTokenRequest
-//     ): TokenResponse = TokenResponse(token = authenticationService.refreshAccessToken(request.token))
-// }
