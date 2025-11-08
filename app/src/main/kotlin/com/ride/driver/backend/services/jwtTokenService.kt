@@ -1,4 +1,4 @@
-package com.ride.driver.backend.service
+package com.ride.driver.backend.services
 
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
@@ -7,6 +7,16 @@ import io.jsonwebtoken.Claims
 import javax.crypto.spec.SecretKeySpec
 import java.util.Base64
 import java.util.Date
+
+data class AdditionalJwtTokenClaims(
+    val roles: List<Roles>,
+)
+
+enum class Roles {
+    BASE_ROLE,
+    ADMIN_ROLE,
+    DEVELOPER_ROLE
+}
 
 @Service
 open class JwtTokenService(
@@ -18,9 +28,12 @@ open class JwtTokenService(
             return SecretKeySpec(keyBytes, 0, keyBytes.size, "HmacSHA256")
         }
 
-    fun generateAccessToken( additionalClaims: Map<String, Any>, userName: String ): String {
+    fun generateAccessToken(additonalJwtTokenClaims: AdditionalJwtTokenClaims, userName: String): String {
         val now = Date()
         val expiryDate = Date(now.time + 15 * 60 * 1000) // 15 minutes
+        val additionalClaims = mapOf(
+          "roles" to additonalJwtTokenClaims.roles.map { it.name }
+        )
         return Jwts.builder()
           .setClaims(additionalClaims)
           .setSubject(userName)

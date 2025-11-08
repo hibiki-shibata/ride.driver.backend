@@ -10,7 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.FilterChain
-import com.ride.driver.backend.service.JwtTokenService
+import com.ride.driver.backend.services.JwtTokenService
 
 @Component 
 class JwtFilter(

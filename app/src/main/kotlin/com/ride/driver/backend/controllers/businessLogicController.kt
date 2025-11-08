@@ -22,7 +22,7 @@ import com.ride.driver.backend.dto.CourierProfileDTO
 
 @RestController
 @RequestMapping("api/v1/couriers")
-class businessLogicController (   
+class BusinessLogicController (   
     private val courierLoginService: CourierLoginService, 
     private val repository: CourierProfileRepository,
     private val operationAreaRepository: OperationAreaRepository
