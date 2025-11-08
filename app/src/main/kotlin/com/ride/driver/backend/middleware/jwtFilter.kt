@@ -6,9 +6,9 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.web.filter.OncePerRequestFilter
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.springframework.web.filter.OncePerRequestFilter
 import jakarta.servlet.FilterChain
 import com.ride.driver.backend.util.JwtTokenUtil
 
@@ -24,24 +24,21 @@ class JwtFilter(
     ) {
     try{
         val authHeader = request.getHeader("Authorization")
-
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val jwtToken: String = authHeader.substringAfter("Bearer ")
-    
+
             if (SecurityContextHolder.getContext().authentication == null && jwtTokenUtil.isTokenValid(jwtToken)) {
                 val username = jwtTokenUtil.extractUsername(jwtToken)
                 val userRoles = jwtTokenUtil.extractRoles(jwtToken)
                 val userDetails = jwtTokenUtil.extractUserDetails(jwtToken)
 
-                if (jwtToken != null && jwtTokenUtil.isTokenValid(jwtToken)) {
-                    val authenticationToken = UsernamePasswordAuthenticationToken(
-                        userDetails, // principal
-                        null, // credentials
-                        userRoles.map { role -> SimpleGrantedAuthority(role) } // authorities
-                    )
-                    authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
-                    SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that  business logic can use it
-                }
+                val authenticationToken = UsernamePasswordAuthenticationToken(
+                    userDetails, // Principal
+                    null, // Credentials
+                    userRoles.map { role -> SimpleGrantedAuthority(role) } // Authorities
+                )
+                authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
+                SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that  business logic can use it            
             }
         }
         filterChain.doFilter(request, response)

@@ -88,8 +88,23 @@ class courirRequestController (
         }
         return ResponseEntity.ok(result)
     }
-
-
     // e.g. http://localhost:4000/api/v1/couriers/login?name=This-is-the-name
-
 }
+
+
+// @RestController
+// @RequestMapping("/api/auth")
+// class AuthController(
+//     private val authenticationService: AuthenticationService
+// ) {
+//     @PostMapping
+//     fun authenticate(
+//       @RequestBody authRequest: AuthenticationRequest
+//     ): AuthenticationResponse =
+//         authenticationService.authentication(authRequest)
+
+//     @PostMapping("/refresh")
+//     fun refreshAccessToken(
+//       @RequestBody request: RefreshTokenRequest
+//     ): TokenResponse = TokenResponse(token = authenticationService.refreshAccessToken(request.token))
+// }
