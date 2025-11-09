@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Value
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Claims
 import java.util.Date
+import java.nio.charset.StandardCharsets
+import io.jsonwebtoken.security.Keys
+import java.security.Key
 
 data class AdditionalJwtTokenClaims(
     val roles: List<Roles>,
@@ -22,7 +25,8 @@ open class JwtTokenService(
     
     private val accessTokenValidityInMilliseconds: Long = 3600000 // 1 hour
     private val refreshTokenValidityInMilliseconds: Long = 86400000 // 24 hours
-    private val signingKey: String = "this-is-test-secret-key" // Use a secure key in production
+    private val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!"
+    private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8))
 
     fun generateAccessToken(
         additonalJwtTokenClaims: AdditionalJwtTokenClaims,
@@ -37,7 +41,7 @@ open class JwtTokenService(
             .setSubject(userName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + accessTokenValidityInMilliseconds))
-            .signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, signingKey)
+            .signWith(signingKey)
             .compact()
     }
 
@@ -49,7 +53,7 @@ open class JwtTokenService(
             .setSubject(userName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + refreshTokenValidityInMilliseconds))
-            .signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, signingKey)
+            .signWith(signingKey)
             .compact()
     }
 

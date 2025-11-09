@@ -28,7 +28,14 @@ class AuthController(
         val additionalJwtTokenClaims = AdditionalJwtTokenClaims(roles = defaultRoles)
         val accessToken: String = jwtTokenService.generateAccessToken(additionalJwtTokenClaims, username)
         val refreshToken: String = jwtTokenService.generateRefreshToken(username)
-        return ResponseEntity.ok(TokenResponse(accessToken, refreshToken))
+        println("Generated access token for user: $accessToken")
+        println("Generated refresh token for user: $refreshToken")
+        return ResponseEntity.ok(
+            TokenResponse(
+                accessToken = accessToken,
+                refreshToken = refreshToken
+            )
+        ) 
         } catch (ex: Exception) {
             println("Authentication error: ${ex}")
             return ResponseEntity.status(4232).body(
