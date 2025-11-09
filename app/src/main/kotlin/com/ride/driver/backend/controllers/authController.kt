@@ -21,12 +21,23 @@ class AuthController(
 
     @PostMapping("/login")
     fun login(@RequestBody @Valid req: LoginRequest): ResponseEntity<TokenResponse> {
+        try{
+        println("Authenticating user: ${req}")
         val username = req.username
         val defaultRoles = listOf(Roles.BASE_ROLE)
         val additionalJwtTokenClaims = AdditionalJwtTokenClaims(roles = defaultRoles)
         val accessToken: String = jwtTokenService.generateAccessToken(additionalJwtTokenClaims, username)
         val refreshToken: String = jwtTokenService.generateRefreshToken(username)
         return ResponseEntity.ok(TokenResponse(accessToken, refreshToken))
+        } catch (ex: Exception) {
+            println("Authentication error: ${ex}")
+            return ResponseEntity.status(4232).body(
+                TokenResponse(
+                    accessToken = "",
+                    refreshToken = null
+                )
+            )
+        }
     }
 
     @PostMapping("/refresh")

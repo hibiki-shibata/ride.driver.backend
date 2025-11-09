@@ -4,8 +4,6 @@ import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Claims
-import javax.crypto.spec.SecretKeySpec
-import java.util.Base64
 import java.util.Date
 
 data class AdditionalJwtTokenClaims(
@@ -20,38 +18,39 @@ enum class Roles {
 
 @Service
 open class JwtTokenService(
-  @Value("0.13.0") private val secret: String = ""
 ) {
-    private val signingKey: SecretKeySpec
-        get() {
-            val keyBytes: ByteArray = Base64.getDecoder().decode(secret)
-            return SecretKeySpec(keyBytes, 0, keyBytes.size, "HmacSHA256")
-        }
+    
+    private val accessTokenValidityInMilliseconds: Long = 3600000 // 1 hour
+    private val refreshTokenValidityInMilliseconds: Long = 86400000 // 24 hours
+    private val signingKey: String = "this-is-test-secret-key" // Use a secure key in production
 
-    fun generateAccessToken(additonalJwtTokenClaims: AdditionalJwtTokenClaims, userName: String): String {
-        val now = Date()
-        val expiryDate = Date(now.time + 15 * 60 * 1000) // 15 minutes
+    fun generateAccessToken(
+        additonalJwtTokenClaims: AdditionalJwtTokenClaims,
+        userName: String,
+    ): String {
+        val now = System.currentTimeMillis()
         val additionalClaims = mapOf(
           "roles" to additonalJwtTokenClaims.roles.map { it.name }
         )
         return Jwts.builder()
-          .setClaims(additionalClaims)
-          .setSubject(userName)
-          .setIssuedAt(now)
-          .setExpiration(expiryDate)
-          .signWith(signingKey)
-          .compact()
+            .setClaims(additionalClaims)
+            .setSubject(userName)
+            .setIssuedAt(Date(now))
+            .setExpiration(Date(now + accessTokenValidityInMilliseconds))
+            .signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, signingKey)
+            .compact()
     }
 
-    fun generateRefreshToken(userName: String): String {
-        val now = Date()
-        val expiryDate = Date(now.time + 7 * 24 * 60 * 60 * 1000) // 7 days
+    fun generateRefreshToken(
+        userName: String
+    ): String {
+        val now = System.currentTimeMillis()
         return Jwts.builder()
-          .setSubject(userName)
-          .setIssuedAt(now)
-          .setExpiration(expiryDate)
-          .signWith(signingKey)
-          .compact()
+            .setSubject(userName)
+            .setIssuedAt(Date(now))
+            .setExpiration(Date(now + refreshTokenValidityInMilliseconds))
+            .signWith(io.jsonwebtoken.SignatureAlgorithm.HS256, signingKey)
+            .compact()
     }
 
     fun extractUsername(token: String): String {
@@ -88,3 +87,31 @@ open class JwtTokenService(
         return extractAllClaims(token).expiration.before(Date())
     }
 }
+
+
+
+// fun generateAccessToken(additonalJwtTokenClaims: AdditionalJwtTokenClaims, userName: String): String {
+//         val now = Date()
+//         val expiryDate = Date(now.time + 15 * 60 * 1000) // 15 minutes
+//         val additionalClaims = mapOf(
+//           "roles" to additonalJwtTokenClaims.roles.map { it.name }
+//         )
+//         return Jwts.builder()
+//           .setClaims(additionalClaims)
+//           .setSubject(userName)
+//           .setIssuedAt(now)
+//           .setExpiration(expiryDate)
+//           .signWith(signingKey)
+//           .compact()
+//     }
+
+//     fun generateRefreshToken(userName: String): String {
+//         val now = Date()
+//         val expiryDate = Date(now.time + 7 * 24 * 60 * 60 * 1000) // 7 days
+//         return Jwts.builder()
+//           .setSubject(userName)
+//           .setIssuedAt(now)
+//           .setExpiration(expiryDate)
+//           .signWith(signingKey)
+//           .compact()
+//     }

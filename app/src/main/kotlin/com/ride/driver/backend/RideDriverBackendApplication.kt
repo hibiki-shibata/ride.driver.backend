@@ -10,7 +10,7 @@ import org.springframework.boot.runApplication
 class RideDriverBackendApplication
 
 fun main(args: Array<String>) {
-    println("Ride Driver Backend Application is running at port 4000")
-    runApplication<RideDriverBackendApplication>(*args)
+        println("Ride Driver Backend Application is running at port 4000")
+        runApplication<RideDriverBackendApplication>(*args)    
 }
 	
