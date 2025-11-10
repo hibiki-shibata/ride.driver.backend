@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.web.bind.annotation.*
 import com.ride.driver.backend.services.JwtTokenService
 import com.ride.driver.backend.services.Roles
-import com.ride.driver.backend.services.AdditionalJwtTokenClaims
+import com.ride.driver.backend.services.AdditionalAccessTokenClaims
 
 data class LoginRequest(val username: String, val password: String)
 data class TokenResponse(val accessToken: String, val refreshToken: String? = null)
@@ -24,9 +24,10 @@ class AuthController(
         try{
         println("Authenticating user: ${req}")
         val username = req.username
+        val password = req.password
         val defaultRoles = listOf(Roles.BASE_ROLE)
-        val additionalJwtTokenClaims = AdditionalJwtTokenClaims(roles = defaultRoles)
-        val accessToken: String = jwtTokenService.generateAccessToken(additionalJwtTokenClaims, username)
+        val additionalAccessTokenClaims = AdditionalAccessTokenClaims(roles = defaultRoles, hashedPassword = password.hashCode().toString())
+        val accessToken: String = jwtTokenService.generateAccessToken(additionalAccessTokenClaims, username)
         val refreshToken: String = jwtTokenService.generateRefreshToken(username)
         println("Generated access token for user: $accessToken")
         println("Generated refresh token for user: $refreshToken")
@@ -50,9 +51,10 @@ class AuthController(
     @PostMapping("/refresh")
     fun refresh(@RequestParam refreshToken: String): ResponseEntity<TokenResponse> {
         val username = jwtTokenService.extractUsername(refreshToken)
+        val password = jwtTokenService.extractUserHashedPassword(refreshToken)
         val defaultRoles = listOf(Roles.BASE_ROLE)
-        val additionalJwtTokenClaims = AdditionalJwtTokenClaims(roles = defaultRoles)
-        val newAccessToken: String = jwtTokenService.generateAccessToken(additionalJwtTokenClaims, username)
+        val additionalAccessTokenClaims = AdditionalAccessTokenClaims(roles = defaultRoles, hashedPassword = password.hashCode().toString())
+        val newAccessToken: String = jwtTokenService.generateAccessToken(additionalAccessTokenClaims, username)
         val newRefreshToken: String = jwtTokenService.generateRefreshToken(username)
         return ResponseEntity.ok(TokenResponse(newAccessToken, newRefreshToken))
     }

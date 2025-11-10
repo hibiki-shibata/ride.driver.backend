@@ -23,30 +23,26 @@ class JwtFilter(
         filterChain: FilterChain
     ) {
     try{
-        val authHeader = request.getHeader("Authorization")
+        val authHeader: String? = request.getHeader("Authorization")
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val jwtToken: String = authHeader.substringAfter("Bearer ")
-
             if (SecurityContextHolder.getContext().authentication == null && jwtTokenService.isTokenValid(jwtToken)) {
                 val username = jwtTokenService.extractUsername(jwtToken)
                 val userRoles = jwtTokenService.extractRoles(jwtToken)
                 val userDetails = jwtTokenService.extractUserDetails(jwtToken)
-
                 val authenticationToken = UsernamePasswordAuthenticationToken(
                     userDetails, // Principal
                     null, // Credentials
-                    userRoles.map { role -> SimpleGrantedAuthority(role) } // Authorities
+                    userRoles.map { SimpleGrantedAuthority(it) } // Authorities
                 )
                 authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
-                SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that  business logic can use it            
+                SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that  business logic can use it
+                filterChain.doFilter(request, response)
             }
-        }
-        filterChain.doFilter(request, response)
+        }        
     } catch (ex: Exception) {
-        response.writer.write(
-                """{"error": "Filter Authorization error: 
-                |${ex.message ?: "unknown error"}"}""".trimMargin()
-            )   
+        response.status = HttpServletResponse.SC_UNAUTHORIZED
+        response.writer.write("Authentication error: {ex.message}}")
         }
     }
 }

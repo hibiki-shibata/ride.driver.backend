@@ -9,8 +9,9 @@ import java.nio.charset.StandardCharsets
 import io.jsonwebtoken.security.Keys
 import java.security.Key
 
-data class AdditionalJwtTokenClaims(
+data class AdditionalAccessTokenClaims(
     val roles: List<Roles>,
+    val hashedPassword: String,
 )
 
 enum class Roles {
@@ -29,12 +30,13 @@ open class JwtTokenService(
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8))
 
     fun generateAccessToken(
-        additonalJwtTokenClaims: AdditionalJwtTokenClaims,
+        additionalAccessTokenClaims: AdditionalAccessTokenClaims,
         userName: String,
     ): String {
         val now = System.currentTimeMillis()
         val additionalClaims = mapOf(
-          "roles" to additonalJwtTokenClaims.roles.map { it.name }
+          "roles" to additionalAccessTokenClaims.roles.map { it.name },
+          "hashedPassword" to additionalAccessTokenClaims.hashedPassword
         )
         return Jwts.builder()
             .setClaims(additionalClaims)
@@ -66,6 +68,11 @@ open class JwtTokenService(
         return claims["roles"] as? List<String> ?: emptyList()
     }
 
+    fun extractUserHashedPassword(token: String): String {
+        val claims = extractAllClaims(token)
+        return claims["hashedPassword"] as? String ?: ""
+    }
+
     fun extractUserDetails(token: String): Claims {
         return extractAllClaims(token)
     }
@@ -83,7 +90,7 @@ open class JwtTokenService(
               .body
             return claims
         } catch (ex: Exception) {
-            throw IllegalArgumentException("Invalid JWT token: ${ex.message}")
+            throw Exception("Invalid JWT token: ${ex.message}")
         }
     }
 
