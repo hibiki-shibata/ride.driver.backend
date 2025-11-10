@@ -10,8 +10,8 @@ import com.ride.driver.backend.services.JwtTokenService
 import com.ride.driver.backend.services.Roles
 import com.ride.driver.backend.services.AdditionalAccessTokenClaims
 
-data class LoginRequest(val username: String, val password: String)
-data class TokenResponse(val accessToken: String, val refreshToken: String? = null)
+data class LoginRequestDTO(val username: String, val password: String)
+data class TokenResponseDTO(val accessToken: String, val refreshToken: String? = null)
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -20,8 +20,7 @@ class AuthController(
 ) {
 
     @PostMapping("/login")
-    fun login(@RequestBody @Valid req: LoginRequest): ResponseEntity<TokenResponse> {
-        try{
+    fun login(@RequestBody @Valid req: LoginRequestDTO): ResponseEntity<TokenResponseDTO> {
         println("Authenticating user: ${req}")
         val username = req.username
         val password = req.password
@@ -29,34 +28,23 @@ class AuthController(
         val additionalAccessTokenClaims = AdditionalAccessTokenClaims(roles = defaultRoles, hashedPassword = password.hashCode().toString())
         val accessToken: String = jwtTokenService.generateAccessToken(additionalAccessTokenClaims, username)
         val refreshToken: String = jwtTokenService.generateRefreshToken(username)
-        println("Generated access token for user: $accessToken")
-        println("Generated refresh token for user: $refreshToken")
         return ResponseEntity.ok(
-            TokenResponse(
+            TokenResponseDTO(
                 accessToken = accessToken,
                 refreshToken = refreshToken
             )
         ) 
-        } catch (ex: Exception) {
-            println("Authentication error: ${ex}")
-            return ResponseEntity.status(4232).body(
-                TokenResponse(
-                    accessToken = "",
-                    refreshToken = null
-                )
-            )
-        }
     }
 
     @PostMapping("/refresh")
-    fun refresh(@RequestParam refreshToken: String): ResponseEntity<TokenResponse> {
+    fun refresh(@RequestParam refreshToken: String): ResponseEntity<TokenResponseDTO> {
         val username = jwtTokenService.extractUsername(refreshToken)
         val password = jwtTokenService.extractUserHashedPassword(refreshToken)
         val defaultRoles = listOf(Roles.BASE_ROLE)
         val additionalAccessTokenClaims = AdditionalAccessTokenClaims(roles = defaultRoles, hashedPassword = password.hashCode().toString())
         val newAccessToken: String = jwtTokenService.generateAccessToken(additionalAccessTokenClaims, username)
         val newRefreshToken: String = jwtTokenService.generateRefreshToken(username)
-        return ResponseEntity.ok(TokenResponse(newAccessToken, newRefreshToken))
+        return ResponseEntity.ok(TokenResponseDTO(newAccessToken, newRefreshToken))
     }
 }
 

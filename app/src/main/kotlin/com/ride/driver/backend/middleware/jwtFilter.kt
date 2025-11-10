@@ -23,8 +23,10 @@ class JwtFilter(
         filterChain: FilterChain
     ) {
     try{
+        println("JWT Filter invoked for request: ${request.requestURI}")
         val authHeader: String? = request.getHeader("Authorization")
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            println("Authorization header found with Bearer token")
             val jwtToken: String = authHeader.substringAfter("Bearer ")
             if (SecurityContextHolder.getContext().authentication == null && jwtTokenService.isTokenValid(jwtToken)) {
                 val username = jwtTokenService.extractUsername(jwtToken)
@@ -37,12 +39,12 @@ class JwtFilter(
                 )
                 authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
                 SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that  business logic can use it
-                filterChain.doFilter(request, response)
             }
-        }        
+        }
+        filterChain.doFilter(request, response)    
     } catch (ex: Exception) {
         response.status = HttpServletResponse.SC_UNAUTHORIZED
-        response.writer.write("Authentication error: {ex.message}}")
+        response.writer.write("Authentication error: ${ex.message}}")
         }
     }
 }
