@@ -26,8 +26,7 @@ class GlobalDefaultExceptionHandler {
 
     @ExceptionHandler(AuthenticationException::class)
     fun handleAuthenticationException(e: AuthenticationException): ResponseEntity<Map<String, String?>> {
-      println("Authentication exception caught in GlobalDefaultExceptionHandler")
-        val body = mapOf("error" to "Authentication exception occurred", "message" to e.message)
+        val body = mapOf("error" to "Authentication error:", "message" to e.message)
         return ResponseEntity(body, HttpStatus.UNAUTHORIZED)
     }
 }

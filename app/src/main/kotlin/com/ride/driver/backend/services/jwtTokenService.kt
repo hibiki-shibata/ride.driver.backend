@@ -8,36 +8,29 @@ import java.util.Date
 import java.nio.charset.StandardCharsets
 import io.jsonwebtoken.security.Keys
 import java.security.Key
+import com.ride.driver.backend.exceptions.AuthenticationException
 
-data class AdditionalAccessTokenClaims(
-    val roles: List<Roles>,
-    val hashedPassword: String,
-)
-
-enum class Roles {
+enum class CourierRoles {
     BASE_ROLE,
     ADMIN_ROLE,
     DEVELOPER_ROLE
 }
 
+data class AdditionalAccessTokenClaims(val roles: List<CourierRoles>)
+
 @Service
 open class JwtTokenService(
-) {
-    
-    private val accessTokenValidityInMilliseconds: Long = 3600000 // 1 hour
-    private val refreshTokenValidityInMilliseconds: Long = 86400000 // 24 hours
-    private val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!"
-    private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8))
-
+    val accessTokenValidityInMilliseconds: Long = 3600000, // 1 hour
+    val refreshTokenValidityInMilliseconds: Long = 86400000, // 24 hours
+    val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!",
+    val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
+) {    
     fun generateAccessToken(
         additionalAccessTokenClaims: AdditionalAccessTokenClaims,
         userName: String,
     ): String {
         val now = System.currentTimeMillis()
-        val additionalClaims = mapOf(
-          "roles" to additionalAccessTokenClaims.roles.map { it.name },
-          "hashedPassword" to additionalAccessTokenClaims.hashedPassword
-        )
+        val additionalClaims = mapOf("roles" to additionalAccessTokenClaims.roles.map { it.name })
         return Jwts.builder()
             .setClaims(additionalClaims)
             .setSubject(userName)
@@ -59,26 +52,25 @@ open class JwtTokenService(
             .compact()
     }
 
+    fun isTokenValid(token: String): Boolean {
+        return !isTokenExpired(token)
+    }
+
+    fun isTokenExpired(token: String): Boolean {
+        return extractAllClaims(token).expiration.before(Date())
+    }
+
+    fun extractUserDetails(token: String): Claims {
+        return extractAllClaims(token) ?: throw AuthenticationException("User details not found in token")
+    }
+
     fun extractUsername(token: String): String {
-        return extractAllClaims(token).subject
+        return extractAllClaims(token).subject ?: throw AuthenticationException("Username not found in token")
     }
 
     fun extractRoles(token: String): List<String> {
         val claims = extractAllClaims(token)
         return claims["roles"] as? List<String> ?: emptyList()
-    }
-
-    fun extractUserHashedPassword(token: String): String {
-        val claims = extractAllClaims(token)
-        return claims["hashedPassword"] as? String ?: ""
-    }
-
-    fun extractUserDetails(token: String): Claims {
-        return extractAllClaims(token)
-    }
-
-    fun isTokenValid(token: String): Boolean {
-        return !isTokenExpired(token)
     }
 
     private fun extractAllClaims(token: String): Claims {
@@ -90,39 +82,7 @@ open class JwtTokenService(
               .body
             return claims
         } catch (ex: Exception) {
-            throw Exception("Invalid JWT token: ${ex.message}")
+            throw AuthenticationException("Invalid JWT Token: ${ex.message}")
         }
     }
-
-    private fun isTokenExpired(token: String): Boolean {
-        return extractAllClaims(token).expiration.before(Date())
-    }
 }
-
-
-
-// fun generateAccessToken(additonalJwtTokenClaims: AdditionalJwtTokenClaims, userName: String): String {
-//         val now = Date()
-//         val expiryDate = Date(now.time + 15 * 60 * 1000) // 15 minutes
-//         val additionalClaims = mapOf(
-//           "roles" to additonalJwtTokenClaims.roles.map { it.name }
-//         )
-//         return Jwts.builder()
-//           .setClaims(additionalClaims)
-//           .setSubject(userName)
-//           .setIssuedAt(now)
-//           .setExpiration(expiryDate)
-//           .signWith(signingKey)
-//           .compact()
-//     }
-
-//     fun generateRefreshToken(userName: String): String {
-//         val now = Date()
-//         val expiryDate = Date(now.time + 7 * 24 * 60 * 60 * 1000) // 7 days
-//         return Jwts.builder()
-//           .setSubject(userName)
-//           .setIssuedAt(now)
-//           .setExpiration(expiryDate)
-//           .signWith(signingKey)
-//           .compact()
-//     }
