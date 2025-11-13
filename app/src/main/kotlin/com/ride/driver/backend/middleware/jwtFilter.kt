@@ -23,24 +23,20 @@ class JwtFilter(
         filterChain: FilterChain
     ) {
     try{
-        println("JWT Filter invoked for request: ${request.requestURI}")
-        val authHeader: String? = request.getHeader("Authorization")
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            println("Authorization header found with Bearer token")
-            val jwtToken: String = authHeader.substringAfter("Bearer ")
-            if (SecurityContextHolder.getContext().authentication == null && jwtTokenService.isTokenValid(jwtToken)) {
-                val username = jwtTokenService.extractUsername(jwtToken)
-                val userRoles = jwtTokenService.extractRoles(jwtToken)
-                val userDetails = jwtTokenService.extractUserDetails(jwtToken)
-                val authenticationToken = UsernamePasswordAuthenticationToken(
-                    userDetails, // Principal
-                    null, // Credentials
-                    userRoles.map { SimpleGrantedAuthority(it) } // Authorities
-                )
-                authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
-                SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that  business logic can use it
-            }
-        }
+        val authHeader: String = request.getHeader("Authorization") ?: throw Exception("Authorization header missing")
+        val jwtToken: String = authHeader.substringAfter("Bearer ") ?: throw Exception("Bearer token missing in Authorization header")
+        if (SecurityContextHolder.getContext().authentication !== null && !jwtTokenService.isTokenValid(jwtToken)) {
+            val username: String = jwtTokenService.extractUsername(jwtToken)
+            val userRoles: List<String> = jwtTokenService.extractRoles(jwtToken)
+            val userDetails = userDetailsService.loadUserByUsername(username)
+            val authenticationToken = UsernamePasswordAuthenticationToken(
+                userDetails, // Principal
+                null, // Credentials
+                userRoles.map { SimpleGrantedAuthority(it) } // Authorities
+            )
+            authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
+            SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that business logic can use it
+        } else throw Exception("Invalid JWT Token or already authenticated")
         filterChain.doFilter(request, response)    
     } catch (ex: Exception) {
         response.status = HttpServletResponse.SC_UNAUTHORIZED
