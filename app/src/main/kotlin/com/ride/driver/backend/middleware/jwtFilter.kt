@@ -25,7 +25,7 @@ class JwtFilter(
     try{
         val authHeader: String = request.getHeader("Authorization") ?: throw Exception("Authorization header missing")
         val jwtToken: String = authHeader.substringAfter("Bearer ") ?: throw Exception("Bearer token missing in Authorization header")
-        if (SecurityContextHolder.getContext().authentication !== null && !jwtTokenService.isTokenValid(jwtToken)) {
+        if (SecurityContextHolder.getContext().authentication !== null && jwtTokenService.isTokenValid(jwtToken)) {
             val username: String = jwtTokenService.extractUsername(jwtToken)
             val userRoles: List<String> = jwtTokenService.extractRoles(jwtToken)
             val userDetails = userDetailsService.loadUserByUsername(username)
@@ -40,7 +40,7 @@ class JwtFilter(
         filterChain.doFilter(request, response)    
     } catch (ex: Exception) {
         response.status = HttpServletResponse.SC_UNAUTHORIZED
-        response.writer.write("Authentication error: ${ex.message}}")
+        response.writer.write("{\"Body\": \"${ex.message}\"}")
         }
     }
 }

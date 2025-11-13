@@ -14,20 +14,6 @@ class GlobalDefaultExceptionHandler {
 
   @ExceptionHandler(IllegalArgumentException::class)
   fun defaultErrorHandler(e: IllegalArgumentException): ResponseEntity<Map<String, String?>> { 
-    
-    // if (e is IllegalArgumentException) {
-    //   // Handle specific exception
-    //   val body = mapOf("error" to "Invalid argument", "message" to e.message)
-    //   return ResponseEntity(body, HttpStatus.BAD_REQUEST);
-    // }
-
-    // if (e is customeExceptionDemo) {
-    //   // Handle custom exception
-    //   val body = mapOf("error" to "Custom exception", "message" to e.message)
-    //   return ResponseEntity(body, HttpStatus.BAD_REQUEST);
-    // }
-        
-    // Otherwise setup and send the user to a default error-view.
     val body = mapOf("error" to "An unexpected error occurred", "message" to e.message)
     return ResponseEntity(body,  HttpStatus.INTERNAL_SERVER_ERROR);  
   }
