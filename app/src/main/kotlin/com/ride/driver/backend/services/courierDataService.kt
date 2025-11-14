@@ -10,22 +10,20 @@ import com.ride.driver.backend.repositories.CourierProfileRepository
 import java.util.UUID
 
 @Service
-open class CourierDataService(){
-        
-        fun saveCoureirData(): CourierProfile {
-                // Example data to save
-                val courierProfile = CourierProfile(
-                    id = UUID.randomUUID(),
-                    phoneNumber = "123-456-7890",
-                    passwordHash = "hashed_password",
-                    name = "John Doe",
-                    vehicleType = VehicleType.BIKE,
-                    rate = 5.0,
-                    status = CourierStatus.AVAILABLE,
-                    operationArea = OperationArea(name = "Downtown"), // Example of setting an area
-                    comments = "Ready to deliver"
-                )
-                return courierProfile
-                // return courierProfileRepository.save(driverDetails)
-        }   
-    }
+class CourierDataService(){
+    fun saveCoureirData(): CourierProfile {
+            // Example data to save
+            val courierProfile = CourierProfile(
+                id = UUID.randomUUID(),
+                phoneNumber = "*810123456789",
+                passwordHash = "Example Password Hash",
+                name = "Example Courier Name",
+                vehicleType = VehicleType.BIKE,
+                rate = 5.0,
+                status = CourierStatus.AVAILABLE,
+                operationArea = OperationArea(name = "Downtown"),
+                comments = "Example Comments"
+            )
+            return courierProfile
+    }   
+}

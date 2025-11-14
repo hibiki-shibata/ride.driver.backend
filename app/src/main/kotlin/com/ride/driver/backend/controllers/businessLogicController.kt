@@ -8,12 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.http.ResponseEntity
-import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.encodeToString
 import com.ride.driver.backend.exceptions.CustomExceptionDemo
-import com.ride.driver.backend.services.CourierLoginService
-import com.ride.driver.backend.services.CourierDataService
+import com.ride.driver.backend.services.CourierAuthService
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.OperationAreaRepository
 import com.ride.driver.backend.models.CourierProfile
@@ -23,14 +19,14 @@ import com.ride.driver.backend.dto.CourierProfileDTO
 @RestController
 @RequestMapping("api/v1/couriers")
 class BusinessLogicController (   
-    private val courierLoginService: CourierLoginService, 
+    private val courierAuthService: CourierAuthService, 
     private val repository: CourierProfileRepository,
     private val operationAreaRepository: OperationAreaRepository
 
 ){
     @GetMapping("/login")
     fun courierLogin(@RequestParam("name") name: String): String { 
-        return courierLoginService.courierLogin(name)
+        return courierAuthService.courierLogin(name)
     }
 
     @PostMapping("/refresh-token")
@@ -74,7 +70,7 @@ class BusinessLogicController (
                 name = courier.name,
                 phoneNumber = courier.phoneNumber,
                 vehicleType = courier.vehicleType.toString(),
-                rate = courier.rate,
+                rate = courier.rate ?: 0.0,
                 status = courier.status.toString(),
                 operationArea = courier.operationArea?.let { OperationArea(name = it.name) },
                 comments = courier.comments
@@ -82,5 +78,4 @@ class BusinessLogicController (
         }
         return ResponseEntity.ok(result)
     }
-    // e.g. http://localhost:4000/api/v1/couriers/login?name=This-is-the-name
 }

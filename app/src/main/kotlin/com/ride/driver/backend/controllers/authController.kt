@@ -16,6 +16,12 @@ data class TokenResponseDTO(val accessToken: String, val refreshToken: String? =
 @RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(private val jwtTokenService: JwtTokenService) {
+    @PostMapping("/signup")
+    fun signup(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<String> {
+        // Implement signup logic here (e.g., save user to database)
+        return ResponseEntity.ok("${req.username} signed up successfully")
+    }
+
     @PostMapping("/login")
     fun login(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<TokenResponseDTO> {
         val username: String = req.username

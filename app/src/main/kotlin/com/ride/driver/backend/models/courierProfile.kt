@@ -40,9 +40,9 @@ data class CourierProfile(
     val name: String,
 
     @Enumerated(EnumType.STRING)
-    val vehicleType: VehicleType,
+    val vehicleType: VehicleType? = VehicleType.BIKE,
 
-    val rate: Double,
+    val rate: Double? = null,
 
     @Enumerated(EnumType.STRING)
     val status: CourierStatus = CourierStatus.AVAILABLE,
@@ -50,6 +50,6 @@ data class CourierProfile(
     @ManyToOne
     // @JoinColumn(name = "area_id")
     val operationArea: OperationArea? = null,
-    val comments: String,
+    val comments: String? = "No comments",
 ) 
 
