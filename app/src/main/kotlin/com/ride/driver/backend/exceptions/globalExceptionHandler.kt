@@ -32,7 +32,7 @@ class GlobalDefaultExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleGeneralException(e: Exception): ResponseEntity<Map<String, String?>> {
-        val body = mapOf("error" to "Unexpected error happened", "message" to e.message)
+        val body = mapOf("error" to "Internal server error", "message" to e.message)
         return ResponseEntity(body, HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }

@@ -82,7 +82,7 @@ open class JwtTokenService(
               .body
             return claims
         } catch (ex: Exception) {
-            throw AuthenticationException("Invalid JWT Token: ${ex.message}")
+            throw AuthenticationException("Failed to extract claims from token: ${ex.message}")
         }
     }
 }

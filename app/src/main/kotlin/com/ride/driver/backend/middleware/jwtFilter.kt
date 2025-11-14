@@ -25,7 +25,6 @@ class JwtFilter(
     try{
         SecurityContextHolder.getContext().authentication == null
         val authHeader: String? = request.getHeader("Authorization")
-        println("Line 26: run")
         if (authHeader !== null && authHeader.startsWith("Bearer ")) {
             val jwtToken: String = authHeader.substringAfter("Bearer ")
             val username: String = jwtTokenService.extractUsername(jwtToken)
@@ -39,12 +38,10 @@ class JwtFilter(
             authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
             SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that business logic can use it
         }
-        println("Line 42: run")
         filterChain.doFilter(request, response)    
-        println("Line 44: run")
     } catch (ex: Exception) {
         response.status = HttpServletResponse.SC_UNAUTHORIZED
-        response.writer.write("{\"Body\": \"${ex.message}\"}")
+        response.writer.write("{\"error\": \"jwtFilter error\", \"message\": \"${ex.message}\"}")
         }
     }
 }
