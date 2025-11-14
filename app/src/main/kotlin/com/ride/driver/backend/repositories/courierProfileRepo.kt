@@ -12,7 +12,9 @@ import java.util.UUID
 open interface CourierProfileRepository : CrudRepository<CourierProfile, Long> {
    override fun findAll(): List<CourierProfile>
    fun findById(id: UUID): CourierProfile?
+   fun findByPhoneNumber(phoneNumber: String): CourierProfile?
    fun save(courier: CourierProfile): CourierProfile
+   fun existsByPhoneNumber(phoneNumber: String): Boolean
 }
 
 @Repository
