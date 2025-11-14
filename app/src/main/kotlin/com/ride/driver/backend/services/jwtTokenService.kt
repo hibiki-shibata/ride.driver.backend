@@ -20,10 +20,10 @@ data class AdditionalAccessTokenClaims(val roles: List<CourierRoles>)
 
 @Service
 open class JwtTokenService(
-    val accessTokenValidityInMilliseconds: Long = 3600000, // 1 hour
-    val refreshTokenValidityInMilliseconds: Long = 86400000, // 24 hours
-    val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!",
-    val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
+    private val accessTokenValidityInMilliseconds: Long = 3600000, // 1 hour
+    private val refreshTokenValidityInMilliseconds: Long = 86400000, // 24 hours
+    private val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!",
+    private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
 ) {    
     fun generateAccessToken(
         additionalAccessTokenClaims: AdditionalAccessTokenClaims,

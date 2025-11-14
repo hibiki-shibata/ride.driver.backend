@@ -29,4 +29,10 @@ class GlobalDefaultExceptionHandler {
         val body = mapOf("error" to "Authentication error:", "message" to e.message)
         return ResponseEntity(body, HttpStatus.UNAUTHORIZED)
     }
+
+    @ExceptionHandler(Exception::class)
+    fun handleGeneralException(e: Exception): ResponseEntity<Map<String, String?>> {
+        val body = mapOf("error" to "Unexpected error happened", "message" to e.message)
+        return ResponseEntity(body, HttpStatus.INTERNAL_SERVER_ERROR)
+    }
 }
