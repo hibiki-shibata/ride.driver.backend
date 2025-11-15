@@ -33,7 +33,7 @@ class AuthController(
                 status = CourierStatus.AVAILABLE
             )
             repository.save(newCourier) // Save the new courier profile in DB
-            println("Registered new courier: $newCourier")
+            println("New coureir is registered: $newCourier")
             return ResponseEntity.ok("${req.username} signed up successfully")
         } else {
             println("Signup failed: Courier with phone number ${req.phoneNumber} already exists")

@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS courier_profile (
 
     status VARCHAR DEFAULT 'UNAVAILABLE',
 
-    operation_area_id BIGSERIAL REFERENCES operation_area(id) ON DELETE CASCADE,
-    comments TEXT
+    comments TEXT,
+
+    operation_area_id BIGSERIAL REFERENCES operation_area(id) ON DELETE CASCADE
     -- CONSTRAINT fk_area FOREIGN KEY (area_id) REFERENCES area(id)
 );
