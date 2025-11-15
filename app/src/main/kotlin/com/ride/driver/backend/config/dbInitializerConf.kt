@@ -30,8 +30,8 @@
 //         courierProfileRepository.save(
 //             CourierProfile(
 //                 id = null,
-//                 phoneNumber = "111-111-1111",
-//                 name = "Initial Driver",
+//                 phoneNumber = "+819012345678",
+//                 name = "Test Courier 1",
 //                 vehicleType = VehicleType.BIKE,
 //                 rate = 5.0,
 //                 status = CourierStatus.AVAILABLE,

@@ -22,17 +22,27 @@ class AuthController(
     ) {
     @PostMapping("/signup")
     fun signup(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<String> {
+        println("Signup request received: $req")
         val isCourierExists: Boolean = repository.existsByPhoneNumber(req.phoneNumber)
+        println("Is courier exists check for phone number ${req.phoneNumber}: $isCourierExists")
+        println(isCourierExists)
         if (isCourierExists !== true) {            
             val newCourier = CourierProfile(
-                id = java.util.UUID.randomUUID(),
                 phoneNumber = req.phoneNumber,
                 passwordHash = req.password.hashCode().toString(),
                 name = req.username,
                 vehicleType = VehicleType.BIKE,
-                status = CourierStatus.AVAILABLE
+                status = CourierStatus.AVAILABLE,
             )
-            repository.save(newCourier) // Save the new courier profile in DB
+            // repository.save(newCourier) // Save the new courier profile in DB
+            println("Saving new courier profile to the database: $newCourier")
+            val savedCourier = repository.save(newCourier)
+            if (savedCourier != null) {
+                println("Courier profile saved successfully: $savedCourier")
+            } else {
+                println("Failed to save courier profile for: $newCourier")
+            }
+
             println("New coureir is registered: $newCourier")
             return ResponseEntity.ok("${req.username} signed up successfully")
         } else {
