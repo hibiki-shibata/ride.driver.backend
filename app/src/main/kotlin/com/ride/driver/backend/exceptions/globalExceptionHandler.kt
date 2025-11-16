@@ -17,13 +17,6 @@ class GlobalDefaultExceptionHandler {
     val body = mapOf("error" to "An unexpected error occurred", "message" to e.message)
     return ResponseEntity(body,  HttpStatus.INTERNAL_SERVER_ERROR);  
   }
-
-    @ExceptionHandler(CustomExceptionDemo::class)
-    fun handleCustomException(e: CustomExceptionDemo): ResponseEntity<Map<String, String?>> {
-        val body = mapOf("error" to "Custom exception occurred", "message" to e.message)
-        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
-    }
-
     @ExceptionHandler(AuthenticationException::class)
     fun handleAuthenticationException(e: AuthenticationException): ResponseEntity<Map<String, String?>> {
         val body = mapOf("error" to "Authentication error:", "message" to e.message)
