@@ -16,7 +16,10 @@ enum class CourierRoles {
     DEVELOPER_ROLE
 }
 
-data class AdditionalAccessTokenClaims(val roles: List<CourierRoles>)
+data class AdditionalAccessTokenClaims(
+    val courierId: Int,
+    val roles: List<CourierRoles>,
+)
 
 @Service
 open class JwtTokenService(
@@ -27,13 +30,13 @@ open class JwtTokenService(
 ) {    
     fun generateAccessToken(
         additionalAccessTokenClaims: AdditionalAccessTokenClaims,
-        userName: String,
+        courierName: String,
     ): String {
         val now = System.currentTimeMillis()
         val additionalClaims = mapOf("roles" to additionalAccessTokenClaims.roles.map { it.name })
         return Jwts.builder()
             .setClaims(additionalClaims)
-            .setSubject(userName)
+            .setSubject(courierName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + accessTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -41,11 +44,11 @@ open class JwtTokenService(
     }
 
     fun generateRefreshToken(
-        userName: String
+        courierName: String
     ): String {
         val now = System.currentTimeMillis()
         return Jwts.builder()
-            .setSubject(userName)
+            .setSubject(courierName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + refreshTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -60,12 +63,17 @@ open class JwtTokenService(
         return extractAllClaims(token).expiration.before(Date())
     }
 
-    fun extractUserDetails(token: String): Claims {
-        return extractAllClaims(token) ?: throw AuthenticationException("User details not found in token")
+    fun extractCourierDetails(token: String): Claims {
+        return extractAllClaims(token) ?: throw AuthenticationException("Courier details not found in token")
     }
 
-    fun extractUsername(token: String): String {
-        return extractAllClaims(token).subject ?: throw AuthenticationException("Username not found in token")
+    fun extractCouriername(token: String): String {
+        return extractAllClaims(token).subject ?: throw AuthenticationException("CourierName not found in token")
+    }
+
+    fun extractCourierId(token: String): Int {
+        val claims = extractAllClaims(token)
+        return claims["courierId"] as? Int ?: throw AuthenticationException("Courier ID not found in token")
     }
 
     fun extractRoles(token: String): List<String> {

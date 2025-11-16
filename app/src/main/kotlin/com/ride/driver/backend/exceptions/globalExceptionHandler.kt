@@ -5,8 +5,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.context.annotation.Configuration
-import com.ride.driver.backend.exceptions.CustomExceptionDemo
-import com.ride.driver.backend.exceptions.HttpException
 
 @ControllerAdvice
 class GlobalDefaultExceptionHandler {

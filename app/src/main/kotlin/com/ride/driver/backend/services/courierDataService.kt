@@ -14,7 +14,7 @@ class CourierDataService(){
     fun saveCoureirData(): CourierProfile {
             // Example data to save
             val courierProfile = CourierProfile(
-                id = UUID.randomUUID(),
+                id = 12345,
                 phoneNumber = "*810123456789",
                 passwordHash = "Example Password Hash",
                 name = "Example Courier Name",

@@ -4,5 +4,6 @@ enum class CourierStatus {
     AVAILABLE,
     UNAVAILABLE,
     ON_DUTY,
-    OFF_DUTY
+    OFF_DUTY,
+    SUSPENDED
 }

@@ -12,7 +12,7 @@ import com.ride.driver.backend.services.CourierRoles
 import com.ride.driver.backend.services.AdditionalAccessTokenClaims
 import com.ride.driver.backend.exceptions.BadRequestException
 
-data class CourierSignInDTO(val username: String, val phoneNumber: String, val password: String)
+data class CourierSignInDTO(val courierName: String, val phoneNumber: String, val password: String)
 data class TokenResponseDTO(val accessToken: String, val refreshToken: String? = null)
 
 @RestController
@@ -29,14 +29,14 @@ class AuthController(
         val newCourier = CourierProfile(
             phoneNumber = req.phoneNumber,
             passwordHash = req.password.hashCode().toString(),
-            name = req.username,
+            name = req.courierName,
             vehicleType = VehicleType.BIKE,
             status = CourierStatus.AVAILABLE
         )
         val savedCourier = repository.save(newCourier)
         if (savedCourier.id == null) throw Exception("Failed to save new courier profile")
         val accessToken = jwtTokenService.generateAccessToken(
-            AdditionalAccessTokenClaims(roles = listOf(CourierRoles.BASE_ROLE)),
+            AdditionalAccessTokenClaims(roles = listOf(CourierRoles.BASE_ROLE), courierId = savedCourier.id.hashCode()),
             savedCourier.name
         )
         val refreshToken = jwtTokenService.generateRefreshToken(savedCourier.name)
@@ -45,23 +45,30 @@ class AuthController(
 
     @PostMapping("/login")
     fun login(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<TokenResponseDTO> {
-        val isCourierExists: Boolean = repository.existsByPhoneNumber(req.phoneNumber)
-        if (!isCourierExists) throw BadRequestException("Courier with phone number ${req.phoneNumber} does not exist")
-        val username: String = req.username
+        val savedCourier: CourierProfile = repository.findByPhoneNumber(req.phoneNumber) ?: 
+            throw BadRequestException("Courier with phone number ${req.phoneNumber} does not exist. Please sign up first.")
+        if (savedCourier.passwordHash !== req.password.hashCode().toString() && savedCourier.name !== req.courierName) 
+            throw BadRequestException("Invalid credentials provided")
         val accessToken: String = jwtTokenService.generateAccessToken(
-            AdditionalAccessTokenClaims(roles = listOf(CourierRoles.BASE_ROLE)),
-            username
+            AdditionalAccessTokenClaims(roles = listOf(CourierRoles.BASE_ROLE), courierId = savedCourier.id.hashCode()),
+            savedCourier.name
         )
-        val refreshToken: String = jwtTokenService.generateRefreshToken(username)
+        val refreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.name)
         return ResponseEntity.ok(TokenResponseDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 
     @PostMapping("/refresh-token")
     fun refreshToken(@RequestBody @Valid refreshToken: String): ResponseEntity<TokenResponseDTO> {
-        val username: String = jwtTokenService.extractUsername(refreshToken)
-        val additionalAccessTokenClaims = AdditionalAccessTokenClaims(roles = listOf(CourierRoles.BASE_ROLE))
-        val newAccessToken: String = jwtTokenService.generateAccessToken(additionalAccessTokenClaims, username)
-        val newRefreshToken: String = jwtTokenService.generateRefreshToken(username)
+        val courierId: Int = jwtTokenService.extractCourierId(refreshToken)
+        if (!jwtTokenService.isTokenValid(refreshToken)) throw BadRequestException("Invalid or expired refresh token")
+        val savedCourier: CourierProfile = repository.findById(courierId)
+            ?: throw BadRequestException("Courier with ID $courierId does not exist.")
+        if (savedCourier.status == CourierStatus.SUSPENDED) throw BadRequestException("Courier account is suspended. Cannot refresh token.")        
+         val newAccessToken: String = jwtTokenService.generateAccessToken(
+            AdditionalAccessTokenClaims(roles = listOf(CourierRoles.BASE_ROLE), courierId = savedCourier.id.hashCode()),
+            savedCourier.name
+        )
+        val newRefreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.name)
         return ResponseEntity.ok(TokenResponseDTO(newAccessToken, newRefreshToken))
     }
 }

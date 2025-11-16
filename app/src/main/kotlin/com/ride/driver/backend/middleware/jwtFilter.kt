@@ -27,7 +27,7 @@ class JwtFilter(
         val authHeader: String? = request.getHeader("Authorization")
         if (authHeader !== null && authHeader.startsWith("Bearer ")) {
             val jwtToken: String = authHeader.substringAfter("Bearer ")
-            val username: String = jwtTokenService.extractUsername(jwtToken)
+            val username: String = jwtTokenService.extractCouriername(jwtToken)
             val userRoles: List<String> = jwtTokenService.extractRoles(jwtToken)
             val userDetails = userDetailsService.loadUserByUsername(username)
             val authenticationToken = UsernamePasswordAuthenticationToken(
