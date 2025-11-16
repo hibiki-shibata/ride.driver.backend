@@ -26,8 +26,8 @@ import jakarta.persistence.Column
 )
 
 data class CourierProfile(    
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: Int? = null,
 

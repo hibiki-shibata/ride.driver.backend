@@ -13,7 +13,7 @@ import com.ride.driver.backend.services.AdditionalAccessTokenClaims
 import com.ride.driver.backend.exceptions.BadRequestException
 
 data class CourierSignInDTO(val courierName: String, val phoneNumber: String, val password: String)
-data class TokenResponseDTO(val accessToken: String, val refreshToken: String? = null)
+data class JwtTokenResponseDTO(val accessToken: String, val refreshToken: String? = null)
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -40,7 +40,7 @@ class AuthController(
             savedCourier.name
         )
         val refreshToken = jwtTokenService.generateRefreshToken(savedCourier.name)
-        return ResponseEntity.ok(TokenResponseDTO(accessToken = accessToken, refreshToken = refreshToken))
+        return ResponseEntity.ok(JwtTokenResponseDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 
     @PostMapping("/login")
@@ -54,7 +54,7 @@ class AuthController(
             savedCourier.name
         )
         val refreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.name)
-        return ResponseEntity.ok(TokenResponseDTO(accessToken = accessToken, refreshToken = refreshToken))
+        return ResponseEntity.ok(JwtTokenResponseDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 
     @PostMapping("/refresh-token")
@@ -69,6 +69,6 @@ class AuthController(
             savedCourier.name
         )
         val newRefreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.name)
-        return ResponseEntity.ok(TokenResponseDTO(newAccessToken, newRefreshToken))
+        return ResponseEntity.ok(JwtTokenResponseDTO(newAccessToken, newRefreshToken))
     }
 }
