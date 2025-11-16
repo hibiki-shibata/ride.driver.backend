@@ -1,7 +1,6 @@
 package com.ride.driver.backend.middleware
 
 import org.springframework.stereotype.Component
-import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
@@ -11,11 +10,13 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.FilterChain
 import com.ride.driver.backend.services.JwtTokenService
+import com.ride.driver.backend.services.AccessTokenData
+import com.ride.driver.backend.services.CourierRoles
+import com.ride.driver.backend.services.AdditionalAccessTokenClaims
 
 @Component 
 class JwtFilter(
     private val jwtTokenService: JwtTokenService,
-    private val userDetailsService: UserDetailsService
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: HttpServletRequest,
@@ -27,13 +28,21 @@ class JwtFilter(
         val authHeader: String? = request.getHeader("Authorization")
         if (authHeader !== null && authHeader.startsWith("Bearer ")) {
             val jwtToken: String = authHeader.substringAfter("Bearer ")
-            val username: String = jwtTokenService.extractCouriername(jwtToken)
-            val userRoles: List<String> = jwtTokenService.extractRoles(jwtToken)
-            val userDetails = userDetailsService.loadUserByUsername(username)
+            if (!jwtTokenService.isTokenValid(jwtToken)) throw Exception("Invalid or expired JWT token")
+            val courierId: Int = jwtTokenService.extractCourierId(jwtToken)
+            val courierName: String = jwtTokenService.extractCouriername(jwtToken)
+            val courierRoles: List<CourierRoles> = jwtTokenService.extractRoles(jwtToken)
+            println("JWT Token extracted: $jwtToken")
+            // stateless authentication - never use db call to validate token, just parse and set context
+            val courierDetails: AccessTokenData = AccessTokenData(            
+                additonalClaims = AdditionalAccessTokenClaims(courierId = courierId, roles = courierRoles),
+                courierName = courierName
+            )
+            println("Courier details loaded: $courierDetails")
             val authenticationToken = UsernamePasswordAuthenticationToken(
-                userDetails, // Principal
+                courierDetails, // Principal
                 null, // Credentials
-                userRoles.map { SimpleGrantedAuthority(it) } // Authorities
+                courierRoles.map { SimpleGrantedAuthority(it.name) } // Authorities
             )
             authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
             SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that business logic can use it

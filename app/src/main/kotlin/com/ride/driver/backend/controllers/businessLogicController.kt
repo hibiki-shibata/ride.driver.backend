@@ -24,7 +24,6 @@ data class CourierProfileDTO(
     val comments: String?
 )
 
-
 @RestController
 @RequestMapping("api/v1/couriers")
 class BusinessLogicController (   

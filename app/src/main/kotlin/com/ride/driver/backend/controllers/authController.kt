@@ -22,7 +22,7 @@ class AuthController(
     private val repository: CourierProfileRepository
     ) {
     @PostMapping("/signup")
-    fun signup(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<TokenResponseDTO> {
+    fun signup(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<JwtTokenResponseDTO> {
         println("Signup request received: $req")
         val isCourierExists: Boolean = repository.existsByPhoneNumber(req.phoneNumber)
         if (isCourierExists) throw BadRequestException("Courier with phone number ${req.phoneNumber} already exists")          
@@ -44,7 +44,7 @@ class AuthController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<TokenResponseDTO> {
+    fun login(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<JwtTokenResponseDTO> {
         val savedCourier: CourierProfile = repository.findByPhoneNumber(req.phoneNumber) ?: 
             throw BadRequestException("Courier with phone number ${req.phoneNumber} does not exist. Please sign up first.")
         if (savedCourier.passwordHash !== req.password.hashCode().toString() && savedCourier.name !== req.courierName) 
@@ -58,7 +58,7 @@ class AuthController(
     }
 
     @PostMapping("/refresh-token")
-    fun refreshToken(@RequestBody @Valid refreshToken: String): ResponseEntity<TokenResponseDTO> {
+    fun refreshToken(@RequestBody @Valid refreshToken: String): ResponseEntity<JwtTokenResponseDTO> {
         val courierId: Int = jwtTokenService.extractCourierId(refreshToken)
         if (!jwtTokenService.isTokenValid(refreshToken)) throw BadRequestException("Invalid or expired refresh token")
         val savedCourier: CourierProfile = repository.findById(courierId)

@@ -21,6 +21,11 @@ data class AdditionalAccessTokenClaims(
     val roles: List<CourierRoles>,
 )
 
+data class AccessTokenData(
+    val additonalClaims: AdditionalAccessTokenClaims,
+    val courierName: String,
+)
+
 @Service
 open class JwtTokenService(
     private val accessTokenValidityInMilliseconds: Long = 3600000, // 1 hour
@@ -76,9 +81,9 @@ open class JwtTokenService(
         return claims["courierId"] as? Int ?: throw AuthenticationException("Courier ID not found in token")
     }
 
-    fun extractRoles(token: String): List<String> {
+    fun extractRoles(token: String): List<CourierRoles> {
         val claims = extractAllClaims(token)
-        return claims["roles"] as? List<String> ?: emptyList()
+        return claims["roles"] as? List<CourierRoles> ?: emptyList()
     }
 
     private fun extractAllClaims(token: String): Claims {
