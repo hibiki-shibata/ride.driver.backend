@@ -30,6 +30,12 @@ class GlobalDefaultExceptionHandler {
         return ResponseEntity(body, HttpStatus.UNAUTHORIZED)
     }
 
+    @ExceptionHandler(BadRequestException::class)
+    fun handleBadRequestException(e: BadRequestException): ResponseEntity<Map<String, String?>> {
+        val body = mapOf("error" to "Bad request error", "message" to e.message)
+        return ResponseEntity(body, HttpStatus.BAD_REQUEST)
+    }
+
     @ExceptionHandler(Exception::class)
     fun handleGeneralException(e: Exception): ResponseEntity<Map<String, String?>> {
         val body = mapOf("error" to "Internal server error", "message" to e.message)

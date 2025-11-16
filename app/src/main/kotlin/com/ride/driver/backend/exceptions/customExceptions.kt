@@ -11,4 +11,8 @@ open class CustomExceptionDemo(
 
 open class AuthenticationException(
     message: String? = "Authentication Exception was called"
-) : Exception(message)
+) : HttpException("401", message)
+
+open class BadRequestException(
+    message: String? = "Bad Request Exception was called"
+) : HttpException("400", message)
