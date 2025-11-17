@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.context.SecurityContextHolder
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.models.CourierProfile
 import com.ride.driver.backend.models.OperationArea
 import com.ride.driver.backend.models.VehicleType
 import com.ride.driver.backend.models.CourierStatus
+import com.ride.driver.backend.services.AccessTokenData
 
 data class CourierProfileDTO(
     val id: Int,
@@ -29,24 +31,22 @@ data class CourierProfileDTO(
 class BusinessLogicController (   
     private val repository: CourierProfileRepository,
 ){
-    @GetMapping("/findall")
-    fun findCourier(): ResponseEntity<List<CourierProfileDTO>> {        
+    @GetMapping("/courier/me")
+    fun findCourierProfile(): ResponseEntity<CourierProfileDTO> {        
         println("Finding all couriers...")
-        val couriers: List<CourierProfile> = repository.findAll()
-        
-        if (couriers.none()) throw Exception("No couriers found in the database")
-        val result = couriers.map { courier ->
-            CourierProfileDTO(
-                id = courier.id ?: throw Exception("Courier ID is null"),
-                name = courier.name,
-                phoneNumber = courier.phoneNumber,
-                vehicleType = courier.vehicleType,
-                status = courier.status,
-                rate = courier.rate,
-                comments = courier.comments,
-                operationArea = courier.operationArea
-            )
-        }
-        return ResponseEntity.ok(result)
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication.principal as AccessTokenData
+        val courierId: Int = courierDetails.additonalClaims.courierId
+        val courier: CourierProfile = repository.findById(courierId.toInt()) ?: throw Exception("Courier not found with ID: $courierId")
+        val courierDTO = CourierProfileDTO(
+            id = courier.id ?: throw Exception("Courier ID is null?"),
+            name = courier.name,
+            phoneNumber = courier.phoneNumber,
+            vehicleType = courier.vehicleType,
+            rate = courier.rate,
+            status = courier.status,
+            operationArea = courier.operationArea,
+            comments = courier.comments
+        )
+        return ResponseEntity.ok(courierDTO)
     }
 }

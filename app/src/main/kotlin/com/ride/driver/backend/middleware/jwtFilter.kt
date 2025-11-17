@@ -33,16 +33,15 @@ class JwtFilter(
             val courierName: String = jwtTokenService.extractCouriername(jwtToken)
             val courierRoles: List<CourierRoles> = jwtTokenService.extractRoles(jwtToken)
             println("JWT Token extracted: $jwtToken")
-            // stateless authentication - never use db call to validate token, just parse and set context
             val courierDetails: AccessTokenData = AccessTokenData(            
                 additonalClaims = AdditionalAccessTokenClaims(courierId = courierId, roles = courierRoles),
                 courierName = courierName
             )
             println("Courier details loaded: $courierDetails")
             val authenticationToken = UsernamePasswordAuthenticationToken(
-                courierDetails, // Principal
-                null, // Credentials
-                courierRoles.map { SimpleGrantedAuthority(it.name) } // Authorities
+                courierDetails, // principal
+                null, // credentials
+                courierRoles.map { SimpleGrantedAuthority(it.name) } // authorities
             )
             authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
             SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that business logic can use it
