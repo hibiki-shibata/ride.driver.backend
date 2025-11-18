@@ -4,11 +4,12 @@ package com.ride.driver.backend
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import java.util.UUID
 
 @SpringBootApplication
 class RideDriverBackendApplication
 fun main(args: Array<String>) {
         println("Ride Driver Backend Application is running at port 4000")
-        runApplication<RideDriverBackendApplication>(*args)    
+        runApplication<RideDriverBackendApplication>(*args)
 }
 	

@@ -14,9 +14,10 @@ import com.ride.driver.backend.models.OperationArea
 import com.ride.driver.backend.models.VehicleType
 import com.ride.driver.backend.models.CourierStatus
 import com.ride.driver.backend.services.AccessTokenData
+import java.util.UUID
 
 data class CourierProfileDTO(
-    val id: Int,
+    val id: UUID?,
     val name: String,
     val phoneNumber: String,
     val vehicleType: VehicleType?,
@@ -35,10 +36,10 @@ class BusinessLogicController (
     fun findCourierProfile(): ResponseEntity<CourierProfileDTO> {        
         println("Finding all couriers...")
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication.principal as AccessTokenData
-        val courierId: Int = courierDetails.additonalClaims.courierId
-        val courier: CourierProfile = repository.findById(courierId.toInt()) ?: throw Exception("Courier not found with ID: $courierId")
+        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val courier: CourierProfile = repository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
         val courierDTO = CourierProfileDTO(
-            id = courier.id ?: throw Exception("Courier ID is null?"),
+            id = courier.id,
             name = courier.name,
             phoneNumber = courier.phoneNumber,
             vehicleType = courier.vehicleType,

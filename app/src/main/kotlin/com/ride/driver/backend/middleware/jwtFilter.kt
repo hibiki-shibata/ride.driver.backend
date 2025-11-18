@@ -13,6 +13,7 @@ import com.ride.driver.backend.services.JwtTokenService
 import com.ride.driver.backend.services.AccessTokenData
 import com.ride.driver.backend.services.CourierRoles
 import com.ride.driver.backend.services.AdditionalAccessTokenClaims
+import java.util.UUID
 
 @Component 
 class JwtFilter(
@@ -29,7 +30,7 @@ class JwtFilter(
         if (authHeader !== null && authHeader.startsWith("Bearer ")) {
             val jwtToken: String = authHeader.substringAfter("Bearer ")
             if (!jwtTokenService.isTokenValid(jwtToken)) throw Exception("Invalid or expired JWT token")
-            val courierId: Int = jwtTokenService.extractCourierId(jwtToken)
+            val courierId: UUID = jwtTokenService.extractCourierId(jwtToken)
             val courierName: String = jwtTokenService.extractCouriername(jwtToken)
             val courierRoles: List<CourierRoles> = jwtTokenService.extractRoles(jwtToken)
             println("JWT Token extracted: $jwtToken")

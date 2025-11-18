@@ -7,14 +7,13 @@ import com.ride.driver.backend.models.CourierProfile
 import com.ride.driver.backend.models.OperationArea
 import java.util.UUID
 
-// Spring's reflection mechanism will automatically read the annotations of the DriverDetails class
 @Repository
 open interface CourierProfileRepository : CrudRepository<CourierProfile, Long> {
    override fun findAll(): List<CourierProfile>
-   fun findById(id: Int): CourierProfile?
-   fun findByPhoneNumber(phoneNumber: String): CourierProfile?
-   fun save(courier: CourierProfile): CourierProfile
+   fun save(courierProfile: CourierProfile): CourierProfile
    fun existsByPhoneNumber(phoneNumber: String): Boolean
+   fun findById(id: UUID): CourierProfile?
+   fun findByPhoneNumber(phoneNumber: String): CourierProfile?
 }
 
 @Repository

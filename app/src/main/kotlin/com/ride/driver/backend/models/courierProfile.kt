@@ -29,7 +29,7 @@ data class CourierProfile(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    val id: Int? = null,
+    val id: UUID? = null,
 
     @Column(name = "phone_number", unique = true, nullable = false)
     val phoneNumber: String,

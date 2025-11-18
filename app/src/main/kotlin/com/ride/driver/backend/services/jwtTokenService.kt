@@ -5,10 +5,12 @@ import org.springframework.beans.factory.annotation.Value
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.Claims
 import java.util.Date
+import java.util.UUID
 import java.nio.charset.StandardCharsets
 import io.jsonwebtoken.security.Keys
 import java.security.Key
 import com.ride.driver.backend.exceptions.AuthenticationException
+
 
 enum class CourierRoles {
     BASE_ROLE,
@@ -17,7 +19,7 @@ enum class CourierRoles {
 }
 
 data class AdditionalAccessTokenClaims(
-    val courierId: Int,
+    val courierId: UUID,
     val roles: List<CourierRoles>,
 )
 
@@ -76,9 +78,9 @@ open class JwtTokenService(
         return extractAllClaims(token).subject ?: throw AuthenticationException("CourierName not found in token")
     }
 
-    fun extractCourierId(token: String): Int {
+    fun extractCourierId(token: String): UUID {
         val claims = extractAllClaims(token)
-        return claims["courierId"] as? Int ?: throw AuthenticationException("Courier ID not found in token")
+        return claims["courierId"] as? UUID ?: throw AuthenticationException("Courier ID not found in token")
     }
 
     fun extractRoles(token: String): List<CourierRoles> {
