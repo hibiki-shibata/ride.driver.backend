@@ -35,6 +35,7 @@ class AuthController(
             status = CourierStatus.AVAILABLE
         )
         val savedCourier = repository.save(newCourierToRegister)
+        println("New courier registered with ID: ${savedCourier}")
         if (savedCourier.id == null) throw Exception("Failed to save new courier profile")
         val accessToken = jwtTokenService.generateAccessToken(
             AdditionalAccessTokenClaims(roles = listOf(CourierRoles.BASE_ROLE), courierId = savedCourier.id?: throw Exception("Courier ID is null")),

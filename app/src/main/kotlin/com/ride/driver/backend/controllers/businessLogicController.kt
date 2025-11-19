@@ -14,6 +14,7 @@ import com.ride.driver.backend.models.OperationArea
 import com.ride.driver.backend.models.VehicleType
 import com.ride.driver.backend.models.CourierStatus
 import com.ride.driver.backend.services.AccessTokenData
+
 import java.util.UUID
 
 data class CourierProfileDTO(
@@ -50,4 +51,27 @@ class BusinessLogicController (
         )
         return ResponseEntity.ok(courierDTO)
     }
+
+    @GetMapping("/all-paged-sorted")
+    fun getAllCouriersPagedAndSorted(
+        @RequestParam page: Int,
+        @RequestParam size: Int
+    ): ResponseEntity<List<CourierProfileDTO>> {
+        println("Fetching couriers for page: $page with size: $size")
+        val pageable = org.springframework.data.domain.PageRequest.of(page, size)
+        val courierPage = repository.findAll(pageable)
+        val courierDTOs = courierPage.content.map { courier ->
+            CourierProfileDTO(
+                id = courier.id,
+                name = courier.name,
+                phoneNumber = courier.phoneNumber,
+                vehicleType = courier.vehicleType,
+                rate = courier.rate,
+                status = courier.status,
+                operationArea = courier.operationArea,
+                comments = courier.comments
+            )
+        }
+        return ResponseEntity.ok(courierDTOs)
+    }   
 }

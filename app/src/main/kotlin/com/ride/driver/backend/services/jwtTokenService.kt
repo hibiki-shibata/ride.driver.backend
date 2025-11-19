@@ -40,7 +40,9 @@ open class JwtTokenService(
         courierName: String,
     ): String {
         val now = System.currentTimeMillis()
-        val additionalClaims = mapOf("roles" to additionalAccessTokenClaims.roles.map { it.name })
+        val additionalClaims =  mapOf(
+            "roles" to additionalAccessTokenClaims.roles.map { it.name },
+            "courierId" to additionalAccessTokenClaims.courierId)
         return Jwts.builder()
             .setClaims(additionalClaims)
             .setSubject(courierName)
@@ -80,12 +82,13 @@ open class JwtTokenService(
 
     fun extractCourierId(token: String): UUID {
         val claims = extractAllClaims(token)
-        return claims["courierId"] as? UUID ?: throw AuthenticationException("Courier ID not found in token")
+        return UUID.fromString(claims["courierId"].toString() ?: throw AuthenticationException("Courier ID not found in token"))
     }
 
     fun extractRoles(token: String): List<CourierRoles> {
         val claims = extractAllClaims(token)
-        return claims["roles"] as? List<CourierRoles> ?: emptyList()
+        println("Extracted roles from token claims: ${claims["roles"]}")
+        return (claims["roles"] as List<*>).map { CourierRoles.valueOf(it.toString()) }
     }
 
     private fun extractAllClaims(token: String): Claims {

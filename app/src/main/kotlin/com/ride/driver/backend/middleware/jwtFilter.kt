@@ -38,7 +38,7 @@ class JwtFilter(
                 additonalClaims = AdditionalAccessTokenClaims(courierId = courierId, roles = courierRoles),
                 courierName = courierName
             )
-            println("Courier details loaded: $courierDetails")
+            println("Courier details loaded: $courierDetails.toString()")
             val authenticationToken = UsernamePasswordAuthenticationToken(
                 courierDetails, // principal
                 null, // credentials
