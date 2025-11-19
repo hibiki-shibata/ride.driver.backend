@@ -57,7 +57,6 @@ class BusinessLogicController (
         @RequestParam page: Int,
         @RequestParam size: Int
     ): ResponseEntity<List<CourierProfileDTO>> {
-        println("Fetching couriers for page: $page with size: $size")
         val pageable = org.springframework.data.domain.PageRequest.of(page, size)
         val courierPage = repository.findAll(pageable)
         val courierDTOs = courierPage.content.map { courier ->

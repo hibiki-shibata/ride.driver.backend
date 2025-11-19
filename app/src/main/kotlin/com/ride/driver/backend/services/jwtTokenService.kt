@@ -87,7 +87,6 @@ open class JwtTokenService(
 
     fun extractRoles(token: String): List<CourierRoles> {
         val claims = extractAllClaims(token)
-        println("Extracted roles from token claims: ${claims["roles"]}")
         return (claims["roles"] as List<*>).map { CourierRoles.valueOf(it.toString()) }
     }
 
