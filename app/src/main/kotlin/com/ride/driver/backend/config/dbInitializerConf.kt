@@ -12,7 +12,7 @@ import com.ride.driver.backend.models.CourierStatus
 import java.util.UUID
 
 @Configuration
-class BlogConfiguration {
+class DbDemoDataInitializerConfig {
 	@Bean
 	fun databaseInitializer(
             courierProfileRepository: CourierProfileRepository, 

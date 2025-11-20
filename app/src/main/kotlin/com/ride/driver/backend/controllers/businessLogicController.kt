@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.models.CourierProfile
 import com.ride.driver.backend.models.OperationArea
@@ -52,13 +54,13 @@ class BusinessLogicController (
         return ResponseEntity.ok(courierDTO)
     }
 
-    @GetMapping("/all-paged-sorted")
+    @GetMapping("/all")
     fun getAllCouriersPagedAndSorted(
         @RequestParam page: Int,
         @RequestParam size: Int
     ): ResponseEntity<List<CourierProfileDTO>> {
-        val pageable = org.springframework.data.domain.PageRequest.of(page, size)
-        val courierPage = repository.findAll(pageable)
+        val pageable = Pageable.ofSize(size).withPage(page)
+        val courierPage: Page<CourierProfile> = repository.findAll(pageable)
         val courierDTOs = courierPage.content.map { courier ->
             CourierProfileDTO(
                 id = courier.id,

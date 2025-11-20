@@ -11,7 +11,6 @@ import java.util.UUID
 
 @Repository
 open interface CourierProfileRepository : CrudRepository<CourierProfile, Long> {
-   override fun findAll(): List<CourierProfile>
    fun save(courierProfile: CourierProfile): CourierProfile
    fun existsByPhoneNumber(phoneNumber: String): Boolean
    fun findById(id: UUID): CourierProfile?

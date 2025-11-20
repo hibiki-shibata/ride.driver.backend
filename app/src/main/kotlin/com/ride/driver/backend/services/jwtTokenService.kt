@@ -11,7 +11,6 @@ import io.jsonwebtoken.security.Keys
 import java.security.Key
 import com.ride.driver.backend.exceptions.AuthenticationException
 
-
 enum class CourierRoles {
     BASE_ROLE,
     ADMIN_ROLE,
