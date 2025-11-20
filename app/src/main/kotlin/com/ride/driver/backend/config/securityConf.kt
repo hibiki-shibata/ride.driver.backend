@@ -10,6 +10,7 @@ import org.springframework.security.web.DefaultSecurityFilterChain
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import com.ride.driver.backend.middleware.JwtFilter
+import com.ride.driver.backend.services.CourierRoles
 
 @Configuration
 @EnableWebSecurity
@@ -22,6 +23,7 @@ class SecurityConfig {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it.requestMatchers("/api/v1/auth/**").permitAll()
+                it.requestMatchers("/api/v1/couriers/**").hasAnyAuthority(CourierRoles.BASE_ROLE.name, CourierRoles.ADMIN_ROLE.name)
                 it.anyRequest().authenticated()
             }
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)
