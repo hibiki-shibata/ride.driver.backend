@@ -16,7 +16,6 @@ import com.ride.driver.backend.models.OperationArea
 import com.ride.driver.backend.models.VehicleType
 import com.ride.driver.backend.models.CourierStatus
 import com.ride.driver.backend.services.AccessTokenData
-
 import java.util.UUID
 
 data class CourierProfileDTO(

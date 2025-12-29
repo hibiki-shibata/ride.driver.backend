@@ -25,6 +25,7 @@ class JwtFilter(
         filterChain: FilterChain
     ) {
     try{
+        println("Hihihihihihihi")
         SecurityContextHolder.getContext().authentication == null
         val authHeader: String? = request.getHeader("Authorization")
         if (authHeader !== null && authHeader.startsWith("Bearer ")) {

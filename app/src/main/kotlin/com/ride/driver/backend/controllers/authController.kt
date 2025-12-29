@@ -22,7 +22,7 @@ class AuthController(
     private val jwtTokenService: JwtTokenService,
     private val repository: CourierProfileRepository
     ) {
-    @PostMapping("/signup")
+    @PostMapping("/courier/signup")
     fun signup(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<JwtTokenResponseDTO> {
         println("Signup request received: $req")
         val isCourierExists: Boolean = repository.existsByPhoneNumber(req.phoneNumber)
@@ -45,7 +45,7 @@ class AuthController(
         return ResponseEntity.ok(JwtTokenResponseDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 
-    @PostMapping("/login")
+    @PostMapping("/courier/login")
     fun login(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<JwtTokenResponseDTO> {
         val savedCourier: CourierProfile = repository.findByPhoneNumber(req.phoneNumber) ?: 
             throw BadRequestException("Courier with phone number ${req.phoneNumber} does not exist. Please sign up first.")
