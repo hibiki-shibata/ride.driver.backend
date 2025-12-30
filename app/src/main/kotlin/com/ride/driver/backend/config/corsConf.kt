@@ -1,3 +1,4 @@
+// Doc: https://docs.spring.io/spring-framework/reference/web/webmvc-cors.html
 package com.ride.driver.backend.config
 
 import org.springframework.context.annotation.Configuration
