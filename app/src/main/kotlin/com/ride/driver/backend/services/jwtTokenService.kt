@@ -35,16 +35,16 @@ open class JwtTokenService(
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
 ) {    
     fun generateAccessToken(
-        additionalAccessTokenClaims: AdditionalAccessTokenClaims,
-        courierName: String,
+        courierTokenData: AccessTokenData
     ): String {
         val now = System.currentTimeMillis()
         val additionalClaims =  mapOf(
-            "roles" to additionalAccessTokenClaims.roles.map { it.name },
-            "courierId" to additionalAccessTokenClaims.courierId)
+            "roles" to courierTokenData.additonalClaims.roles.map { it.name },
+            "courierId" to courierTokenData.additonalClaims.courierId
+            )
         return Jwts.builder()
             .setClaims(additionalClaims)
-            .setSubject(courierName)
+            .setSubject(courierTokenData.courierName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + accessTokenValidityInMilliseconds))
             .signWith(signingKey)
