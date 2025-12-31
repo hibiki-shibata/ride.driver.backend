@@ -1,14 +1,14 @@
 package com.ride.driver.backend.services
 
-import org.springframework.stereotype.Service
-import org.springframework.beans.factory.annotation.Value
-import io.jsonwebtoken.Jwts
-import io.jsonwebtoken.Claims
 import java.util.Date
 import java.util.UUID
 import java.nio.charset.StandardCharsets
-import io.jsonwebtoken.security.Keys
 import java.security.Key
+import io.jsonwebtoken.Jwts
+import io.jsonwebtoken.Claims
+import io.jsonwebtoken.security.Keys
+import org.springframework.stereotype.Service
+import org.springframework.beans.factory.annotation.Value
 import com.ride.driver.backend.exceptions.AuthenticationException
 
 enum class CourierRoles {
