@@ -42,13 +42,13 @@ class BusinessLogicController (
         val courier: CourierProfile = repository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
         val courierDTO = CourierProfileDTO(
             id = courier.id,
-            name = courier.name,
+            name = courier.cpFirstName + " " + courier.cpLastName,
             phoneNumber = courier.phoneNumber,
             vehicleType = courier.vehicleType,
-            rate = courier.rate,
-            status = courier.status,
+            rate = courier.cpRate,
+            status = courier.cpStatus,
             operationArea = courier.operationArea,
-            comments = courier.comments
+            comments = courier.cpComments
         )
         return ResponseEntity.ok(courierDTO)
     }
@@ -63,13 +63,13 @@ class BusinessLogicController (
         val courierDTOs = courierPage.content.map { courier ->
             CourierProfileDTO(
                 id = courier.id,
-                name = courier.name,
+                name = courier.cpFirstName + " " + courier.cpLastName,
                 phoneNumber = courier.phoneNumber,
                 vehicleType = courier.vehicleType,
-                rate = courier.rate,
-                status = courier.status,
+                rate = courier.cpRate,
+                status = courier.cpStatus,
                 operationArea = courier.operationArea,
-                comments = courier.comments
+                comments = courier.cpComments
             )
         }
         return ResponseEntity.ok(courierDTOs)

@@ -28,7 +28,7 @@ dependencies {
 	// CORS configuration
 	implementation("org.springframework:spring-webmvc")
 
-	// // JPA and database
+	// JPA and database
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	runtimeOnly("org.postgresql:postgresql")
 

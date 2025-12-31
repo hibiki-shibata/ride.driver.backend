@@ -14,14 +14,17 @@ class CourierDataService(){
     fun saveCoureirData(): CourierProfile {
             // Example data to save
             val courierProfile = CourierProfile(
-                phoneNumber = "*810123456789",
-                passwordHash = "Example Password Hash",
-                name = "Example Courier Name",
-                vehicleType = VehicleType.BIKE,
-                rate = 5.0,
-                status = CourierStatus.AVAILABLE,
-                operationArea = OperationArea(name = "Downtown"),
-                comments = "Example Comments"
+                phoneNumber = "+1234567890",
+                passwordHash = "hashed_password",
+                cpFirstName = "John",
+                cpLastName = "Doe",
+                vehicleType = VehicleType.CAR,
+                cpRate = 4.5,
+                cpStatus = CourierStatus.AVAILABLE,
+                operationArea = OperationArea(
+                    name = "Downtown"
+                ),
+                cpComments = "No comments"
             )
             return courierProfile
     }   
