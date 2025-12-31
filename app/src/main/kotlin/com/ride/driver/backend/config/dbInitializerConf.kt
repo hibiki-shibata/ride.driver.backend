@@ -11,111 +11,59 @@ import com.ride.driver.backend.models.VehicleType
 import com.ride.driver.backend.models.CourierStatus
 import java.util.UUID
 
-// @Configuration
-// class DbDemoDataInitializerConfig {
-// 	@Bean
-// 	fun databaseInitializer(
-//             courierProfileRepository: CourierProfileRepository, 
-//             operationAreaRepository: OperationAreaRepository 
-//     ) = ApplicationRunner {
-//         // Initialize the database with some default data
-//         val savedArea = operationAreaRepository.save(
-//             OperationArea(
-//                 name = "Tokyo")
-//         )
+@Configuration
+class DbDemoDataInitializerConfig {
+	@Bean
+	fun databaseInitializer(
+            courierProfileRepository: CourierProfileRepository, 
+            operationAreaRepository: OperationAreaRepository 
+    ) = ApplicationRunner {
+        // Initialize the database with some default data
+        val savedArea = operationAreaRepository.save(
+            OperationArea(
+                name = "Tokyo")
+        )
 
-//         val tokyoArea = operationAreaRepository.findByName("Tokyo")
-//             ?: throw IllegalStateException("Area 'Tokyo' not found")
+        val tokyoArea = operationAreaRepository.findByName("Tokyo")
+            ?: throw IllegalStateException("Area 'Tokyo' not found")
 
-//         courierProfileRepository.save(
-//             CourierProfile(
-//                 phoneNumber = "+819012345678",
-//                 passwordHash = "hashed_password_1",
-//                 name = "Test Courier 1",
-//                 vehicleType = VehicleType.BIKE,
-//                 rate = 5.0,
-//                 status = CourierStatus.AVAILABLE,
-//                 operationArea = tokyoArea[0],
-//                 comments = "No comments"
-//             )
-//         )
+        courierProfileRepository.save(
+            CourierProfile(
+                cpFirstName = "John",
+                cpLastName = "Doe",
+                phoneNumber = "123-456-7890",
+                vehicleType = VehicleType.MOTORCYCLE,
+                passwordHash = "hashed_password",
+                cpRate = 4.5,
+                cpStatus = CourierStatus.ON_DUTY,
+                cpComments = "Reliable courier",
+            )
+        )
 
-//         courierProfileRepository.save(
-//             CourierProfile(
-//                 phoneNumber = "+819098765432",
-//                 passwordHash = "hashed_password_2",
-//                 name = "Test Courier 2",
-//                 vehicleType = VehicleType.CAR,
-//                 rate = 4.5,
-//                 status = CourierStatus.UNAVAILABLE,
-//                 operationArea = tokyoArea[0],
-//                 comments = "No comments"
-//             )
-//         )
+        courierProfileRepository.save(
+            CourierProfile(
+                cpFirstName = "Jane",
+                cpLastName = "Smith",
+                phoneNumber = "987-654-3210",
+                vehicleType = VehicleType.CAR,
+                passwordHash = "another_hashed_password",
+                cpRate = 4.8,
+                cpStatus = CourierStatus.AVAILABLE,
+                cpComments = "Fast and efficient"
+            )
+        )
 
-//         courierProfileRepository.save(
-//             CourierProfile(
-//                 phoneNumber = "+819011122233",
-//                 passwordHash = "hashed_password_3",
-//                 name = "Test Courier 3",
-//                 vehicleType = VehicleType.BIKE,
-//                 rate = 4.8,
-//                 status = CourierStatus.AVAILABLE,
-//                 operationArea = tokyoArea[0],
-//                 comments = "No comments"
-//             )
-//         )
-
-//         courierProfileRepository.save(
-//             CourierProfile(
-//                 phoneNumber = "+819044455566",
-//                 passwordHash = "hashed_password_4",
-//                 name = "Test Courier 4",
-//                 vehicleType = VehicleType.CAR,
-//                 rate = 5.0,
-//                 status = CourierStatus.AVAILABLE,
-//                 operationArea = tokyoArea[0],
-//                 comments = "No comments"
-//             )
-//         )
-
-//         courierProfileRepository.save(
-//             CourierProfile(
-//                 phoneNumber = "+819077788899",
-//                 passwordHash = "hashed_password_5",
-//                 name = "Test Courier 5",
-//                 vehicleType = VehicleType.BIKE,
-//                 rate = 4.2,
-//                 status = CourierStatus.UNAVAILABLE,
-//                 operationArea = tokyoArea[0],
-//                 comments = "No comments"
-//             )
-//         )
-
-//         courierProfileRepository.save(
-//             CourierProfile(
-//                 phoneNumber = "+819000111222",
-//                 passwordHash = "hashed_password_6",
-//                 name = "Test Courier 6",
-//                 vehicleType = VehicleType.CAR,
-//                 rate = 4.9,
-//                 status = CourierStatus.AVAILABLE,
-//                 operationArea = tokyoArea[0],
-//                 comments = "No comments"
-//             )
-//         )
-
-//         courierProfileRepository.save(
-//             CourierProfile(
-//                 phoneNumber = "+819033344455",
-//                 passwordHash = "hashed_password_7",
-//                 name = "Test Courier 7",
-//                 vehicleType = VehicleType.BIKE,
-//                 rate = 5.0,
-//                 status = CourierStatus.AVAILABLE,
-//                 operationArea = tokyoArea[0],
-//                 comments = "No comments"
-//             )
-//         )
-//     }
-// }
+        courierProfileRepository.save(
+            CourierProfile(
+                cpFirstName = "Alice",
+                cpLastName = "Johnson",
+                phoneNumber = "555-123-4567",
+                vehicleType = VehicleType.BICYCLE,
+                passwordHash = "alice_hashed_password",
+                cpRate = 4.2,
+                cpStatus = CourierStatus.ONBOARDING,
+                cpComments = "New courier"
+            )
+        )
+    }
+}
