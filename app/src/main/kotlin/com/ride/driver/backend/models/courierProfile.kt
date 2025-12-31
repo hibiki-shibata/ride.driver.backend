@@ -31,28 +31,31 @@ data class CourierProfile(
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: UUID? = null,
 
+    @Column(name = "cp_first_name", nullable = false)
+    val cpFirstName: String,
+
+    @Column(name = "cp_last_name", nullable = false)
+    val cpLastName: String,
+
     @Column(name = "phone_number", unique = true, nullable = false)
     val phoneNumber: String,
 
-    @Column(name = "password_hash")
-    val passwordHash: String,
-
-    @Column(name = "name", nullable = false)
-    val name: String,
-
     @Column(name = "vehicle_type")
     @Enumerated(EnumType.STRING)
-    val vehicleType: VehicleType? = VehicleType.BIKE,
+    val vehicleType: VehicleType? = null,
 
-    @Column(name = "rate")
-    val rate: Double? = null,
+    @Column(name = "password_hash")
+    val passwordHash: String? = null,
+
+    @Column(name = "cp_rate")
+    val cpRate: Double? = null,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    val status: CourierStatus = CourierStatus.AVAILABLE,
+    @Column(name = "cp_status")
+    val cpStatus: CourierStatus = CourierStatus.AVAILABLE,
     
-    @Column(name = "comments")
-    val comments: String? = "No comments",
+    @Column(name = "cp_comments")
+    val cpComments: String? = "No comments",
     
     // @JoinColumn(name = "area_id")
     @ManyToOne

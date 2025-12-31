@@ -13,7 +13,13 @@ import com.ride.driver.backend.services.AdditionalAccessTokenClaims
 import com.ride.driver.backend.exceptions.BadRequestException
 import java.util.UUID
 
-data class CourierSignInDTO(val courierName: String, val phoneNumber: String, val password: String)
+// data class CourierSignInDTO(val courierName: String, val phoneNumber: String, val password: String)
+data class CourierSignInDTO(
+    val cpFirstName: String,
+    val cpLastName: String,
+    val phoneNumber: String,
+    val vehicleType: VehicleType,
+)
 data class JwtTokenResponseDTO(val accessToken: String, val refreshToken: String? = null)
 
 @RestController
