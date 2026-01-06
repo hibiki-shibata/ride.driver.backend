@@ -40,9 +40,9 @@ data class CourierProfile(
     @Column(name = "phone_number", unique = true, nullable = false)
     val phoneNumber: String,
 
-    @Column(name = "vehicle_type")
+    @Column(name = "vehicle_type", nullable = false)
     @Enumerated(EnumType.STRING)
-    val vehicleType: VehicleType? = null,
+    val vehicleType: VehicleType,
 
     @Column(name = "password_hash")
     val passwordHash: String? = null,
