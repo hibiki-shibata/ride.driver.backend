@@ -1,4 +1,11 @@
 rootProject.name = "ride.driver.backend"
 
-include("app")
-// include("app2")
+// include("app-main")
+include("app2-logistics")
+
+// This is used for Ktor server
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+    }
+}
