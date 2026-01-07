@@ -9,7 +9,7 @@ import java.util.UUID
 @SpringBootApplication
 class RideDriverBackendApplication
 fun main(args: Array<String>) {
-        println("Ride Driver Backend Application is running at port 4000")
+        println("Ride Driver Backend Application is running at port 300")
         runApplication<RideDriverBackendApplication>(*args)
 }
 	
