@@ -1,12 +1,11 @@
-package com.ride.driver.backend
+package ride.driver.backend
 
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
-
-// @SpringBootApplication
-// class RideDriverBackendApplication
+import io.ktor.server.application.*
 
 fun main(args: Array<String>) {
-	println("Hibiki is cute!")
-	// runApplication<RideDriverBackendApplication>(*args)
+    io.ktor.server.netty.EngineMain.main(args)
+}
+
+fun Application.module() {
+    configureRouting()
 }
