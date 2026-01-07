@@ -1,4 +1,4 @@
 rootProject.name = "ride.driver.backend"
 
-include("app")
-// include("app2")
+// include("app-main")
+include("app2-logistics")
