@@ -4,7 +4,7 @@ plugins {
 
 }
 
-group = "ride.driver.backend"
+group = "ride.driver.logistic"
 version = "0.0.1"
 
 application {

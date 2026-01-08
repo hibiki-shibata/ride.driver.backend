@@ -1,4 +1,4 @@
-package ride.driver.backend
+package ride.driver.logistic
 
 import io.ktor.server.application.*
 

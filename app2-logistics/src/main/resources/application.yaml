@@ -1,6 +1,6 @@
 ktor:
     application:
         modules:
-            - ride.driver.backend.RideDriverBackendApplicationKt.module
+            - ride.driver.logistic.RideDriverLogisticApplicationKt.module
     deployment:
         port: 8080
