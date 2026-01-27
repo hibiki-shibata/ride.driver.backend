@@ -1,10 +1,10 @@
 plugins {
     kotlin("jvm") version "2.2.21"
-	id("io.ktor.plugin") version "3.3.2"
+	id("io.ktor.plugin") version "3.4.0"
 
 }
 
-group = "ride.driver.backend"
+group = "ride.driver.logistic"
 version = "0.0.1"
 
 application {

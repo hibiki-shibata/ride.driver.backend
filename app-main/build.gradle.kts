@@ -1,7 +1,7 @@
 plugins {
 	kotlin("jvm") version "2.2.0"
 	kotlin("plugin.spring") version "2.2.0"
-	id("org.springframework.boot") version "3.5.4"
+	id("org.springframework.boot") version "4.0.2"
 	id("io.spring.dependency-management") version "1.1.7"
 	// id ("application")
 	// kotlin("plugin.allopen") version "1.9.25"
@@ -30,18 +30,18 @@ dependencies {
 
 	// JPA and database
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	runtimeOnly("org.postgresql:postgresql")
+	runtimeOnly("org.postgresql:postgresql:42.7.8")
 
 	// DB migration
-	implementation("org.flywaydb:flyway-database-postgresql")
-	implementation("org.flywaydb:flyway-core") // core is included in starter-data-jpa, but explicitly adding for clarity
+	implementation("org.flywaydb:flyway-database-postgresql:11.20.1")
+	implementation("org.flywaydb:flyway-core:11.20.1") // core is included in starter-data-jpa, but explicitly adding for clarity
 
 	// Kotlin support - used for models and services
-	implementation("jakarta.validation:jakarta.validation-api")
-	implementation("jakarta.persistence:jakarta.persistence-api")
+	implementation("jakarta.validation:jakarta.validation-api:3.1.1")
+	implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
 
 	//JSON serialization
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json")
+	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
 	// Security
 	implementation("org.springframework.boot:spring-boot-starter-security")
@@ -50,7 +50,7 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-jackson:0.13.0") // for JSON parsing
 	
 	// For reflection, Spring need to read the Entity data class passed in the Repo args (e.g. obj:class.memberProperties)
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
+	implementation("org.jetbrains.kotlin:kotlin-reflect:2.3.0")
 }
 
 kotlin {
