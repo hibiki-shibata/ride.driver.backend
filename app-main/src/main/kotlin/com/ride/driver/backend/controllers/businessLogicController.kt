@@ -37,7 +37,7 @@ class BusinessLogicController (
     @GetMapping("/courier/me")
     fun findCourierProfile(): ResponseEntity<CourierProfileDTO> {        
         println("Finding all couriers...")
-        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication.principal as AccessTokenData
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.courierId
         val courier: CourierProfile = repository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
         val courierDTO = CourierProfileDTO(
