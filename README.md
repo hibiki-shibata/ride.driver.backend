@@ -1,5 +1,32 @@
-This is a backend for Ride Driver App
+## This is a backend for Ride Driver App (Under development)
 
+What does it do:📝
+1. Registering new Couriers
+2. Response existing Coureirs data
+3. Authentication
+
+How to run the project:🏃‍♂️
+1. Clone the project
+```
+git clone https://github.com/hibiki-shibata/ride.driver.backend
+```
+3. Prepare local DB with Postgres
+```bash
+docker pull postgres
+docker run -p 5432:5432 -d \
+    --name postgres \
+    -e POSTGRES_PASSWORD=postgres \
+    -e POSTGRES_USER=postgres \
+    -e POSTGRES_DB=postgres \
+    postgres
+```
+3. Run code
+```
+./gradrew bootRun
+```
+
+
+Tips💡
 You can use command `make help` to learn simplified CLI ops.
 
 ### Manual Initiations For Mac/Linux
@@ -13,14 +40,14 @@ You can use command `make help` to learn simplified CLI ops.
 
 
 ### Initiate Postgers Container:
-`
+```
 docker run -p 5432:5432 -d \
     --name postgres \
     -e POSTGRES_PASSWORD=postgres \
     -e POSTGRES_USER=postgres \
     -e POSTGRES_DB=postgres \
     postgres
-`
+```
 
 
 ### Flyway control
