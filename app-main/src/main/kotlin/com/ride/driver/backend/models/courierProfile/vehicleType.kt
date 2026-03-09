@@ -1,4 +1,4 @@
-package com.ride.driver.backend.models
+package com.ride.driver.backend.models.courierProfile
 
 enum class VehicleType {
     CAR,

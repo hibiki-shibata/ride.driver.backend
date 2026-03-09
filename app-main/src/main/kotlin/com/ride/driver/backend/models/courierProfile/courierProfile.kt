@@ -1,5 +1,5 @@
 // https://spring.io/guides/gs/accessing-data-jpa
-package com.ride.driver.backend.models
+package com.ride.driver.backend.models.courierProfile
 
 import java.util.UUID
 import jakarta.persistence.Entity

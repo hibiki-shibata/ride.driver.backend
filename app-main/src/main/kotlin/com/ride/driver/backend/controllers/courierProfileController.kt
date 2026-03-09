@@ -11,10 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import com.ride.driver.backend.repositories.CourierProfileRepository
-import com.ride.driver.backend.models.CourierProfile
-import com.ride.driver.backend.models.OperationArea
-import com.ride.driver.backend.models.VehicleType
-import com.ride.driver.backend.models.CourierStatus
+import com.ride.driver.backend.models.courierProfile.CourierProfile
+import com.ride.driver.backend.models.courierProfile.OperationArea
+import com.ride.driver.backend.models.courierProfile.VehicleType
+import com.ride.driver.backend.models.courierProfile.CourierStatus
 import com.ride.driver.backend.services.AccessTokenData
 import java.util.UUID
 
@@ -31,7 +31,7 @@ data class CourierProfileDTO(
 
 @RestController
 @RequestMapping("api/v1/couriers")
-class BusinessLogicController (   
+class CourierProfileController (   
     private val repository: CourierProfileRepository,
 ){
     @GetMapping("/courier/me")

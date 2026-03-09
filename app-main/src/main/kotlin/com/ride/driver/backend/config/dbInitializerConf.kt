@@ -5,10 +5,10 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.OperationAreaRepository
-import com.ride.driver.backend.models.CourierProfile
-import com.ride.driver.backend.models.OperationArea
-import com.ride.driver.backend.models.VehicleType
-import com.ride.driver.backend.models.CourierStatus
+import com.ride.driver.backend.models.courierProfile.CourierProfile
+import com.ride.driver.backend.models.courierProfile.CourierStatus
+import com.ride.driver.backend.models.courierProfile.OperationArea
+import com.ride.driver.backend.models.courierProfile.VehicleType
 import java.util.UUID
 
 @Configuration

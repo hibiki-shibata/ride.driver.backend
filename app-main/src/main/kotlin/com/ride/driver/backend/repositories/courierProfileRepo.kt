@@ -5,8 +5,8 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
-import com.ride.driver.backend.models.CourierProfile
-import com.ride.driver.backend.models.OperationArea
+import com.ride.driver.backend.models.courierProfile.CourierProfile
+import com.ride.driver.backend.models.courierProfile.OperationArea
 import java.util.UUID
 
 @Repository
