@@ -9,6 +9,7 @@ import com.ride.driver.backend.models.courierProfile.CourierProfile
 import com.ride.driver.backend.models.courierProfile.CourierStatus
 import com.ride.driver.backend.models.courierProfile.OperationArea
 import com.ride.driver.backend.models.courierProfile.VehicleType
+import com.ride.driver.backend.models.Coordinate
 import java.util.UUID
 
 @Configuration
@@ -19,13 +20,12 @@ class DbDemoDataInitializerConfig {
             operationAreaRepository: OperationAreaRepository 
     ) = ApplicationRunner {
         // Initialize the database with some default data
-        val savedArea = operationAreaRepository.save(
-            OperationArea(
-                name = "Tokyo")
-        )
-
-        val tokyoArea = operationAreaRepository.findByName("Tokyo")
-            ?: throw IllegalStateException("Area 'Tokyo' not found")
+        if (operationAreaRepository.findByName("Tokyo").isNullOrEmpty()){
+            val savedArea = operationAreaRepository.save(
+                OperationArea(
+                    name = "Tokyo")
+            )
+        }
 
         courierProfileRepository.save(
             CourierProfile(
@@ -35,7 +35,8 @@ class DbDemoDataInitializerConfig {
                 vehicleType = VehicleType.MOTORCYCLE,
                 passwordHash = "hashed_password",
                 cpRate = 4.5,
-                cpStatus = CourierStatus.ON_DUTY,
+                cpStatus = CourierStatus.ONLINE,
+                currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
                 cpComments = "Reliable courier",
             )
         )
@@ -49,6 +50,7 @@ class DbDemoDataInitializerConfig {
                 passwordHash = "another_hashed_password",
                 cpRate = 4.8,
                 cpStatus = CourierStatus.AVAILABLE,
+                currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
                 cpComments = "Fast and efficient"
             )
         )
@@ -62,6 +64,7 @@ class DbDemoDataInitializerConfig {
                 passwordHash = "alice_hashed_password",
                 cpRate = 4.2,
                 cpStatus = CourierStatus.ONBOARDING,
+                currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
                 cpComments = "New courier"
             )
         )

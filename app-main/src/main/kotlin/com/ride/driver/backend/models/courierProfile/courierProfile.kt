@@ -14,6 +14,10 @@ import jakarta.persistence.Enumerated
 import jakarta.persistence.JoinColumn
 import jakarta.persistence.Index
 import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.AttributeOverride
+import com.ride.driver.backend.models.Coordinate
 
 @Entity
 @Table(
@@ -21,7 +25,7 @@ import jakarta.persistence.Column
     indexes = [
         Index(name = "idx_courier_phone_number", columnList = "phoneNumber"),
         Index(name = "idx_courier_area_id", columnList = "operation_area_id"),
-        Index(name = "idx_courier_status", columnList = "status")
+        Index(name = "idx_courier_status", columnList = "cp_status")
     ]
 )
 
@@ -40,8 +44,8 @@ data class CourierProfile(
     @Column(name = "phone_number", unique = true, nullable = false)
     val phoneNumber: String,
 
-    @Column(name = "vehicle_type", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "vehicle_type", nullable = false)
     val vehicleType: VehicleType,
 
     @Column(name = "password_hash")
@@ -56,7 +60,10 @@ data class CourierProfile(
     
     @Column(name = "cp_comments")
     val cpComments: String? = "No comments",
-    
+
+    @Embedded
+    val currentLocation: Coordinate,
+
     // @JoinColumn(name = "area_id")
     @ManyToOne
     @JoinColumn(name = "operation_area_id")

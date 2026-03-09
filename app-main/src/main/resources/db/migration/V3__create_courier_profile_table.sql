@@ -12,9 +12,11 @@ CREATE TABLE IF NOT EXISTS courier_profile (
 
     rate DOUBLE PRECISION,
 
-    status VARCHAR DEFAULT 'UNAVAILABLE',
+    cp_status VARCHAR DEFAULT 'UNAVAILABLE',
 
     comments TEXT,
+
+    courier_location BIGSERIAL REFERENCES courier_location(courier_id) ON DELETE SET NULL,
 
     operation_area_id BIGSERIAL REFERENCES operation_area(id) ON DELETE CASCADE
     -- CONSTRAINT fk_area FOREIGN KEY (area_id) REFERENCES area(id)

@@ -3,6 +3,7 @@ package com.ride.driver.backend.controller
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.models.courierProfile.CourierProfile
 import com.ride.driver.backend.models.courierProfile.CourierStatus
@@ -44,6 +45,7 @@ class AuthController(
             cpLastName = req.cpLastName,
             phoneNumber = req.phoneNumber,
             vehicleType = req.vehicleType,
+            currentLocation = Coordinate(latitude = 0.0, longitude = 0.0), // Default location for new couriers
             cpStatus = CourierStatus.ONBOARDING
         )
         val savedCourier: CourierProfile = repository.save(newCourierToRegister)

@@ -6,6 +6,7 @@ import com.ride.driver.backend.models.courierProfile.CourierProfile
 import com.ride.driver.backend.models.courierProfile.CourierStatus 
 import com.ride.driver.backend.models.courierProfile.OperationArea
 import com.ride.driver.backend.models.courierProfile.VehicleType
+import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import java.util.UUID
 
@@ -24,6 +25,7 @@ class CourierDataService(){
                 operationArea = OperationArea(
                     name = "Downtown"
                 ),
+                currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
                 cpComments = "No comments"
             )
             return courierProfile
