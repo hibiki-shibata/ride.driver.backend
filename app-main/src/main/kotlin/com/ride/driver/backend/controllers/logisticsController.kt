@@ -40,8 +40,8 @@ class LogisticsController (
     fun pollForTask(): ResponseEntity<Task> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.courierId
-        val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body(null)
-        return ResponseEntity.ok(assignedTask)
+        val assignedTask: Task? = taskRepository.findByAssignedCourierId(courierId) ?: null
+        return if (assignedTask != null) ResponseEntity.ok(assignedTask) else ResponseEntity.status(204).build()        
     }
 
     @PostMapping("/update/status")
@@ -54,13 +54,6 @@ class LogisticsController (
             ) ?: return ResponseEntity.status(404).body("Courier not found")
         )
         return ResponseEntity.ok("Status updated successfully")
-    }
-
-    @PostMapping("/task/reject")
-    fun rejectTask(@RequestBody taskId: String): ResponseEntity<String> {
-        println("Received task rejection for task ID: $taskId")
-        // 
-        return ResponseEntity.ok("Task $taskId rejected successfully")
     }
 
    @PostMapping("/task/accept")
