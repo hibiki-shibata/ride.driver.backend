@@ -15,17 +15,16 @@ public class ScheduledTasks (
     private val courierProfileRepository: CourierProfileRepository,
     private val taskRepository: TaskRepository
 ){
-	@Scheduled(fixedRate = 4000) // Run every 60 seconds
+	@Scheduled(fixedRate = 17000) // Run every 17 seconds
     public fun assignCpToTask() {
         val availableTasks: List<Task> = taskRepository.findByTaskStatus(TaskStatus.READY_FOR_ASSIGNMENT)
-        if (availableTasks.isEmpty()) println("No available tasks to assign")// return
+        if (availableTasks.isEmpty()) return
         
         val onlineCouriers: List<CourierProfile> = courierProfileRepository.findByCpStatus(CourierStatus.ONLINE)
         if (onlineCouriers.isEmpty()) return
         
-
         var shuffledCouriers: List<CourierProfile> = onlineCouriers.shuffled()
-        println("Assigning ${availableTasks.size} tasks to ${shuffledCouriers.size} online couriers")
+
         for (task in availableTasks) {
             val courierToAssign: CourierProfile = shuffledCouriers.firstOrNull() ?: return // No more couriers available            
             taskRepository.save(
@@ -34,7 +33,6 @@ public class ScheduledTasks (
                 )
             )
             shuffledCouriers = shuffledCouriers.drop(1) // Remove the assigned courier from the list
-            println("Assigned task ${task.id} to courier ${courierToAssign.id}")
         }
     }
 }
