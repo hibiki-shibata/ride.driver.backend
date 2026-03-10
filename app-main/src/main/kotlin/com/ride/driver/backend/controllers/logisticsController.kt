@@ -53,14 +53,13 @@ class LogisticsController (
                 cpStatus = if (isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
             ) ?: return ResponseEntity.status(404).body("Courier not found")
         )
-        // Here you would typically update the courier's status in the database and perform any necessary business logic
         return ResponseEntity.ok("Status updated successfully")
     }
 
     @PostMapping("/task/reject")
     fun rejectTask(@RequestBody taskId: String): ResponseEntity<String> {
         println("Received task rejection for task ID: $taskId")
-        // Here you would typically update the task status in the database and perform any necessary business logic
+        // 
         return ResponseEntity.ok("Task $taskId rejected successfully")
     }
 

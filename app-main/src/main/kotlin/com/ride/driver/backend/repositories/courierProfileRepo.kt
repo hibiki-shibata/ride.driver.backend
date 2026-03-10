@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import com.ride.driver.backend.models.courierProfile.CourierProfile
 import com.ride.driver.backend.models.courierProfile.OperationArea
+import com.ride.driver.backend.models.courierProfile.CourierStatus
 import java.util.UUID
 
 @Repository
@@ -14,6 +15,7 @@ open interface CourierProfileRepository : CrudRepository<CourierProfile, Long> {
    fun save(courierProfile: CourierProfile): CourierProfile
    fun existsByPhoneNumber(phoneNumber: String): Boolean
    fun findById(id: UUID): CourierProfile?
+   fun findByCpStatus(cpStatus: CourierStatus): List<CourierProfile>
    fun findByPhoneNumber(phoneNumber: String): CourierProfile?
    fun findAll(pageable: Pageable): Page<CourierProfile>
    // next method is for paginated and sorted fetch all courier data but certain page

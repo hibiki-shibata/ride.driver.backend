@@ -5,11 +5,14 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.OperationAreaRepository
+import com.ride.driver.backend.repositories.TaskRepository
 import com.ride.driver.backend.models.courierProfile.CourierProfile
 import com.ride.driver.backend.models.courierProfile.CourierStatus
 import com.ride.driver.backend.models.courierProfile.OperationArea
 import com.ride.driver.backend.models.courierProfile.VehicleType
 import com.ride.driver.backend.models.Coordinate
+import com.ride.driver.backend.models.logistics.Task
+import com.ride.driver.backend.models.logistics.TaskStatus
 import java.util.UUID
 
 @Configuration
@@ -17,7 +20,8 @@ class DbDemoDataInitializerConfig {
 	@Bean
 	fun databaseInitializer(
             courierProfileRepository: CourierProfileRepository, 
-            operationAreaRepository: OperationAreaRepository 
+            operationAreaRepository: OperationAreaRepository,
+            taskRepository: TaskRepository
     ) = ApplicationRunner {
         // Initialize the database with some default data
         if (operationAreaRepository.findByName("Tokyo").isNullOrEmpty()){
@@ -67,6 +71,27 @@ class DbDemoDataInitializerConfig {
                 cpStatus = CourierStatus.ONBOARDING,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
                 cpComments = "New courier"
+            )
+        )
+        taskRepository.save(
+            Task(
+                assignedCourierId = UUID.randomUUID(),
+                pickupLocation = Coordinate(latitude = 35.6895, longitude = 139.6917),
+                dropoffLocation = Coordinate(latitude = 35.6762, longitude = 139.6503),
+                consumerName = "hibiki",
+                venueName = "KFC",
+                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
+            )
+        )
+
+        taskRepository.save(
+            Task(
+                assignedCourierId = UUID.randomUUID(),
+                pickupLocation = Coordinate(latitude = 33.6895, longitude = 129.6917),
+                dropoffLocation = Coordinate(latitude = 35.6762, longitude = 139.6503),
+                consumerName = "Shibata",
+                venueName = "FIve guys",
+                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
             )
         )
     }

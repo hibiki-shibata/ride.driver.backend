@@ -31,7 +31,7 @@ data class Task(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    val id: Long,
+    val id: Long? = null,
 
     @Column(name = "assigned_courier_id", nullable = false)
     val assignedCourierId: UUID?,
@@ -51,7 +51,7 @@ data class Task(
     val dropoffLocation: Coordinate,
 
     @Column(name = "task_note", nullable = true)
-    val taskNote: String,
+    val taskNote: String? = null,
 
     @Column(name = "consumer_name", nullable = false)
     val consumerName: String,

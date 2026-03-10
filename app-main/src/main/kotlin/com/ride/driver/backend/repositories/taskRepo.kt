@@ -6,11 +6,13 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import com.ride.driver.backend.models.logistics.Task
+import com.ride.driver.backend.models.logistics.TaskStatus
 import java.util.UUID
 
 @Repository
 open interface TaskRepository : CrudRepository<Task, Long> {
    fun save(courierProfile: Task): Task
    fun findByAssignedCourierId(assignedCourierId: UUID): Task?
+   fun findByTaskStatus(taskStatus: TaskStatus): List<Task>
    fun findAll(pageable: Pageable): Page<Task>
 }
