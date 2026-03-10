@@ -37,6 +37,7 @@ class DbDemoDataInitializerConfig {
                 cpRate = 4.5,
                 cpStatus = CourierStatus.ONLINE,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
+                operationArea = operationAreaRepository.findByName("Tokyo")?.firstOrNull(),
                 cpComments = "Reliable courier",
             )
         )
