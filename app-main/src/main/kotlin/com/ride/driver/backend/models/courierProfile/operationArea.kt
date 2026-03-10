@@ -19,7 +19,7 @@ import jakarta.persistence.Column
 
 data class OperationArea (
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: Long? = null,
 

@@ -4,8 +4,8 @@ CREATE TABLE IF NOT EXISTS task_data (
     pickup_longitude DOUBLE PRECISION NOT NULL,
     dropoff_latitude DOUBLE PRECISION NOT NULL,
     dropoff_longitude DOUBLE PRECISION NOT NULL,
-    description CHAR NOT NULL,
-    consumer_name CHAR NOT NULL,
-    venue_name CHAR NOT NULL,
-    status CHAR NOT NULL
+    task_note VARCHAR NOT NULL,
+    consumer_name VARCHAR NOT NULL,
+    venue_name VARCHAR NOT NULL,
+    task_status VARCHAR NOT NULL
 )

@@ -1,77 +1,59 @@
 plugins {
-	kotlin("jvm") version "2.2.0"
-	kotlin("plugin.spring") version "2.2.0"
-	id("org.springframework.boot") version "4.0.2"
-	id("io.spring.dependency-management") version "1.1.7"
-	// id ("application")
-	// kotlin("plugin.allopen") version "1.9.25"
-	// kotlin("kapt") version "1.9.25"
-	kotlin("plugin.jpa") version "2.2.0" // for config/dbInitializerConf.kt
+    id("org.springframework.boot") version "4.0.2"
+    id("io.spring.dependency-management") version "1.1.7"
+
+    kotlin("jvm") version "2.2.0"
+    kotlin("plugin.spring") version "2.2.0"
+    kotlin("plugin.jpa") version "2.2.0"
 }
 
 group = "com.ride.driver"
 
 java {
-	toolchain {
-		languageVersion = JavaLanguageVersion.of(21)
-	}
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter")
-	implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-web")
 
-	// CORS configuration
-	implementation("org.springframework:spring-webmvc")
+    // JPA and database
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    runtimeOnly("org.postgresql:postgresql:42.7.8")
 
-	// JPA and database
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	runtimeOnly("org.postgresql:postgresql:42.7.8")
+    // ✅ Flyway (Boot-managed + auto-config)
+    implementation("org.springframework.boot:spring-boot-starter-flyway")
+	    // override Flyway to newer (example)
+    implementation("org.flywaydb:flyway-core:11.20.1")
+    implementation("org.flywaydb:flyway-database-postgresql:11.20.1")
 
-	// DB migration
-	implementation("org.flywaydb:flyway-database-postgresql:11.20.1")
-	implementation("org.flywaydb:flyway-core:11.20.1") // core is included in starter-data-jpa, but explicitly adding for clarity
+    // ✅ Bean Validation provider (fixes NoProviderFoundException warning)
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
-	// Kotlin support - used for models and services
-	implementation("jakarta.validation:jakarta.validation-api:3.1.1")
-	implementation("jakarta.persistence:jakarta.persistence-api:3.2.0")
+    // Security
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.jsonwebtoken:jjwt-api:0.13.0")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
 
-	//JSON serialization
-	implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    // Kotlin reflection (version aligned via Gradle/Kotlin plugin)
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
 
-	// Security
-	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("io.jsonwebtoken:jjwt-api:0.13.0") 
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0") 
-	implementation("io.jsonwebtoken:jjwt-jackson:0.13.0") // for JSON parsing
-	
-	// For reflection, Spring need to read the Entity data class passed in the Repo args (e.g. obj:class.memberProperties)
-	implementation("org.jetbrains.kotlin:kotlin-reflect:2.3.0")
+    // JSON serialization (keep if you actually use kotlinx.serialization)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 }
 
 kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
-	}
+    compilerOptions {
+        freeCompilerArgs.addAll("-Xjsr305=strict")
+    }
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
-
-// tasks.test {
-//     testLogging {
-//         showStandardStreams = true  // output println() values in gradle test
-//     }
-//     // dependsOn("startServer")
-//     // finalizedBy("stopServer")
-// }
-
-
-// application {
-// 	mainClass.set("com.ride.driver.backend.RideDriverBackendApplicationKt")
-// }

@@ -50,8 +50,8 @@ data class Task(
     )
     val dropoffLocation: Coordinate,
 
-    @Column(name = "description", nullable = true)
-    val description: String,
+    @Column(name = "task_note", nullable = true)
+    val taskNote: String,
 
     @Column(name = "consumer_name", nullable = false)
     val consumerName: String,

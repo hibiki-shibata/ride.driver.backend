@@ -23,7 +23,7 @@ import com.ride.driver.backend.models.Coordinate
 @Table(
     name = "courier_profile",
     indexes = [
-        Index(name = "idx_courier_phone_number", columnList = "phoneNumber"),
+        Index(name = "idx_courier_phone_number", columnList = "phone_number"),
         Index(name = "idx_courier_area_id", columnList = "operation_area_id"),
         Index(name = "idx_courier_status", columnList = "cp_status")
     ]
@@ -62,6 +62,10 @@ data class CourierProfile(
     val cpComments: String? = "No comments",
 
     @Embedded
+    @AttributeOverrides(
+        AttributeOverride(name = "latitude", column = Column(name = "current_latitude")),
+        AttributeOverride(name = "longitude", column = Column(name = "current_longitude"))
+    )
     val currentLocation: Coordinate,
 
     // @JoinColumn(name = "area_id")
