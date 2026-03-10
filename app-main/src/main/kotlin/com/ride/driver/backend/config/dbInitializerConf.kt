@@ -50,7 +50,7 @@ class DbDemoDataInitializerConfig {
                 vehicleType = VehicleType.CAR,
                 passwordHash = "another_hashed_password",
                 cpRate = 4.8,
-                cpStatus = CourierStatus.AVAILABLE,
+                cpStatus = CourierStatus.ONLINE,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
                 cpComments = "Fast and efficient"
             )

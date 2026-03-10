@@ -9,25 +9,21 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import com.ride.driver.backend.services.AccessTokenData
 import com.ride.driver.backend.models.Coordinate
+import com.ride.driver.backend.models.logistics.Task
+import com.ride.driver.backend.models.courierProfile.CourierStatus
 import java.util.UUID
 import com.ride.driver.backend.repositories.CourierProfileRepository
+import com.ride.driver.backend.repositories.taskRepository
 
-data class TaskInfoDTO(
-    val taskId: String,
-    val earnings: Int,
-    val venueName: String,
-    val consumerName: String,
-    val pickupLocation: String,
-    val dropoffLocation: String,
-    val description: String?,
-)
+
 
 @RestController
 @RequestMapping("/api/v1/logistics")
 class LogisticsController (
     private val courierProfileRepository: CourierProfileRepository,
+    private val taskRepository: taskRepository
 ){
-    @PostMapping("/location/update")
+    @PostMapping("/update/mylocation")
     fun updateLocation(@RequestBody location: Coordinate): ResponseEntity<String> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.courierId
@@ -40,17 +36,31 @@ class LogisticsController (
     }
 
     @GetMapping("/poll/task")
-    fun pollForTask(): ResponseEntity<TaskInfoDTO> {
-        val sampleTask = TaskInfoDTO(
-            taskId = "task123",
-            earnings = 500,
-            venueName = "Pizza Place",
-            consumerName = "John Doe",
-            pickupLocation = "123 Main St",
-            dropoffLocation = "456 Elm St",
-            description = "Deliver a large pepperoni pizza"
+    fun pollForTask(): ResponseEntity<Task> {
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body(null)
+        return ResponseEntity.ok(assignedTask)
+    }
+
+    @PostMapping("/update/status")
+    fun updateStatus(@RequestBody isOnline: Boolean): ResponseEntity<String> {
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val courierId: UUID = courierDetails.additonalClaims.courierId
+        courierProfileRepository.save(
+            courierProfileRepository.findById(courierId)?.copy(
+                cpStatus = if (isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
+            ) ?: return ResponseEntity.status(404).body("Courier not found")
         )
-        return ResponseEntity.ok(sampleTask)
+        // Here you would typically update the courier's status in the database and perform any necessary business logic
+        return ResponseEntity.ok("Status updated successfully")
+    }
+
+    @PostMapping("/task/reject")
+    fun rejectTask(@RequestBody taskId: String): ResponseEntity<String> {
+        println("Received task rejection for task ID: $taskId")
+        // Here you would typically update the task status in the database and perform any necessary business logic
+        return ResponseEntity.ok("Task $taskId rejected successfully")
     }
 
    @PostMapping("/task/accept")

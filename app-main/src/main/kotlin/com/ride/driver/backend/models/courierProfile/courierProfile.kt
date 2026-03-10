@@ -56,7 +56,7 @@ data class CourierProfile(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "cp_status")
-    val cpStatus: CourierStatus = CourierStatus.AVAILABLE,
+    val cpStatus: CourierStatus = CourierStatus.ONBOARDING,
     
     @Column(name = "cp_comments")
     val cpComments: String? = "No comments",

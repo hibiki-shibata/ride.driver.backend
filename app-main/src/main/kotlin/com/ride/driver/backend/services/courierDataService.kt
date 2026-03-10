@@ -21,7 +21,7 @@ class CourierDataService(){
                 cpLastName = "Doe",
                 vehicleType = VehicleType.CAR,
                 cpRate = 4.5,
-                cpStatus = CourierStatus.AVAILABLE,
+                cpStatus = CourierStatus.ONLINE,
                 operationArea = OperationArea(
                     name = "Downtown"
                 ),
