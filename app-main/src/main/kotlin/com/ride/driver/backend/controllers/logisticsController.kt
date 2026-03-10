@@ -11,9 +11,10 @@ import com.ride.driver.backend.services.AccessTokenData
 import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.models.logistics.Task
 import com.ride.driver.backend.models.courierProfile.CourierStatus
+import com.ride.driver.backend.models.logistics.TaskStatus
 import java.util.UUID
 import com.ride.driver.backend.repositories.CourierProfileRepository
-import com.ride.driver.backend.repositories.taskRepository
+import com.ride.driver.backend.repositories.TaskRepository
 
 
 
@@ -21,7 +22,7 @@ import com.ride.driver.backend.repositories.taskRepository
 @RequestMapping("/api/v1/logistics")
 class LogisticsController (
     private val courierProfileRepository: CourierProfileRepository,
-    private val taskRepository: taskRepository
+    private val taskRepository: TaskRepository
 ){
     @PostMapping("/update/mylocation")
     fun updateLocation(@RequestBody location: Coordinate): ResponseEntity<String> {
@@ -65,15 +66,43 @@ class LogisticsController (
 
    @PostMapping("/task/accept")
     fun acceptTask(@RequestBody taskId: String): ResponseEntity<String> {
-        println("Received task acceptance for task ID: $taskId")
-        // Here you would typically update the task status in the database and perform any necessary business logic
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
+        if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
+        taskRepository.save(
+            assignedTask.copy(
+                taskStatus = TaskStatus.IN_PICKUP
+            )
+        )
         return ResponseEntity.ok("Task $taskId accepted successfully")
     }
 
-   @PostMapping("/task/complete")
-    fun completeTask(@RequestBody taskId: String): ResponseEntity<String> {
-        println("Received task completion for task ID: $taskId")
-        // Here you would typically update the task status in the database and perform any necessary business logic
-        return ResponseEntity.ok("Task $taskId marked as completed")
+   @PostMapping("/task/complete/pickup")
+    fun completePickup(@RequestBody taskId: String): ResponseEntity<String> {
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
+        if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
+        taskRepository.save(
+            assignedTask.copy(
+                taskStatus = TaskStatus.IN_DROPOFF
+            )
+        )
+        return ResponseEntity.ok("Pickup for task $taskId completed successfully")
+    }
+
+    @PostMapping("/task/complete/dropoff")
+    fun completeDropoff(@RequestBody taskId: String): ResponseEntity<String> {
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
+        if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
+        taskRepository.save(
+            assignedTask.copy(
+                taskStatus = TaskStatus.DELIVERED
+            )
+        )
+        return ResponseEntity.ok("Dropoff for task $taskId completed successfully")
     }
 }

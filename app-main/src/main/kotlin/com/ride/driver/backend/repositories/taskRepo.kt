@@ -9,7 +9,7 @@ import com.ride.driver.backend.models.logistics.Task
 import java.util.UUID
 
 @Repository
-open interface taskRepository : CrudRepository<Task, Long> {
+open interface TaskRepository : CrudRepository<Task, Long> {
    fun save(courierProfile: Task): Task
    fun findByAssignedCourierId(assignedCourierId: UUID): Task?
    fun findAll(pageable: Pageable): Page<Task>

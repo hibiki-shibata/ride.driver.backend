@@ -1,7 +1,7 @@
 package com.ride.driver.backend.models.logistics
 
 enum class TaskStatus {
-    CRATED,
+    CREATED,
     IN_PICKUP,
     IN_DROPOFF,
     DELIVERED,
