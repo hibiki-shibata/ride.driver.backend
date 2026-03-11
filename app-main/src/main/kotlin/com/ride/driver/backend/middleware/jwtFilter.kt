@@ -33,8 +33,8 @@ class JwtFilter(
             val courierId: UUID = jwtTokenService.extractAccountId(jwtToken)
             val courierName: String = jwtTokenService.extractAccountName(jwtToken)
             val accountRoles: List<AccountRoles> = jwtTokenService.extractRoles(jwtToken)
-            val courierDetails: AccessTokenData = AccessTokenData(            
-                additonalClaims = AdditionalAccessTokenClaims(accountID = courierId, roles = AccountRoles),
+            val courierDetails: AccessTokenData = AccessTokenData(                            
+                additonalClaims = AdditionalAccessTokenClaims(accountID = courierId, roles = accountRoles),
                 accountName = courierName
             )
             val authenticationToken = UsernamePasswordAuthenticationToken(
