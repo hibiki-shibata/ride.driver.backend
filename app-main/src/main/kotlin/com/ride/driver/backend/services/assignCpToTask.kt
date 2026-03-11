@@ -15,7 +15,7 @@ public class ScheduledTasks (
     private val courierProfileRepository: CourierProfileRepository,
     private val taskRepository: TaskRepository
 ){
-	@Scheduled(fixedRate = 17000) // Run every 17 seconds
+	@Scheduled(fixedRate = 3000) // Run every 17 seconds
     public fun assignCpToTask() {
         val availableTasks: List<Task> = taskRepository.findByTaskStatus(TaskStatus.READY_FOR_ASSIGNMENT)
         if (availableTasks.isEmpty()) return

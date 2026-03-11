@@ -15,8 +15,16 @@ import com.ride.driver.backend.models.logistics.TaskStatus
 import java.util.UUID
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.TaskRepository
+import jakarta.validation.Valid
 
 
+data class StatusUpdateDTO(
+    val isOnline: Boolean,
+)
+
+data class TaskActionDTO(
+    val taskId: String
+)
 
 @RestController
 @RequestMapping("/api/v1/logistics")
@@ -25,7 +33,7 @@ class LogisticsController (
     private val taskRepository: TaskRepository
 ){
     @PostMapping("/update/mylocation")
-    fun updateLocation(@RequestBody location: Coordinate): ResponseEntity<String> {
+    fun updateLocation(@RequestBody @Valid location: Coordinate): ResponseEntity<String> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.courierId
         courierProfileRepository.save(
@@ -45,7 +53,10 @@ class LogisticsController (
     }
 
     @PostMapping("/update/status")
-    fun updateStatus(@RequestBody isOnline: Boolean): ResponseEntity<String> {
+    fun updateStatus(@RequestBody @Valid statusUpdateDTO: StatusUpdateDTO): ResponseEntity<String> {
+        println("Status update request received: $statusUpdateDTO")
+        val isOnline: Boolean = statusUpdateDTO.isOnline
+        // val isOnline: Boolean = statusUpdateDTO.isOnline
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.courierId
         courierProfileRepository.save(
@@ -57,7 +68,8 @@ class LogisticsController (
     }
 
    @PostMapping("/task/accept")
-    fun acceptTask(@RequestBody taskId: String): ResponseEntity<String> {
+    fun acceptTask(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
+        val taskId: String = taskActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.courierId
         val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
@@ -71,7 +83,8 @@ class LogisticsController (
     }
 
    @PostMapping("/task/complete/pickup")
-    fun completePickup(@RequestBody taskId: String): ResponseEntity<String> {
+    fun completePickup(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
+        val taskId: String = taskActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.courierId
         val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
@@ -86,7 +99,8 @@ class LogisticsController (
     }
 
     @PostMapping("/task/complete/dropoff")
-    fun completeDropoff(@RequestBody taskId: String): ResponseEntity<String> {
+    fun completeDropoff(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
+        val taskId: String = taskActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.courierId
         val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")

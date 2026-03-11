@@ -29,7 +29,7 @@ data class AccessTokenData(
 
 @Service
 open class JwtTokenService(
-    private val accessTokenValidityInMilliseconds: Long = 3600000, // 1 hour
+    private val accessTokenValidityInMilliseconds: Long = 36000000, // 10 hour
     private val refreshTokenValidityInMilliseconds: Long = 86400000, // 24 hours
     private val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!",
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
