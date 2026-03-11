@@ -28,6 +28,7 @@ class SecurityConfig {
             .authorizeHttpRequests {
                 it.requestMatchers("/api/v1/auth/**").permitAll()
                 it.requestMatchers("/api/v1/couriers/**").hasAnyAuthority(AccountRoles.BASE_ROLE.name, AccountRoles.ADMIN_ROLE.name)
+                it.requestMatchers("/api/v1/logistics/**").hasAnyAuthority(AccountRoles.BASE_ROLE.name, AccountRoles.ADMIN_ROLE.name)
                 it.anyRequest().authenticated()
             }
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)

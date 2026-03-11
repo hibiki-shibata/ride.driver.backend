@@ -32,7 +32,7 @@ class JwtFilter(
             if (!jwtTokenService.isTokenValid(jwtToken)) throw Exception("Invalid or expired JWT token")
             val courierId: UUID = jwtTokenService.extractAccountId(jwtToken)
             val courierName: String = jwtTokenService.extractAccountName(jwtToken)
-            val AccountRoles: List<AccountRoles> = jwtTokenService.extractRoles(jwtToken)
+            val accountRoles: List<AccountRoles> = jwtTokenService.extractRoles(jwtToken)
             val courierDetails: AccessTokenData = AccessTokenData(            
                 additonalClaims = AdditionalAccessTokenClaims(accountID = courierId, roles = AccountRoles),
                 accountName = courierName
@@ -40,7 +40,7 @@ class JwtFilter(
             val authenticationToken = UsernamePasswordAuthenticationToken(
                 courierDetails, // principal
                 null, // credentials
-                AccountRoles.map { SimpleGrantedAuthority(it.name) } // authorities
+                accountRoles.map { SimpleGrantedAuthority(it.name) } // authorities
             )
             authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
             SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that business logic can use it
