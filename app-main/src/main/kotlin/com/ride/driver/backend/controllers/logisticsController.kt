@@ -76,6 +76,7 @@ class LogisticsController (
         val courierId: UUID = courierDetails.additonalClaims.courierId
         val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
+        if (assignedTask.taskStatus != TaskStatus.IN_PICKUP) return ResponseEntity.status(400).body("Cannot complete pickup for task that is not in PICKUP status")
         taskRepository.save(
             assignedTask.copy(
                 taskStatus = TaskStatus.IN_DROPOFF
@@ -90,11 +91,20 @@ class LogisticsController (
         val courierId: UUID = courierDetails.additonalClaims.courierId
         val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
+        if (assignedTask.taskStatus != TaskStatus.IN_DROPOFF) return ResponseEntity.status(400).body("Cannot complete dropoff for task that is not in DROPOFF status")
         taskRepository.save(
             assignedTask.copy(
                 taskStatus = TaskStatus.DELIVERED
             )
         )
         return ResponseEntity.ok("Dropoff for task $taskId completed successfully")
+    }
+    
+    @GetMapping("/task/history")
+    fun getTaskHistory(): ResponseEntity<List<Task>> {
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val taskHistory: List<Task> = taskRepository.findByAssignedCourierIdAndTaskStatus(courierId, TaskStatus.DELIVERED)
+        return ResponseEntity.ok(taskHistory)
     }
 }

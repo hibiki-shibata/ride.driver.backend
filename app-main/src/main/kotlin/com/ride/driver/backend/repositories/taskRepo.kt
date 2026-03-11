@@ -14,5 +14,6 @@ open interface TaskRepository : CrudRepository<Task, Long> {
    fun save(courierProfile: Task): Task
    fun findByAssignedCourierId(assignedCourierId: UUID): Task?
    fun findByTaskStatus(taskStatus: TaskStatus): List<Task>
+   fun findByAssignedCourierIdAndTaskStatus(assignedCourierId: UUID, taskStatus: TaskStatus): List<Task>
    fun findAll(pageable: Pageable): Page<Task>
 }

@@ -73,5 +73,5 @@ class CourierProfileController (
             )
         }
         return ResponseEntity.ok(courierDTOs)
-    }   
+    }
 }
