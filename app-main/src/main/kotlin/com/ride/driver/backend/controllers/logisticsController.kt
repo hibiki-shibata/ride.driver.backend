@@ -35,7 +35,7 @@ class LogisticsController (
     @PostMapping("/update/mylocation")
     fun updateLocation(@RequestBody @Valid location: Coordinate): ResponseEntity<String> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val courierId: UUID = courierDetails.additonalClaims.accountID
         courierProfileRepository.save(
             courierProfileRepository.findById(courierId)?.copy(
                 currentLocation = location                
@@ -47,7 +47,7 @@ class LogisticsController (
     @GetMapping("/poll/task")
     fun pollForTask(): ResponseEntity<Task> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val courierId: UUID = courierDetails.additonalClaims.accountID
         val assignedTask: Task? = taskRepository.findByAssignedCourierId(courierId) ?: null
         return if (assignedTask != null) ResponseEntity.ok(assignedTask) else ResponseEntity.status(204).build()        
     }
@@ -58,7 +58,7 @@ class LogisticsController (
         val isOnline: Boolean = statusUpdateDTO.isOnline
         // val isOnline: Boolean = statusUpdateDTO.isOnline
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val courierId: UUID = courierDetails.additonalClaims.accountID
         courierProfileRepository.save(
             courierProfileRepository.findById(courierId)?.copy(
                 cpStatus = if (isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
@@ -71,7 +71,7 @@ class LogisticsController (
     fun acceptTask(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
         val taskId: String = taskActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val courierId: UUID = courierDetails.additonalClaims.accountID
         val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
         taskRepository.save(
@@ -86,7 +86,7 @@ class LogisticsController (
     fun completePickup(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
         val taskId: String = taskActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val courierId: UUID = courierDetails.additonalClaims.accountID
         val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
         if (assignedTask.taskStatus != TaskStatus.IN_PICKUP) return ResponseEntity.status(400).body("Cannot complete pickup for task that is not in PICKUP status")
@@ -102,7 +102,7 @@ class LogisticsController (
     fun completeDropoff(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
         val taskId: String = taskActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val courierId: UUID = courierDetails.additonalClaims.accountID
         val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
         if (assignedTask.taskStatus != TaskStatus.IN_DROPOFF) return ResponseEntity.status(400).body("Cannot complete dropoff for task that is not in DROPOFF status")
@@ -117,7 +117,7 @@ class LogisticsController (
     @GetMapping("/task/history")
     fun getTaskHistory(): ResponseEntity<List<Task>> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.courierId
+        val courierId: UUID = courierDetails.additonalClaims.accountID
         val taskHistory: List<Task> = taskRepository.findByAssignedCourierIdAndTaskStatus(courierId, TaskStatus.DELIVERED)
         return ResponseEntity.ok(taskHistory)
     }

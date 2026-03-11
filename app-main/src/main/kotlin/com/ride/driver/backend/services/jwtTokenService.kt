@@ -11,20 +11,20 @@ import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
 import com.ride.driver.backend.exceptions.AuthenticationException
 
-enum class CourierRoles {
+enum class AccountRoles {
     BASE_ROLE,
     ADMIN_ROLE,
     DEVELOPER_ROLE
 }
 
 data class AdditionalAccessTokenClaims(
-    val courierId: UUID,
-    val roles: List<CourierRoles>,
+    val accountID: UUID,
+    val roles: List<AccountRoles>,
 )
 
 data class AccessTokenData(
     val additonalClaims: AdditionalAccessTokenClaims,
-    val courierName: String,
+    val accountName: String,
 )
 
 @Service
@@ -35,16 +35,16 @@ open class JwtTokenService(
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
 ) {    
     fun generateAccessToken(
-        courierTokenData: AccessTokenData
+        accountTokenData: AccessTokenData
     ): String {
         val now = System.currentTimeMillis()
         val additionalClaims =  mapOf(
-            "roles" to courierTokenData.additonalClaims.roles.map { it.name },
-            "courierId" to courierTokenData.additonalClaims.courierId
+            "roles" to accountTokenData.additonalClaims.roles.map { it.name },
+            "AccountId" to accountTokenData.additonalClaims.accountID.toString()
             )
         return Jwts.builder()
             .setClaims(additionalClaims)
-            .setSubject(courierTokenData.courierName)
+            .setSubject(accountTokenData.accountName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + accessTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -52,11 +52,11 @@ open class JwtTokenService(
     }
 
     fun generateRefreshToken(
-        courierName: String
+        accountName: String
     ): String {
         val now = System.currentTimeMillis()
         return Jwts.builder()
-            .setSubject(courierName)
+            .setSubject(accountName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + refreshTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -71,22 +71,22 @@ open class JwtTokenService(
         return extractAllClaims(token).expiration.before(Date())
     }
 
-    fun extractCourierDetails(token: String): Claims {
-        return extractAllClaims(token) ?: throw AuthenticationException("Courier details not found in token")
+    fun extractAccountDetails(token: String): Claims {
+        return extractAllClaims(token) ?: throw AuthenticationException("Account details not found in token")
     }
 
-    fun extractCouriername(token: String): String {
-        return extractAllClaims(token).subject ?: throw AuthenticationException("CourierName not found in token")
+    fun extractAccountName(token: String): String {
+        return extractAllClaims(token).subject ?: throw AuthenticationException("Account Name not found in token")
     }
 
-    fun extractCourierId(token: String): UUID {
+    fun extractAccountId(token: String): UUID {
         val claims = extractAllClaims(token)
-        return UUID.fromString(claims["courierId"].toString() ?: throw AuthenticationException("Courier ID not found in token"))
+        return UUID.fromString(claims["AccountId"].toString() ?: throw AuthenticationException("Account ID not found in token"))
     }
 
-    fun extractRoles(token: String): List<CourierRoles> {
+    fun extractRoles(token: String): List<AccountRoles> {
         val claims = extractAllClaims(token)
-        return (claims["roles"] as List<*>).map { CourierRoles.valueOf(it.toString()) }
+        return (claims["roles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
     }
 
     private fun extractAllClaims(token: String): Claims {

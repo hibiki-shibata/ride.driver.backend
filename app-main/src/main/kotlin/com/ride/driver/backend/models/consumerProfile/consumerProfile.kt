@@ -32,7 +32,7 @@ data class ConsumerProfile(
     val cxLastName: String,
 
     @Column(name = "email_address", unique = true, nullable = false)
-    val email_address: String,
+    val emailAddress: String,
 
     @Column(name = "hash_password", nullable = false)
     val hashPassword: String,
