@@ -38,6 +38,11 @@ data class ConsumerSignInDTO(
     val password: String
 )
 
+data class ConsumerLoginDTO(
+    val emailAddress: String,
+    val password: String
+)
+
 data class JwtTokensDTO(val accessToken: String, val refreshToken: String? = null)
 
 @RestController
@@ -120,7 +125,45 @@ class AuthController(
         ))
         println("New consumer registered with ID: ${savedConsumer}")
         if (savedConsumer.id == null) throw Exception("Failed to save new consumer profile")
+        val accessToken: String = jwtTokenService.generateAccessToken(
+            AccessTokenData(
+                additonalClaims = AdditionalAccessTokenClaims(
+                    accountID = savedConsumer.id,
+                    roles = listOf(AccountRoles.BASE_ROLE)
+                ),
+                accountName = savedConsumer.cxFirstName + " " + savedConsumer.cxLastName
+            )
+        )
+        val refreshToken = jwtTokenService.generateRefreshToken(savedConsumer.cxFirstName + " " + savedConsumer.cxLastName)
         return ResponseEntity.ok("Consumer signup endpoint is under construction.")
+    }
+
+    @PostMapping("/consumer/login")
+    fun consumerLogin(@RequestBody @Valid req: ConsumerLoginDTO): ResponseEntity<Pair<JwtTokensDTO, ConsumerSignInDTO>> {
+        val savedConsumer: ConsumerProfile = consumerProfileRepository.findByEmailAddress(req.emailAddress) ?: 
+            throw BadRequestException("Consumer with email address ${req.emailAddress} does not exist. Please sign up first.")
+        if (req.password.hashCode().toString() != savedConsumer.hashPassword) throw BadRequestException("Incorrect password for email address ${req.emailAddress}")
+        val accessToken: String = jwtTokenService.generateAccessToken(
+            AccessTokenData(
+                additonalClaims = AdditionalAccessTokenClaims(
+                    accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
+                    roles = listOf(AccountRoles.BASE_ROLE)
+                ),
+                accountName = savedConsumer.cxFirstName + " " + savedConsumer.cxLastName
+            )
+        )
+        val refreshToken: String = jwtTokenService.generateRefreshToken(savedConsumer.cxFirstName + " " + savedConsumer.cxLastName)
+        return ResponseEntity.ok(
+            Pair(
+                JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken),
+                ConsumerSignInDTO(
+                    cxFirstName = savedConsumer.cxFirstName,
+                    cxLastName = savedConsumer.cxLastName,
+                    emailAddress = savedConsumer.emailAddress,
+                    password = "Your password is securely stored and cannot be retrieved. If you forgot your password, please use the password reset option."
+                )
+            )
+        )
     }
 
     @PostMapping("/refresh-token")
