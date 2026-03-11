@@ -1,33 +1,23 @@
 // https://spring.io/guides/gs/accessing-data-jpa
-package com.ride.driver.backend.models.courierProfile
+package com.ride.driver.backend.models.consumerProfile
 
 import java.util.UUID
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
-import jakarta.validation.constraints.NotBlank
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.JoinColumn
 import jakarta.persistence.Index
 import jakarta.persistence.Column
-import jakarta.persistence.Embedded
-import jakarta.persistence.AttributeOverrides
-import jakarta.persistence.AttributeOverride
-import com.ride.driver.backend.models.Coordinate
 
-// @Entity
-// @Table(
-//     name = "consumer_profile",
-//     indexes = [
-        // Index(name = "idx_courier_phone_number", columnList = "phone_number"),
-        // Index(name = "idx_courier_area_id", columnList = "operation_area_id"),
-        // Index(name = "idx_courier_status", columnList = "cp_status")
-//     ]
-// )
+@Entity
+@Table(
+    name = "consumer_profile",
+    indexes = [
+        Index(name = "idx_consumer_email_address", columnList = "email_address"),
+        Index(name = "idx_consumer__id", columnList = "id"),
+    ]
+)
 
 data class ConsumerProfile(    
     @Id
