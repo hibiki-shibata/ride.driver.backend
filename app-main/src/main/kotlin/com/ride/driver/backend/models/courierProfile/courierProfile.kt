@@ -49,7 +49,7 @@ data class CourierProfile(
     val vehicleType: VehicleType,
 
     @Column(name = "password_hash")
-    val passwordHash: String? = null,
+    val passwordHash: String,
 
     @Column(name = "cp_rate")
     val cpRate: Double? = null,

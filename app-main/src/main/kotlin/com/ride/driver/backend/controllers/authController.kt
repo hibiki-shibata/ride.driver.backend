@@ -20,11 +20,13 @@ data class CourierBasicInfoDTO(
     val cpFirstName: String,
     val cpLastName: String,
     val phoneNumber: String,
+    val password: String,
     val vehicleType: VehicleType,
 )
 
 data class CourierLoginDTO(
-    val phoneNumber: String
+    val phoneNumber: String,
+    val password: String
 )
 
 data class JwtTokensDTO(val accessToken: String, val refreshToken: String? = null)
@@ -44,6 +46,7 @@ class AuthController(
             cpFirstName = req.cpFirstName,
             cpLastName = req.cpLastName,
             phoneNumber = req.phoneNumber,
+            passwordHash = req.password.hashCode().toString(), // Simple hash for demonstration. Use a proper hashing algorithm in production.
             vehicleType = req.vehicleType,
             currentLocation = Coordinate(latitude = 0.0, longitude = 0.0), // Default location for new couriers
             cpStatus = CourierStatus.ONBOARDING
@@ -68,6 +71,7 @@ class AuthController(
     fun login(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<Pair<JwtTokensDTO, CourierBasicInfoDTO>> {
         val savedCourier: CourierProfile = repository.findByPhoneNumber(req.phoneNumber) ?: 
             throw BadRequestException("Courier with phone number ${req.phoneNumber} does not exist. Please sign up first.")
+        if (req.password.hashCode().toString() != savedCourier.passwordHash) throw BadRequestException("Incorrect password for phone number ${req.phoneNumber}")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
                 additonalClaims = AdditionalAccessTokenClaims(
@@ -86,6 +90,7 @@ class AuthController(
                     cpFirstName = savedCourier.cpFirstName,
                     cpLastName = savedCourier.cpLastName,
                     phoneNumber = savedCourier.phoneNumber,
+                    password = "Your password is securely stored and cannot be retrieved. If you forgot your password, please use the password reset option.", 
                     vehicleType = savedCourier.vehicleType
                 )
             )
