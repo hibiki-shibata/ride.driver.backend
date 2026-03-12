@@ -12,7 +12,8 @@ import java.util.UUID
 @Repository
 open interface TaskRepository : CrudRepository<Task, Long> {
    fun save(courierProfile: Task): Task
-   fun findByAssignedCourierId(assignedCourierId: UUID): Task?
+   fun findByAssignedCourierId(assignedCourierId: UUID): Task
+   fun findByConsumerId(consumerId: UUID): List<Task>
    fun findByTaskStatus(taskStatus: TaskStatus): List<Task>
    fun findByAssignedCourierIdAndTaskStatus(assignedCourierId: UUID, taskStatus: TaskStatus): List<Task>
    fun findAll(pageable: Pageable): Page<Task>

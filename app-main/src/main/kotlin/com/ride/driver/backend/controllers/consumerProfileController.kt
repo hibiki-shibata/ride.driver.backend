@@ -3,15 +3,14 @@ package com.ride.driver.backend.controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import com.ride.driver.backend.repositories.ConsumerProfileRepository
+import com.ride.driver.backend.repositories.TaskRepository
 import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
+import com.ride.driver.backend.models.logistics.Task
 import com.ride.driver.backend.services.AccessTokenData
 import java.util.UUID
 
@@ -21,10 +20,18 @@ data class ConsumerProfileDTO(
     val emailAddress: String,
 )
 
+data class ConsumerOrderHistoryDTO(
+    val venueName: String,
+    val orderDate: String,
+    val orderStatus: String,
+)
+
+
 @RestController
 @RequestMapping("api/v1/consumers")
 class ConsumerProfileController (   
     private val consumerProfileRepository: ConsumerProfileRepository,
+    private val taskRepository: TaskRepository
 ){
     @GetMapping("/consumer/me")
     fun findConsumerProfile(): ResponseEntity<ConsumerProfileDTO> {        
@@ -39,5 +46,21 @@ class ConsumerProfileController (
             emailAddress = consumer.emailAddress
          )
         )
+    }
+
+    @GetMapping("/consumer/order-history")
+    fun findConsumerOrderHistory(): ResponseEntity<List<ConsumerOrderHistoryDTO>> {
+        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val consumerId: UUID = consumerDetails.additonalClaims.accountID
+        val tasks: List<Task> = taskRepository.findByConsumerId(consumerId)
+        return ResponseEntity.ok(
+            tasks.map { task ->
+                ConsumerOrderHistoryDTO(
+                    venueName = task.venueName,
+                    orderDate = task.orderTime.toString(),
+                    orderStatus = task.taskStatus.toString()
+                )
+            }
+        )        
     }
 }

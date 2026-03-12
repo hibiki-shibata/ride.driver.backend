@@ -23,6 +23,7 @@ import java.util.UUID
     name = "Task",
     indexes = [
         Index(name = "idx_assigned_courier_id", columnList = "assigned_courier_id"),
+        Index(name = "idx_consumer_id", columnList = "consumer_id"),
         Index(name = "idx_task_status", columnList = "task_status")
     ]
 )
@@ -38,6 +39,9 @@ data class Task(
 
     @Column(name = "consumer_id", nullable = false)
     val consumerId: UUID,
+
+    @Column(name = "order_time", nullable = false)
+    val orderTime: Long = System.currentTimeMillis(),
 
     @Embedded
     @AttributeOverrides(
