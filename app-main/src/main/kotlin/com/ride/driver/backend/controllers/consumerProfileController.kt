@@ -1,6 +1,9 @@
 package com.ride.driver.backend.controller
 
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
@@ -63,4 +66,29 @@ class ConsumerProfileController (
             }
         )        
     }
+
+    @PostMapping("/consumer/update")
+    fun updateConsumerProfile(@RequestBody consumerProfileDTO: ConsumerProfileDTO): ResponseEntity<ConsumerProfileDTO> {
+        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData 
+            ?: return ResponseEntity.status(401).build()
+        val consumerId: UUID = consumerDetails.additonalClaims.accountID        
+        val consumerDetailsInDb: ConsumerProfile = consumerProfileRepository.findById(consumerId) 
+            ?: throw Exception("Consumer not found with ID: $consumerId")
+        if (consumerProfileDTO.emailAddress != consumerDetailsInDb.emailAddress)
+             throw Exception("Email address cannot be updated to a different value than the original email address used during registration") 
+        if (consumerProfileRepository.existsByEmailAddress(consumerProfileDTO.emailAddress)) 
+            throw Exception("Email address ${consumerProfileDTO.emailAddress} is already in use by another consumer")
+        
+        val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(
+                consumerDetailsInDb.copy(emailAddress = consumerProfileDTO.emailAddress)
+        )
+        return ResponseEntity.ok(
+            ConsumerProfileDTO(
+                id = updatedConsumerProfile.id,
+                name = updatedConsumerProfile.cxFirstName + " " + updatedConsumerProfile.cxLastName,
+                emailAddress = updatedConsumerProfile.emailAddress
+             )
+         )                
+    }
 }
+        
