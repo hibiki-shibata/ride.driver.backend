@@ -29,7 +29,7 @@ public class ScheduledTasks (
             val courierToAssign: CourierProfile = shuffledCouriers.firstOrNull() ?: return // No more couriers available            
             taskRepository.save(
                 task.copy(
-                    assignedCourierId = courierToAssign.id,
+                    assignedCourierId = courierToAssign.id ?: throw Exception("Failed to assign courier to task: Courier ID is null"),
                 )
             )
             shuffledCouriers = shuffledCouriers.drop(1) // Remove the assigned courier from the list

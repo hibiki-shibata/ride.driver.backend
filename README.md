@@ -13,6 +13,8 @@ git clone https://github.com/hibiki-shibata/ride.driver.backend
 3. Prepare local DB with Postgres
 ```bash
 docker pull postgres
+```
+```bash
 docker run -p 5432:5432 -d \
     --name postgres \
     -e POSTGRES_PASSWORD=postgres \

@@ -34,7 +34,10 @@ data class Task(
     val id: Long? = null,
 
     @Column(name = "assigned_courier_id", nullable = false)
-    val assignedCourierId: UUID?,
+    val assignedCourierId: UUID,
+
+    @Column(name = "consumer_id", nullable = false)
+    val consumerId: UUID,
 
     @Embedded
     @AttributeOverrides(

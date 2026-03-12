@@ -31,7 +31,8 @@ class DbDemoDataInitializerConfig {
             )
         }
 
-        courierProfileRepository.save(
+
+        val john: CourierProfile = courierProfileRepository.save(
             CourierProfile(
                 cpFirstName = "John",
                 cpLastName = "Doe",
@@ -46,7 +47,7 @@ class DbDemoDataInitializerConfig {
             )
         )
 
-        courierProfileRepository.save(
+        val jane: CourierProfile = courierProfileRepository.save(
             CourierProfile(
                 cpFirstName = "Jane",
                 cpLastName = "Smith",
@@ -56,11 +57,12 @@ class DbDemoDataInitializerConfig {
                 cpRate = 4.8,
                 cpStatus = CourierStatus.ONLINE,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
+                operationArea = operationAreaRepository.findByName("Tokyo")?.firstOrNull(),
                 cpComments = "Fast and efficient"
             )
         )
 
-        courierProfileRepository.save(
+        val alice: CourierProfile = courierProfileRepository.save(
             CourierProfile(
                 cpFirstName = "Alice",
                 cpLastName = "Johnson",
@@ -70,12 +72,15 @@ class DbDemoDataInitializerConfig {
                 cpRate = 4.2,
                 cpStatus = CourierStatus.ONBOARDING,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
+                operationArea = operationAreaRepository.findByName("Tokyo")?.firstOrNull(),
                 cpComments = "New courier"
             )
         )
+        
         taskRepository.save(
             Task(
                 assignedCourierId = UUID.randomUUID(),
+                consumerId = alice.id ?: throw Exception("Alice ID is null"),
                 pickupLocation = Coordinate(latitude = 35.6895, longitude = 139.6917),
                 dropoffLocation = Coordinate(latitude = 35.6762, longitude = 139.6503),
                 consumerName = "hibiki",
@@ -87,6 +92,7 @@ class DbDemoDataInitializerConfig {
         taskRepository.save(
             Task(
                 assignedCourierId = UUID.randomUUID(),
+                consumerId = john.id ?: throw Exception("John ID is null"),
                 pickupLocation = Coordinate(latitude = 33.6895, longitude = 129.6917),
                 dropoffLocation = Coordinate(latitude = 35.6762, longitude = 139.6503),
                 consumerName = "Shibata",
