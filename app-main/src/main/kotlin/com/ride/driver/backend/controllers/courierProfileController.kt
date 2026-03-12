@@ -11,10 +11,13 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import com.ride.driver.backend.repositories.CourierProfileRepository
+import com.ride.driver.backend.repositories.TaskRepository
 import com.ride.driver.backend.models.courierProfile.CourierProfile
 import com.ride.driver.backend.models.courierProfile.OperationArea
 import com.ride.driver.backend.models.courierProfile.VehicleType
 import com.ride.driver.backend.models.courierProfile.CourierStatus
+import com.ride.driver.backend.models.logistics.Task
+import com.ride.driver.backend.models.logistics.TaskStatus
 import com.ride.driver.backend.services.AccessTokenData
 import java.util.UUID
 
@@ -32,14 +35,15 @@ data class CourierProfileDTO(
 @RestController
 @RequestMapping("api/v1/couriers")
 class CourierProfileController (   
-    private val repository: CourierProfileRepository,
+    private val courierProfileRepository: CourierProfileRepository,
+    private val taskRepository: TaskRepository
 ){
     @GetMapping("/courier/me")
     fun findCourierProfile(): ResponseEntity<CourierProfileDTO> {        
         println("Finding all couriers...")
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.accountID
-        val courier: CourierProfile = repository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
+        val courier: CourierProfile = courierProfileRepository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
         val courierDTO = CourierProfileDTO(
             id = courier.id,
             name = courier.cpFirstName + " " + courier.cpLastName,
@@ -53,25 +57,11 @@ class CourierProfileController (
         return ResponseEntity.ok(courierDTO)
     }
 
-    @GetMapping("/all")
-    fun getAllCouriersPagedAndSorted(
-        @RequestParam page: Int,
-        @RequestParam size: Int
-    ): ResponseEntity<List<CourierProfileDTO>> {
-        val pageable = Pageable.ofSize(size).withPage(page)
-        val courierPage: Page<CourierProfile> = repository.findAll(pageable)
-        val courierDTOs = courierPage.content.map { courier ->
-            CourierProfileDTO(
-                id = courier.id,
-                name = courier.cpFirstName + " " + courier.cpLastName,
-                phoneNumber = courier.phoneNumber,
-                vehicleType = courier.vehicleType,
-                rate = courier.cpRate,
-                status = courier.cpStatus,
-                operationArea = courier.operationArea,
-                comments = courier.cpComments
-            )
-        }
-        return ResponseEntity.ok(courierDTOs)
+    @GetMapping("/courier/task-history")
+    fun getTaskHistory(): ResponseEntity<List<Task>> {
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val courierId: UUID = courierDetails.additonalClaims.accountID
+        val taskHistory: List<Task> = taskRepository.findByAssignedCourierIdAndTaskStatus(courierId, TaskStatus.DELIVERED)
+        return ResponseEntity.ok(taskHistory)
     }
 }

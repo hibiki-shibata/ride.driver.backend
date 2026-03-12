@@ -17,7 +17,7 @@ open interface CourierProfileRepository : CrudRepository<CourierProfile, Long> {
    fun findById(id: UUID): CourierProfile?
    fun findByCpStatus(cpStatus: CourierStatus): List<CourierProfile>
    fun findByPhoneNumber(phoneNumber: String): CourierProfile?
-   fun findAll(pageable: Pageable): Page<CourierProfile>
+//    fun findAll(pageable: Pageable): Page<CourierProfile>
    // next method is for paginated and sorted fetch all courier data but certain page
 }
 

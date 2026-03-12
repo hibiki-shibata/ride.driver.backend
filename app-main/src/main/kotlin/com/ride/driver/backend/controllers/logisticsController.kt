@@ -101,9 +101,11 @@ class LogisticsController (
     @PostMapping("/task/complete/dropoff")
     fun completeDropoff(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
         val taskId: String = taskActionDTO.taskId
-        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData 
+            ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.accountID
-        val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) ?: return ResponseEntity.status(404).body("No task assigned to this courier")
+        val assignedTask: Task = taskRepository.findByAssignedCourierId(courierId) 
+            ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
         if (assignedTask.taskStatus != TaskStatus.IN_DROPOFF) return ResponseEntity.status(400).body("Cannot complete dropoff for task that is not in DROPOFF status")
         taskRepository.save(
@@ -112,13 +114,5 @@ class LogisticsController (
             )
         )
         return ResponseEntity.ok("Dropoff for task $taskId completed successfully")
-    }
-    
-    @GetMapping("/task/history")
-    fun getTaskHistory(): ResponseEntity<List<Task>> {
-        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.accountID
-        val taskHistory: List<Task> = taskRepository.findByAssignedCourierIdAndTaskStatus(courierId, TaskStatus.DELIVERED)
-        return ResponseEntity.ok(taskHistory)
-    }
+    }    
 }
