@@ -9,6 +9,10 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Table
 import jakarta.persistence.Index
 import jakarta.persistence.Column
+import jakarta.persistence.Embedded
+import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.AttributeOverride
+import com.ride.driver.backend.models.Coordinate
 
 @Entity
 @Table(
@@ -34,6 +38,15 @@ data class ConsumerProfile(
     @Column(name = "email_address", unique = true, nullable = false)
     val emailAddress: String,
 
+    @Embedded
+    @AttributeOverrides(
+        AttributeOverride(name = "latitude", column = Column(name = "latitude")),
+        AttributeOverride(name = "longitude", column = Column(name = "longitude"))
+    )
+    val homeAddressCoordinate: Coordinate,
+
+    @Column(name = "home_address", nullable = false)
+    val homeAddress: String,
     @Column(name = "hash_password", nullable = false)
     val hashPassword: String,
 )

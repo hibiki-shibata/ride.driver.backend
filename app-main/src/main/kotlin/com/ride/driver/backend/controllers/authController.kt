@@ -34,6 +34,8 @@ data class CourierLoginDTO(
 data class ConsumerSignInDTO(
     val cxFirstName: String,
     val cxLastName: String,
+    val homeAddress: String,
+    val homeAddressCoordinate: Coordinate,
     val emailAddress: String,
     val password: String
 )
@@ -105,7 +107,7 @@ class AuthController(
                     cpFirstName = savedCourier.cpFirstName,
                     cpLastName = savedCourier.cpLastName,
                     phoneNumber = savedCourier.phoneNumber,
-                    password = "Your password is securely stored and cannot be retrieved. If you forgot your password, please use the password reset option.", 
+                    password = "Your password is securely stored and cannot be retrieved. If you forgot your password, please use the password reset option.",
                     vehicleType = savedCourier.vehicleType
                 )
             )
@@ -121,6 +123,8 @@ class AuthController(
             cxFirstName = req.cxFirstName,
             cxLastName = req.cxLastName,
             emailAddress = req.emailAddress,
+            homeAddress = req.homeAddress,
+            homeAddressCoordinate = req.homeAddressCoordinate,
             hashPassword = req.password.hashCode().toString() // Simple hash for demonstration. Use a proper hashing algorithm in production.
         ))
         println("New consumer registered with ID: ${savedConsumer}")
@@ -159,6 +163,8 @@ class AuthController(
                 ConsumerSignInDTO(
                     cxFirstName = savedConsumer.cxFirstName,
                     cxLastName = savedConsumer.cxLastName,
+                    homeAddress = savedConsumer.homeAddress,
+                    homeAddressCoordinate = savedConsumer.homeAddressCoordinate,
                     emailAddress = savedConsumer.emailAddress,
                     password = "Your password is securely stored and cannot be retrieved. If you forgot your password, please use the password reset option."
                 )
