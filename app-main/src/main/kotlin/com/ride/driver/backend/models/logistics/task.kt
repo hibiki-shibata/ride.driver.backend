@@ -35,10 +35,13 @@ data class Task(
     val id: Long? = null,
 
     @Column(name = "assigned_courier_id", nullable = false)
-    val assignedCourierId: UUID,
+    val assignedCourierId: UUID? = null,
 
     @Column(name = "consumer_id", nullable = false)
     val consumerId: UUID,
+
+    @Column(name = "venue_id", nullable = false)
+    val venueId: UUID,
 
     @Column(name = "order_time", nullable = false)
     val orderTime: Long = System.currentTimeMillis(),

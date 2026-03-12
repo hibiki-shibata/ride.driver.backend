@@ -13,7 +13,9 @@ import org.springframework.data.domain.Pageable
 import com.ride.driver.backend.repositories.ConsumerProfileRepository
 import com.ride.driver.backend.repositories.TaskRepository
 import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
+import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.models.logistics.Task
+import com.ride.driver.backend.models.logistics.TaskStatus
 import com.ride.driver.backend.services.AccessTokenData
 import java.util.UUID
 
@@ -27,6 +29,12 @@ data class ConsumerOrderHistoryDTO(
     val venueName: String,
     val orderDate: String,
     val orderStatus: String,
+)
+
+data class CreateConsumerOrderDTO(
+    val venueID: UUID,
+    val pickupLocation: Coordinate,
+    val dropoffLocation: Coordinate
 )
 
 
@@ -51,21 +59,6 @@ class ConsumerProfileController (
         )
     }
 
-    @GetMapping("/consumer/order-history")
-    fun findConsumerOrderHistory(): ResponseEntity<List<ConsumerOrderHistoryDTO>> {
-        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val consumerId: UUID = consumerDetails.additonalClaims.accountID
-        val tasks: List<Task> = taskRepository.findByConsumerId(consumerId)
-        return ResponseEntity.ok(
-            tasks.map { task ->
-                ConsumerOrderHistoryDTO(
-                    venueName = task.venueName,
-                    orderDate = task.orderTime.toString(),
-                    orderStatus = task.taskStatus.toString()
-                )
-            }
-        )        
-    }
 
     @PostMapping("/consumer/update")
     fun updateConsumerProfile(@RequestBody consumerProfileDTO: ConsumerProfileDTO): ResponseEntity<ConsumerProfileDTO> {
@@ -88,7 +81,41 @@ class ConsumerProfileController (
                 name = updatedConsumerProfile.cxFirstName + " " + updatedConsumerProfile.cxLastName,
                 emailAddress = updatedConsumerProfile.emailAddress
              )
-         )                
+         )
+
+    @GetMapping("/consumer/order/history")
+    fun findConsumerOrderHistory(): ResponseEntity<List<ConsumerOrderHistoryDTO>> {
+        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val consumerId: UUID = consumerDetails.additonalClaims.accountID
+        val tasks: List<Task> = taskRepository.findByConsumerId(consumerId)
+        return ResponseEntity.ok(
+            tasks.map { task ->
+                ConsumerOrderHistoryDTO(
+                    venueName = task.venueName,
+                    orderDate = task.orderTime.toString(),
+                    orderStatus = task.taskStatus.toString()
+                )
+            }
+        )        
+    }         
+
+    @PostMapping("/consumer/order/create")
+    fun createConsumerOrder(@RequestBody createConsumerOrderDTO: CreateConsumerOrderDTO): ResponseEntity<String> {
+        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val consumerId: UUID = consumerDetails.additonalClaims.accountID
+        taskRepository.save(
+            Task(
+                consumerId = consumerId,
+                venueId = createConsumerOrderDTO.venueID,
+                pickupLocation = createConsumerOrderDTO.pickupLocation,
+                dropoffLocation = createConsumerOrderDTO.dropoffLocation,
+                consumerName = consumerDetails.accountName,
+                venueName = "NEED TO CHANGE AFTER IMPLEMENTING VENUE SERVICE",
+                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
+            )
+        )
+        return ResponseEntity.ok("Order created successfully")
     }
+  }
 }
         

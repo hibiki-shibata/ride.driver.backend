@@ -84,6 +84,7 @@ class DbDemoDataInitializerConfig {
                 pickupLocation = Coordinate(latitude = 35.6895, longitude = 139.6917),
                 dropoffLocation = Coordinate(latitude = 35.6762, longitude = 139.6503),
                 consumerName = "hibiki",
+                venueId = UUID.randomUUID(),
                 venueName = "KFC",
                 taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
             )
@@ -96,6 +97,7 @@ class DbDemoDataInitializerConfig {
                 pickupLocation = Coordinate(latitude = 33.6895, longitude = 129.6917),
                 dropoffLocation = Coordinate(latitude = 35.6762, longitude = 139.6503),
                 consumerName = "Shibata",
+                venueId = UUID.randomUUID(),
                 venueName = "FIve guys",
                 taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
             )
