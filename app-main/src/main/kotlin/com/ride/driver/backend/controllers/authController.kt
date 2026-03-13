@@ -136,20 +136,19 @@ class AuthController(
 
     @PostMapping("/refresh-token")
     fun refreshToken(@RequestBody @Valid req: JwtTokensDTO): ResponseEntity<JwtTokensDTO> {
-        val accountId: UUID = jwtTokenService.extractAccountId(req.refreshToken)
-        val accountName: String = jwtTokenService.extractAccountName(req.accessToken)
+        val accountIdOfRefreshToken: UUID = jwtTokenService.extractAccountId(req.refreshToken)
+        val acccountIdOfAccessToken: UUID = jwtTokenService.extractAccountId(req.accessToken)
+        if (accountIdOfRefreshToken != acccountIdOfAccessToken) throw BadRequestException("Account ID in refresh token does not match account ID in access token")
         if (!jwtTokenService.isTokenValid(req.refreshToken)) throw BadRequestException("Invalid or expired refresh token")
-        // val savedCourier: CourierProfile = repository.findById(courierId)
-        //     ?: throw BadRequestException("Courier with ID $courierId does not exist.")
-        // if (savedCourier.cpStatus == CourierStatus.SUSPENDED) throw BadRequestException("Courier account is suspended. Cannot refresh token.")        
+        val accountName: String = jwtTokenService.extractAccountName(req.accessToken)
         val newAccessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
-                accountID = accountId,
+                accountID = accountIdOfRefreshToken,
                 accountName = accountName,
                 roles = listOf(AccountRoles.BASE_ROLE)
             )
         )
-        val newRefreshToken: String = jwtTokenService.generateRefreshToken(accountId)
+        val newRefreshToken: String = jwtTokenService.generateRefreshToken(accountIdOfRefreshToken)
         return ResponseEntity.ok(JwtTokensDTO(newAccessToken, newRefreshToken))
     }
 }
