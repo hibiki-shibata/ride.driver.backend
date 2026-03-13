@@ -12,10 +12,12 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import com.ride.driver.backend.repositories.ConsumerProfileRepository
 import com.ride.driver.backend.repositories.TaskRepository
+import com.ride.driver.backend.repositories.VenueProfileRepository
 import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
 import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.models.logistics.Task
 import com.ride.driver.backend.models.logistics.TaskStatus
+import com.ride.driver.backend.models.venueProfile.VenueProfile
 import com.ride.driver.backend.services.AccessTokenData
 import java.util.UUID
 
@@ -42,7 +44,8 @@ data class CreateConsumerOrderDTO(
 @RequestMapping("api/v1/consumers")
 class ConsumerProfileController (   
     private val consumerProfileRepository: ConsumerProfileRepository,
-    private val taskRepository: TaskRepository
+    private val taskRepository: TaskRepository,
+    private val venueProfileRepository: VenueProfileRepository
 ){
     @GetMapping("/consumer/me")
     fun findConsumerProfile(): ResponseEntity<ConsumerProfileDTO> {        
@@ -53,7 +56,7 @@ class ConsumerProfileController (
         return ResponseEntity.ok(
             ConsumerProfileDTO(
             id = consumer.id,
-            name = consumer.cxFirstName + " " + consumer.cxLastName,
+            name = consumer.name,
             emailAddress = consumer.emailAddress
          )
         )
@@ -78,7 +81,7 @@ class ConsumerProfileController (
         return ResponseEntity.ok(
             ConsumerProfileDTO(
                 id = updatedConsumerProfile.id,
-                name = updatedConsumerProfile.cxFirstName + " " + updatedConsumerProfile.cxLastName,
+                name = updatedConsumerProfile.name,
                 emailAddress = updatedConsumerProfile.emailAddress
              )
          )
@@ -87,7 +90,7 @@ class ConsumerProfileController (
     fun findConsumerOrderHistory(): ResponseEntity<List<ConsumerOrderHistoryDTO>> {
         val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val consumerId: UUID = consumerDetails.additonalClaims.accountID
-        val tasks: List<Task> = taskRepository.findByConsumerId(consumerId)
+        val tasks: List<Task> = taskRepository.findByConsumerProfile_Id(consumerId) 
         return ResponseEntity.ok(
             tasks.map { task ->
                 ConsumerOrderHistoryDTO(
@@ -106,13 +109,9 @@ class ConsumerProfileController (
         taskRepository.save(
             Task(
                 consumerProfile = consumerProfileRepository.findById(consumerId) ?: return ResponseEntity.status(404).body("Consumer not found"),
-                venueId = createConsumerOrderDTO.venueID,
-                pickupLocation = createConsumerOrderDTO.pickupLocation,
-                dropoffLocation = createConsumerOrderDTO.dropoffLocation,
-                consumerName = consumerDetails.accountName,
-                venueName = "NEED TO CHANGE AFTER IMPLEMENTING VENUE SERVICE",
-                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
-            )
+                venueProfile = venueProfileRepository.findById(createConsumerOrderDTO.venueID) ?: return ResponseEntity.status(404).body("Venue not found"),                
+                taskStatus = TaskStatus.CREATED
+             )
         )
         return ResponseEntity.ok("Order created successfully")
     }

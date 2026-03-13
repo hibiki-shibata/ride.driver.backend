@@ -61,7 +61,7 @@ class CourierProfileController (
     fun getTaskHistory(): ResponseEntity<List<Task>> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.accountID
-        val taskHistory: List<Task> = taskRepository.findByAssignedCourierIdAndTaskStatus(courierId, TaskStatus.DELIVERED)
+        val taskHistory: List<Task> = taskRepository.findByCourierProfile_IdAndTaskStatus(courierId, TaskStatus.DELIVERED)
         return ResponseEntity.ok(taskHistory)
     }
 }

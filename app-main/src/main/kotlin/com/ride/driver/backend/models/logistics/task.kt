@@ -47,13 +47,13 @@ data class Task(
     val taskNote: String? = null,
 
     @ManyToOne
-    @JoinColumn(name = "assigned_courier", referencedColumnName = "id", insertable = false, updatable = false)
-    val assignedCourier: CourierProfile? = null,
+    @JoinColumn(name = "courierProfile", referencedColumnName = "id", insertable = false, updatable = false)
+    val courierProfile: CourierProfile? = null,
 
     // @Column(name = "consumer_name", nullable = false)
     // val consumerName: String,
     @ManyToOne
-    @JoinColumn(name = "consumer_id", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "consumerProfile", referencedColumnName = "id", insertable = false, updatable = false)
     val consumerProfile: ConsumerProfile,
 
     // @Column(name = "venue_name", nullable = false)

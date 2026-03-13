@@ -29,11 +29,8 @@ data class ConsumerProfile(
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: UUID? = null,
 
-    @Column(name = "cx_first_name", nullable = false)
-    val cxFirstName: String,
-
-    @Column(name = "cx_last_name", nullable = false)
-    val cxLastName: String,
+    @Column(name = "name", nullable = false)
+    val name: String,
 
     @Column(name = "email_address", unique = true, nullable = false)
     val emailAddress: String,

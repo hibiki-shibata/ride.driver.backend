@@ -34,7 +34,7 @@ data class VenueProfile(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    val id: Long? = null,
+    val id: UUID? = null,
 
     @Column(name = "venue_name", nullable = false)
     val venueName: String,
@@ -44,6 +44,9 @@ data class VenueProfile(
 
     @Column(name = "venue_address", nullable = false)
     val venueAddress: String,
+
+    @Column(name = "venue_comments", nullable = true)
+    val venueComments: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "venue_status", nullable = false)

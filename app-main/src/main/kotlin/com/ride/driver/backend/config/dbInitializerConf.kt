@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.OperationAreaRepository
 import com.ride.driver.backend.repositories.TaskRepository
+import com.ride.driver.backend.repositories.VenueProfileRepository
+import com.ride.driver.backend.repositories.ConsumerProfileRepository
 import com.ride.driver.backend.models.courierProfile.CourierProfile
 import com.ride.driver.backend.models.courierProfile.CourierStatus
 import com.ride.driver.backend.models.courierProfile.OperationArea
@@ -13,6 +15,10 @@ import com.ride.driver.backend.models.courierProfile.VehicleType
 import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.models.logistics.Task
 import com.ride.driver.backend.models.logistics.TaskStatus
+import com.ride.driver.backend.models.venueProfile.VenueProfile
+import com.ride.driver.backend.models.venueProfile.VenueStatus
+import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
+
 import java.util.UUID
 
 @Configuration
@@ -21,7 +27,9 @@ class DbDemoDataInitializerConfig {
 	fun databaseInitializer(
             courierProfileRepository: CourierProfileRepository, 
             operationAreaRepository: OperationAreaRepository,
-            taskRepository: TaskRepository
+            taskRepository: TaskRepository,
+            venueProfileRepository: VenueProfileRepository,
+            consumerProfileRepository: ConsumerProfileRepository
     ) = ApplicationRunner {
         // Initialize the database with some default data
         if (operationAreaRepository.findByName("Tokyo").isNullOrEmpty()){
@@ -31,7 +39,7 @@ class DbDemoDataInitializerConfig {
             )
         }
 
-
+// Courier Profiles
         val courierJohn: CourierProfile = courierProfileRepository.save(
             CourierProfile(
                 cpFirstName = "John",
@@ -76,31 +84,73 @@ class DbDemoDataInitializerConfig {
                 cpComments = "New courier"
             )
         )
+    // Consumer Profiles
+        val consumerAlice: ConsumerProfile = consumerProfileRepository.save(
+            ConsumerProfile(
+                name = "Alice Smith",
+                emailAddress = "alicesmith@gmail.com",
+                hashPassword = "hashed_password",
+                homeAddress = "123 Main St, Tokyo",
+                homeAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
+            )
+        )
+        val consumerBob: ConsumerProfile = consumerProfileRepository.save(
+            ConsumerProfile(
+                name = "Bob Johnson",
+                emailAddress = "bobjonhson@gmail.com",
+                hashPassword = "another_hashed_password",
+                homeAddress = "456 Elm St, Tokyo",
+                homeAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
+            )
+        )
+
+
+    // Venue Profiles
+        val venueKfc: VenueProfile = venueProfileRepository.save(
+            VenueProfile(
+                venueName = "KFC",
+                phoneNumber = "111-222-3333",
+                venueStatus = VenueStatus.OPEN,
+                venueAddress = "123 Fried Chicken St, Tokyo",
+                venueAddressCoordiate = Coordinate(latitude = 35.6895, longitude = 139.6917),                
+                venueComments = "Famous fried chicken restaurant"
+            )
+        )
+
+        val venueFiveGuys: VenueProfile = venueProfileRepository.save(
+            VenueProfile(
+                venueName = "Five Guys",
+                phoneNumber = "444-555-6666",
+                venueStatus = VenueStatus.OPEN,
+                venueAddress = "456 Burger Ave, Tokyo",
+                venueAddressCoordiate = Coordinate(latitude = 35.6762, longitude = 139.6503),                
+                venueComments = "Popular burger joint"
+            )
+        )
         
         taskRepository.save(
             Task(
-                assignedCourierId = UUID.randomUUID(),
-                consumerId = alice.id ?: throw Exception("Alice ID is null"),
-                pickupLocation = Coordinate(latitude = 35.6895, longitude = 139.6917),
-                dropoffLocation = Coordinate(latitude = 35.6762, longitude = 139.6503),
-                consumerName = "hibiki",
-                venueId = UUID.randomUUID(),
-                venueName = "KFC",
+                consumerProfile = consumerAlice,
+                venueProfile = venueKfc,          
                 taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
             )
         )
 
         taskRepository.save(
             Task(
-                assignedCourierId = UUID.randomUUID(),
-                consumerId = john.id ?: throw Exception("John ID is null"),
-                pickupLocation = Coordinate(latitude = 33.6895, longitude = 129.6917),
-                dropoffLocation = Coordinate(latitude = 35.6762, longitude = 139.6503),
-                consumerName = "Shibata",
-                venueId = UUID.randomUUID(),
-                venueName = "FIve guys",
-                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
-            )
-        )
+                consumerProfile = consumerBob,
+                venueProfile = venueFiveGuys,
+                taskStatus = TaskStatus.CREATED
+             )
+         )
+
+         taskRepository.save(
+            Task(
+                consumerProfile = consumerAlice,
+                venueProfile = venueFiveGuys,
+                taskStatus = TaskStatus.DELIVERED,
+                courierProfile = courierJohn
+             )
+         )
     }
 }

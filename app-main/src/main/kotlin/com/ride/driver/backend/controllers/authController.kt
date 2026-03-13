@@ -32,8 +32,7 @@ data class CourierLoginDTO(
 )
 
 data class ConsumerSignInDTO(
-    val cxFirstName: String,
-    val cxLastName: String,
+    val name: String,
     val homeAddress: String,
     val homeAddressCoordinate: Coordinate,
     val emailAddress: String,
@@ -120,8 +119,7 @@ class AuthController(
         if (isConsumerExists) throw BadRequestException("Consumer with email address ${req.emailAddress} already exists")
         val savedConsumer: ConsumerProfile = consumerProfileRepository.save(
             ConsumerProfile(
-            cxFirstName = req.cxFirstName,
-            cxLastName = req.cxLastName,
+            name = req.name,
             emailAddress = req.emailAddress,
             homeAddress = req.homeAddress,
             homeAddressCoordinate = req.homeAddressCoordinate,
@@ -135,10 +133,10 @@ class AuthController(
                     accountID = savedConsumer.id,
                     roles = listOf(AccountRoles.BASE_ROLE)
                 ),
-                accountName = savedConsumer.cxFirstName + " " + savedConsumer.cxLastName
+                accountName = savedConsumer.name
             )
         )
-        val refreshToken = jwtTokenService.generateRefreshToken(savedConsumer.cxFirstName + " " + savedConsumer.cxLastName)
+        val refreshToken = jwtTokenService.generateRefreshToken(savedConsumer.name)
         return ResponseEntity.ok("Consumer signup endpoint is under construction.")
     }
 
@@ -153,16 +151,15 @@ class AuthController(
                     accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
                     roles = listOf(AccountRoles.BASE_ROLE)
                 ),
-                accountName = savedConsumer.cxFirstName + " " + savedConsumer.cxLastName
+                accountName = savedConsumer.name
             )
         )
-        val refreshToken: String = jwtTokenService.generateRefreshToken(savedConsumer.cxFirstName + " " + savedConsumer.cxLastName)
+        val refreshToken: String = jwtTokenService.generateRefreshToken(savedConsumer.name)
         return ResponseEntity.ok(
             Pair(
                 JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken),
                 ConsumerSignInDTO(
-                    cxFirstName = savedConsumer.cxFirstName,
-                    cxLastName = savedConsumer.cxLastName,
+                    name = savedConsumer.name,
                     homeAddress = savedConsumer.homeAddress,
                     homeAddressCoordinate = savedConsumer.homeAddressCoordinate,
                     emailAddress = savedConsumer.emailAddress,
