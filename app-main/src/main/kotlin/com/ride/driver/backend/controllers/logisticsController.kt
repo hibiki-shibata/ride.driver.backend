@@ -35,7 +35,7 @@ class LogisticsController (
     @PostMapping("/update/mylocation")
     fun updateLocation(@RequestBody @Valid location: Coordinate): ResponseEntity<String> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.accountID
+        val courierId: UUID = courierDetails.accountID
         courierProfileRepository.save(
             courierProfileRepository.findById(courierId)?.copy(
                 currentLocation = location                
@@ -47,7 +47,7 @@ class LogisticsController (
     @GetMapping("/poll/task")
     fun pollForTask(): ResponseEntity<Task> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.accountID
+        val courierId: UUID = courierDetails.accountID
         val assignedTask: Task? = taskRepository.findByCourierProfile_IdAndTaskStatus(courierId, TaskStatus.READY_FOR_ASSIGNMENT).firstOrNull()
         return if (assignedTask != null) ResponseEntity.ok(assignedTask) else ResponseEntity.status(204).build()        
     }
@@ -57,7 +57,7 @@ class LogisticsController (
         val isOnline: Boolean = statusUpdateDTO.isOnline
         // val isOnline: Boolean = statusUpdateDTO.isOnline
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.accountID
+        val courierId: UUID = courierDetails.accountID
         courierProfileRepository.save(
             courierProfileRepository.findById(courierId)?.copy(
                 cpStatus = if (isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
@@ -70,7 +70,7 @@ class LogisticsController (
     fun acceptTask(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
         val taskId: String = taskActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.accountID
+        val courierId: UUID = courierDetails.accountID
         val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull() ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
         taskRepository.save(
@@ -85,7 +85,7 @@ class LogisticsController (
     fun completePickup(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
         val taskId: String = taskActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.accountID
+        val courierId: UUID = courierDetails.accountID
         val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull()
              ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
@@ -103,7 +103,7 @@ class LogisticsController (
         val taskId: String = taskActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData 
             ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.accountID
+        val courierId: UUID = courierDetails.accountID
         val assignedTask: Task = taskRepository.findByConsumerProfile_IdAndTaskStatus(courierId, TaskStatus.IN_DROPOFF).firstOrNull()
             ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")

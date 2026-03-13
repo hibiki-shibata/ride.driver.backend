@@ -18,13 +18,13 @@ enum class AccountRoles {
 }
 
 data class AdditionalAccessTokenClaims(
-    val accountID: UUID,
+    val accountName: String,
     val roles: List<AccountRoles>,
 )
 
 data class AccessTokenData(
     val additonalClaims: AdditionalAccessTokenClaims,
-    val accountName: String,
+    val accountID: UUID,
 )
 
 @Service
@@ -39,12 +39,12 @@ open class JwtTokenService(
     ): String {
         val now = System.currentTimeMillis()
         val additionalClaims =  mapOf(
-            "roles" to accountTokenData.additonalClaims.roles.map { it.name },
-            "AccountId" to accountTokenData.additonalClaims.accountID.toString()
-            )
+            "accountID" to accountTokenData.accountID.toString(),
+            "roles" to accountTokenData.additonalClaims.roles.map { it.name }
+        )
         return Jwts.builder()
             .setClaims(additionalClaims)
-            .setSubject(accountTokenData.accountName)
+            .setSubject(accountTokenData.additonalClaims.accountName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + accessTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -52,11 +52,11 @@ open class JwtTokenService(
     }
 
     fun generateRefreshToken(
-        accountName: String
+        accountID: UUID
     ): String {
         val now = System.currentTimeMillis()
         return Jwts.builder()
-            .setSubject(accountName)
+            .setSubject(accountID.toString())
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + refreshTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -81,7 +81,7 @@ open class JwtTokenService(
 
     fun extractAccountId(token: String): UUID {
         val claims = extractAllClaims(token)
-        return UUID.fromString(claims["AccountId"].toString() ?: throw AuthenticationException("Account ID not found in token"))
+        return UUID.fromString(claims["accountID"].toString() ?: throw AuthenticationException("Account ID not found in token"))
     }
 
     fun extractRoles(token: String): List<AccountRoles> {

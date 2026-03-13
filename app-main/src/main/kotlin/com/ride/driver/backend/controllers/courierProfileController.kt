@@ -41,7 +41,7 @@ class CourierProfileController (
     @GetMapping("/courier/me")
     fun findCourierProfile(): ResponseEntity<CourierProfileDTO> {        
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.accountID
+        val courierId: UUID = courierDetails.accountID
         val courier: CourierProfile = courierProfileRepository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
         val courierDTO = CourierProfileDTO(
             id = courier.id,
@@ -59,7 +59,7 @@ class CourierProfileController (
     @GetMapping("/courier/task-history")
     fun getTaskHistory(): ResponseEntity<List<Task>> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.additonalClaims.accountID
+        val courierId: UUID = courierDetails.accountID
         val taskHistory: List<Task> = taskRepository.findByCourierProfile_IdAndTaskStatus(courierId, TaskStatus.DELIVERED)
         return ResponseEntity.ok(taskHistory)
     }

@@ -50,7 +50,7 @@ class ConsumerProfileController (
     @GetMapping("/consumer/me")
     fun findConsumerProfile(): ResponseEntity<ConsumerProfileDTO> {        
         val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val consumerId: UUID = consumerDetails.additonalClaims.accountID
+        val consumerId: UUID = consumerDetails.accountID
         val consumer: ConsumerProfile = consumerProfileRepository.findById(consumerId) ?: throw Exception("Consumer not found with ID: $consumerId")
         return ResponseEntity.ok(
             ConsumerProfileDTO(
@@ -66,7 +66,7 @@ class ConsumerProfileController (
     fun updateConsumerProfile(@RequestBody consumerProfileDTO: ConsumerProfileDTO): ResponseEntity<ConsumerProfileDTO> {
         val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData 
             ?: return ResponseEntity.status(401).build()
-        val consumerId: UUID = consumerDetails.additonalClaims.accountID        
+        val consumerId: UUID = consumerDetails.accountID        
         val consumerDetailsInDb: ConsumerProfile = consumerProfileRepository.findById(consumerId) 
             ?: throw Exception("Consumer not found with ID: $consumerId")
         if (consumerProfileDTO.emailAddress != consumerDetailsInDb.emailAddress)
@@ -88,7 +88,7 @@ class ConsumerProfileController (
     @GetMapping("/consumer/order/history")
     fun findConsumerOrderHistory(): ResponseEntity<List<ConsumerOrderHistoryDTO>> {
         val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val consumerId: UUID = consumerDetails.additonalClaims.accountID
+        val consumerId: UUID = consumerDetails.accountID
         val tasks: List<Task> = taskRepository.findByConsumerProfile_Id(consumerId) 
         return ResponseEntity.ok(
             tasks.map { task ->
@@ -104,7 +104,7 @@ class ConsumerProfileController (
     @PostMapping("/consumer/order/create")
     fun createConsumerOrder(@RequestBody createConsumerOrderDTO: CreateConsumerOrderDTO): ResponseEntity<String> {
         val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val consumerId: UUID = consumerDetails.additonalClaims.accountID
+        val consumerId: UUID = consumerDetails.accountID
         taskRepository.save(
             Task(
                 consumerProfile = consumerProfileRepository.findById(consumerId) ?: return ResponseEntity.status(404).body("Consumer not found"),

@@ -30,12 +30,15 @@ class JwtFilter(
         if (authHeader !== null && authHeader.startsWith("Bearer ")) {
             val jwtToken: String = authHeader.substringAfter("Bearer ")
             if (!jwtTokenService.isTokenValid(jwtToken)) throw Exception("Invalid or expired JWT token")
-            val courierId: UUID = jwtTokenService.extractAccountId(jwtToken)
-            val courierName: String = jwtTokenService.extractAccountName(jwtToken)
+            val accountID: UUID = jwtTokenService.extractAccountId(jwtToken)
+            val accountName: String = jwtTokenService.extractAccountName(jwtToken)
             val accountRoles: List<AccountRoles> = jwtTokenService.extractRoles(jwtToken)
             val courierDetails: AccessTokenData = AccessTokenData(                            
-                additonalClaims = AdditionalAccessTokenClaims(accountID = courierId, roles = accountRoles),
-                accountName = courierName
+                additonalClaims = AdditionalAccessTokenClaims(
+                    accountName = accountName,
+                    roles = accountRoles
+                ),
+                accountID = accountID
             )
             val authenticationToken = UsernamePasswordAuthenticationToken(
                 courierDetails, // principal
