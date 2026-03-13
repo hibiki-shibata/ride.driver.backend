@@ -19,8 +19,7 @@ import java.util.UUID
 
 // data class CourierSignInDTO(val courierName: String, val phoneNumber: String, val password: String)
 data class CourierSignInDTO(
-    val cpFirstName: String,
-    val cpLastName: String,
+    val name: String,
     val phoneNumber: String,
     val password: String,
     val vehicleType: VehicleType,
@@ -59,8 +58,7 @@ class AuthController(
         val isCourierExists: Boolean = repository.existsByPhoneNumber(req.phoneNumber)
         if (isCourierExists) throw BadRequestException("Courier with phone number ${req.phoneNumber} already exists")          
         val newCourierToRegister = CourierProfile(
-            cpFirstName = req.cpFirstName,
-            cpLastName = req.cpLastName,
+            name = req.name,
             phoneNumber = req.phoneNumber,
             passwordHash = req.password.hashCode().toString(), // Simple hash for demonstration. Use a proper hashing algorithm in production.
             vehicleType = req.vehicleType,
@@ -76,10 +74,10 @@ class AuthController(
                     accountID = savedCourier.id,
                     roles = listOf(AccountRoles.BASE_ROLE)
                 ),
-                accountName = savedCourier.cpFirstName + " " + savedCourier.cpLastName
+                accountName = savedCourier.name
             )
         )
-        val refreshToken = jwtTokenService.generateRefreshToken(savedCourier.cpFirstName + " " + savedCourier.cpLastName)
+        val refreshToken = jwtTokenService.generateRefreshToken(savedCourier.name)
         return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 
@@ -94,17 +92,15 @@ class AuthController(
                     accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
                     roles = listOf(AccountRoles.BASE_ROLE)
                 ),
-                accountName = savedCourier.cpFirstName + " " +
-                savedCourier.cpLastName
+                accountName = savedCourier.name
             )
         )
-        val refreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.cpFirstName + " " + savedCourier.cpLastName)
+        val refreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.name)
         return ResponseEntity.ok(
             Pair(
                 JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken),
                 CourierSignInDTO(
-                    cpFirstName = savedCourier.cpFirstName,
-                    cpLastName = savedCourier.cpLastName,
+                    name = savedCourier.name,
                     phoneNumber = savedCourier.phoneNumber,
                     password = "Your password is securely stored and cannot be retrieved. If you forgot your password, please use the password reset option.",
                     vehicleType = savedCourier.vehicleType
@@ -183,10 +179,10 @@ class AuthController(
                     accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
                     roles = listOf(AccountRoles.BASE_ROLE)
                 ),
-                accountName = savedCourier.cpFirstName + " " + savedCourier.cpLastName
+                accountName = savedCourier.name
             )
         )
-        val newRefreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.cpFirstName + " " + savedCourier.cpLastName)
+        val newRefreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.name)
         return ResponseEntity.ok(JwtTokensDTO(newAccessToken, newRefreshToken))
     }
 }

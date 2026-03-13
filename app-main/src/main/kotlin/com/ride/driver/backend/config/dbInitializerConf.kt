@@ -42,8 +42,7 @@ class DbDemoDataInitializerConfig {
 // Courier Profiles
         val courierJohn: CourierProfile = courierProfileRepository.save(
             CourierProfile(
-                cpFirstName = "John",
-                cpLastName = "Doe",
+                name = "John Doe",
                 phoneNumber = "123-456-7890",
                 vehicleType = VehicleType.MOTORCYCLE,
                 passwordHash = "hashed_password",
@@ -57,8 +56,7 @@ class DbDemoDataInitializerConfig {
 
         val courierJane: CourierProfile = courierProfileRepository.save(
             CourierProfile(
-                cpFirstName = "Jane",
-                cpLastName = "Smith",
+                name = "Jane Smith",
                 phoneNumber = "987-654-3210",
                 vehicleType = VehicleType.CAR,
                 passwordHash = "another_hashed_password",
@@ -72,8 +70,7 @@ class DbDemoDataInitializerConfig {
 
         val courierAlice: CourierProfile = courierProfileRepository.save(
             CourierProfile(
-                cpFirstName = "Alice",
-                cpLastName = "Johnson",
+                name = "Alice Johnson",
                 phoneNumber = "555-123-4567",
                 vehicleType = VehicleType.BICYCLE,
                 passwordHash = "alice_hashed_password",

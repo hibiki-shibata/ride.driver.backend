@@ -35,11 +35,8 @@ data class CourierProfile(
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: UUID? = null,
 
-    @Column(name = "cp_first_name", nullable = false)
-    val cpFirstName: String,
-
-    @Column(name = "cp_last_name", nullable = false)
-    val cpLastName: String,
+    @Column(name = "cp_name", nullable = false)
+    val name: String,
 
     @Column(name = "phone_number", unique = true, nullable = false)
     val phoneNumber: String,

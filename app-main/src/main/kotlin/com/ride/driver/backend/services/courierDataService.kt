@@ -17,8 +17,7 @@ class CourierDataService(){
             val courierProfile = CourierProfile(
                 phoneNumber = "+1234567890",
                 passwordHash = "hashed_password",
-                cpFirstName = "John",
-                cpLastName = "Doe",
+                name = "John Doe",
                 vehicleType = VehicleType.CAR,
                 cpRate = 4.5,
                 cpStatus = CourierStatus.ONLINE,

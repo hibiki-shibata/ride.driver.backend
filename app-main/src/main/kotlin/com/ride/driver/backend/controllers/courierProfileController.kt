@@ -46,7 +46,7 @@ class CourierProfileController (
         val courier: CourierProfile = courierProfileRepository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
         val courierDTO = CourierProfileDTO(
             id = courier.id,
-            name = courier.cpFirstName + " " + courier.cpLastName,
+            name = courier.name,
             phoneNumber = courier.phoneNumber,
             vehicleType = courier.vehicleType,
             rate = courier.cpRate,
