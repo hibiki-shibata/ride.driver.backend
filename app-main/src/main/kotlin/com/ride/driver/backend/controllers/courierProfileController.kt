@@ -1,6 +1,7 @@
 package com.ride.driver.backend.controller
 
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestParam
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import jakarta.validation.Valid
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.TaskRepository
 import com.ride.driver.backend.models.courierProfile.CourierProfile
@@ -17,6 +19,7 @@ import com.ride.driver.backend.models.courierProfile.OperationArea
 import com.ride.driver.backend.models.courierProfile.VehicleType
 import com.ride.driver.backend.models.courierProfile.CourierStatus
 import com.ride.driver.backend.models.logistics.Task
+import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.models.logistics.TaskStatus
 import com.ride.driver.backend.services.AccessTokenData
 import java.util.UUID
@@ -30,6 +33,10 @@ data class CourierProfileDTO(
     val status: CourierStatus,
     val operationArea: OperationArea?,
     val comments: String?
+)
+
+data class CourierStatusUpdateDTO(
+    val isOnline: Boolean,
 )
 
 @RestController
@@ -54,6 +61,32 @@ class CourierProfileController (
             comments = courier.cpComments
         )
         return ResponseEntity.ok(courierDTO)
+    }
+
+    @PostMapping("/update/mylocation")
+    fun updateLocation(@RequestBody @Valid location: Coordinate): ResponseEntity<String> {
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val courierId: UUID = courierDetails.accountID
+        courierProfileRepository.save(
+            courierProfileRepository.findById(courierId)?.copy(
+                currentLocation = location                
+            ) ?: return ResponseEntity.status(404).body("Courier not found")
+        )
+        return ResponseEntity.ok("Location updated successfully")
+    }    
+
+    @PostMapping("/update/online")
+    fun updateStatus(@RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO): ResponseEntity<String> {
+        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val isOnline: Boolean = courierStatusUpdateDTO.isOnline
+        // val isOnline: Boolean = statusUpdateDTO.isOnline
+        val courierId: UUID = courierDetails.accountID
+        courierProfileRepository.save(
+            courierProfileRepository.findById(courierId)?.copy(
+                cpStatus = if (isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
+            ) ?: return ResponseEntity.status(404).body("Courier not found")
+        )
+        return ResponseEntity.ok("Status updated successfully")
     }
 
     @GetMapping("/courier/task-history")

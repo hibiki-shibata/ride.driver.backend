@@ -7,42 +7,36 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
-import com.ride.driver.backend.services.AccessTokenData
 import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.models.logistics.Task
 import com.ride.driver.backend.models.courierProfile.CourierStatus
 import com.ride.driver.backend.models.logistics.TaskStatus
-import java.util.UUID
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.TaskRepository
+import com.ride.driver.backend.repositories.ConsumerProfileRepository
+import com.ride.driver.backend.repositories.VenueProfileRepository
+import com.ride.driver.backend.services.AccessTokenData
+import java.util.UUID
 import jakarta.validation.Valid
 
-data class StatusUpdateDTO(
-    val isOnline: Boolean,
+data class TaskStatusActionDTO(
+    val taskId: String
 )
 
-data class TaskActionDTO(
-    val taskId: String
+data class CreateTaskDTO(
+    val venueID: UUID,
+    val pickupLocation: Coordinate,
+    val dropoffLocation: Coordinate
 )
 
 @RestController
 @RequestMapping("/api/v1/logistics")
 class LogisticsController (
     private val courierProfileRepository: CourierProfileRepository,
+    private val consumerProfileRepository: ConsumerProfileRepository,
+    private val venueProfileRepository: VenueProfileRepository,
     private val taskRepository: TaskRepository
 ){
-    @PostMapping("/update/mylocation")
-    fun updateLocation(@RequestBody @Valid location: Coordinate): ResponseEntity<String> {
-        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.accountID
-        courierProfileRepository.save(
-            courierProfileRepository.findById(courierId)?.copy(
-                currentLocation = location                
-            ) ?: return ResponseEntity.status(404).body("Courier not found")
-        )
-        return ResponseEntity.ok("Location updated successfully")
-    }
-
     @GetMapping("/poll/task")
     fun pollForTask(): ResponseEntity<Task> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
@@ -51,24 +45,41 @@ class LogisticsController (
         return if (assignedTask != null) ResponseEntity.ok(assignedTask) else ResponseEntity.status(204).build()        
     }
 
-    @PostMapping("/update/online")
-    fun updateStatus(@RequestBody @Valid statusUpdateDTO: StatusUpdateDTO): ResponseEntity<String> {
-        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val isOnline: Boolean = statusUpdateDTO.isOnline
-        // val isOnline: Boolean = statusUpdateDTO.isOnline
-        val courierId: UUID = courierDetails.accountID
-        courierProfileRepository.save(
-            courierProfileRepository.findById(courierId)?.copy(
-                cpStatus = if (isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
-            ) ?: return ResponseEntity.status(404).body("Courier not found")
+    @PostMapping("/task/create")
+    fun createTask(@RequestBody createTaskDTO: CreateTaskDTO): ResponseEntity<String> {
+        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val consumerId: UUID = consumerDetails.accountID
+        taskRepository.save(
+            Task(
+                consumerProfile = consumerProfileRepository.findById(consumerId) ?: return ResponseEntity.status(404).body("Consumer not found"),
+                venueProfile = venueProfileRepository.findById(createTaskDTO.venueID) ?: return ResponseEntity.status(404).body("Venue not found"),                
+                taskStatus = TaskStatus.CREATED
+             )
         )
-        return ResponseEntity.ok("Status updated successfully")
+        return ResponseEntity.ok("Order created successfully")
     }
 
+    @PostMapping("/task/ready")
+    fun readyTaskForAssignment(@RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO): ResponseEntity<String> {
+        val venueDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val venueId: UUID = venueDetails.accountID
+        val taskId: String = taskStatusActionDTO.taskId
+        val taskToUpdate: Task = taskRepository.findById(UUID.fromString(taskId)) ?: throw Exception("Task not found with ID: $taskId")
+        if (taskToUpdate.venueProfile.id != venueId) return ResponseEntity.status(403).body("This task does not belong to the venue associated with the authenticated account")
+        if (taskToUpdate.taskStatus != TaskStatus.CREATED) return ResponseEntity.status(400).body("Only tasks in CREATED status can be marked as READY_FOR_ASSIGNMENT")
+        taskRepository.save(
+            taskToUpdate.copy(
+                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
+            )
+        )
+        return ResponseEntity.ok("Task $taskId is now ready for assignment")
+    }
+
+
    @PostMapping("/task/accept")
-    fun acceptTask(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
+    fun acceptTask(@RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO): ResponseEntity<String> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val taskId: String = taskActionDTO.taskId
+        val taskId: String = taskStatusActionDTO.taskId
         val courierId: UUID = courierDetails.accountID
         val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull() ?: return ResponseEntity.status(404).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
@@ -81,9 +92,9 @@ class LogisticsController (
     }
 
    @PostMapping("/task/complete/pickup")
-    fun completePickup(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
+    fun completePickup(@RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO): ResponseEntity<String> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val taskId: String = taskActionDTO.taskId
+        val taskId: String = taskStatusActionDTO.taskId
         val courierId: UUID = courierDetails.accountID
         val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull()
              ?: return ResponseEntity.status(404).body("No task assigned to this courier")
@@ -98,8 +109,8 @@ class LogisticsController (
     }
 
     @PostMapping("/task/complete/dropoff")
-    fun completeDropoff(@RequestBody @Valid taskActionDTO: TaskActionDTO): ResponseEntity<String> {
-        val taskId: String = taskActionDTO.taskId
+    fun completeDropoff(@RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO): ResponseEntity<String> {
+        val taskId: String = taskStatusActionDTO.taskId
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData 
             ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.accountID

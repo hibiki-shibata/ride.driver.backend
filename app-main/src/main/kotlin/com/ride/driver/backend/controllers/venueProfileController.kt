@@ -22,8 +22,8 @@ import jakarta.validation.Valid
 class venuesController (
     private val taskRepository: TaskRepository
 ){
-    @PostMapping("/order/ready")
-    fun updateOrderReady(@RequestBody taskActionDTO: TaskActionDTO): ResponseEntity<String> {
+    @PostMapping("/venue/me")
+    fun findVenueProfile(@RequestBody taskStatusActionDTO: TaskStatusActionDTO): ResponseEntity<String> {
         // Venue profile update location logic goes here. For now, just return a success message.
         return ResponseEntity.ok("Venue location updated successfully")
     }

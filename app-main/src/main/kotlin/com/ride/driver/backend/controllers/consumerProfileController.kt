@@ -32,12 +32,6 @@ data class ConsumerOrderHistoryDTO(
     val orderStatus: String,
 )
 
-data class CreateConsumerOrderDTO(
-    val venueID: UUID,
-    val pickupLocation: Coordinate,
-    val dropoffLocation: Coordinate
-)
-
 @RestController
 @RequestMapping("api/v1/consumers")
 class ConsumerProfileController (   
@@ -97,20 +91,6 @@ class ConsumerProfileController (
             }
         )        
     }         
-
-    @PostMapping("/consumer/order/create")
-    fun createConsumerOrder(@RequestBody createConsumerOrderDTO: CreateConsumerOrderDTO): ResponseEntity<String> {
-        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val consumerId: UUID = consumerDetails.accountID
-        taskRepository.save(
-            Task(
-                consumerProfile = consumerProfileRepository.findById(consumerId) ?: return ResponseEntity.status(404).body("Consumer not found"),
-                venueProfile = venueProfileRepository.findById(createConsumerOrderDTO.venueID) ?: return ResponseEntity.status(404).body("Venue not found"),                
-                taskStatus = TaskStatus.CREATED
-             )
-        )
-        return ResponseEntity.ok("Order created successfully")
-    }
   }
 }
         
