@@ -13,7 +13,6 @@ import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
 import com.ride.driver.backend.services.JwtTokenService
 import com.ride.driver.backend.services.AccountRoles
 import com.ride.driver.backend.services.AccessTokenData
-import com.ride.driver.backend.services.AdditionalAccessTokenClaims
 import com.ride.driver.backend.exceptions.BadRequestException
 import java.util.UUID
 
@@ -70,11 +69,9 @@ class AuthController(
         if (savedCourier.id == null) throw Exception("Failed to save new courier profile")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
-                additonalClaims = AdditionalAccessTokenClaims(
-                    accountName = savedCourier.name,
-                    roles = listOf(AccountRoles.BASE_ROLE)
-                ),
                 accountID = savedCourier.id,
+                accountName = savedCourier.name,
+                roles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val refreshToken = jwtTokenService.generateRefreshToken(savedCourier.id)
@@ -88,11 +85,9 @@ class AuthController(
         if (req.password.hashCode().toString() != savedCourier.passwordHash) throw BadRequestException("Incorrect password for phone number ${req.phoneNumber}")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
-                additonalClaims = AdditionalAccessTokenClaims(
-                    accountName = savedCourier.name,
-                    roles = listOf(AccountRoles.BASE_ROLE)
-                ),
                 accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
+                accountName = savedCourier.name,
+                roles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val refreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.id)
@@ -114,11 +109,9 @@ class AuthController(
         if (savedConsumer.id == null) throw Exception("Failed to save new consumer profile")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
-                additonalClaims = AdditionalAccessTokenClaims(
-                    accountName = savedConsumer.name,
-                    roles = listOf(AccountRoles.BASE_ROLE)
-                ),
                 accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
+                accountName = savedConsumer.name,
+                roles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val refreshToken = jwtTokenService.generateRefreshToken(savedConsumer.id)
@@ -132,11 +125,9 @@ class AuthController(
         if (req.password.hashCode().toString() != savedConsumer.hashPassword) throw BadRequestException("Incorrect password for email address ${req.emailAddress}")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
-                additonalClaims = AdditionalAccessTokenClaims(
-                    accountName = savedConsumer.name,
-                    roles = listOf(AccountRoles.BASE_ROLE)
-                ),
                 accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
+                accountName = savedConsumer.name,
+                roles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val refreshToken: String = jwtTokenService.generateRefreshToken(savedConsumer.id)
@@ -146,18 +137,16 @@ class AuthController(
     @PostMapping("/refresh-token")
     fun refreshToken(@RequestBody @Valid req: JwtTokensDTO): ResponseEntity<JwtTokensDTO> {
         val accountId: UUID = jwtTokenService.extractAccountId(req.refreshToken)
-        val accountName: String = jwtTokenService.extractAccountName(req.refreshToken)
+        val accountName: String = jwtTokenService.extractAccountName(req.accessToken)
         if (!jwtTokenService.isTokenValid(req.refreshToken)) throw BadRequestException("Invalid or expired refresh token")
         // val savedCourier: CourierProfile = repository.findById(courierId)
         //     ?: throw BadRequestException("Courier with ID $courierId does not exist.")
         // if (savedCourier.cpStatus == CourierStatus.SUSPENDED) throw BadRequestException("Courier account is suspended. Cannot refresh token.")        
         val newAccessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
-                additonalClaims = AdditionalAccessTokenClaims(
-                    accountName = accountName,
-                    roles = listOf(AccountRoles.BASE_ROLE)
-                ),
                 accountID = accountId,
+                accountName = accountName,
+                roles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val newRefreshToken: String = jwtTokenService.generateRefreshToken(accountId)

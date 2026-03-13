@@ -17,14 +17,10 @@ enum class AccountRoles {
     DEVELOPER_ROLE
 }
 
-data class AdditionalAccessTokenClaims(
+data class AccessTokenData(
+    val accountID: UUID,
     val accountName: String,
     val roles: List<AccountRoles>,
-)
-
-data class AccessTokenData(
-    val additonalClaims: AdditionalAccessTokenClaims,
-    val accountID: UUID,
 )
 
 @Service
@@ -40,11 +36,11 @@ open class JwtTokenService(
         val now = System.currentTimeMillis()
         val additionalClaims =  mapOf(
             "accountID" to accountTokenData.accountID.toString(),
-            "roles" to accountTokenData.additonalClaims.roles.map { it.name }
+            "roles" to accountTokenData.roles.map { it.name }
         )
         return Jwts.builder()
             .setClaims(additionalClaims)
-            .setSubject(accountTokenData.additonalClaims.accountName)
+            .setSubject(accountTokenData.accountName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + accessTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -56,7 +52,7 @@ open class JwtTokenService(
     ): String {
         val now = System.currentTimeMillis()
         return Jwts.builder()
-            .setSubject(accountID.toString())
+            .setClaims(mapOf("accountID" to accountID.toString()))
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + refreshTokenValidityInMilliseconds))
             .signWith(signingKey)

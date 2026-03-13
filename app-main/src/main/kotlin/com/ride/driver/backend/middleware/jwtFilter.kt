@@ -12,7 +12,6 @@ import jakarta.servlet.FilterChain
 import com.ride.driver.backend.services.JwtTokenService
 import com.ride.driver.backend.services.AccessTokenData
 import com.ride.driver.backend.services.AccountRoles
-import com.ride.driver.backend.services.AdditionalAccessTokenClaims
 import java.util.UUID
 
 @Component 
@@ -34,11 +33,9 @@ class JwtFilter(
             val accountName: String = jwtTokenService.extractAccountName(jwtToken)
             val accountRoles: List<AccountRoles> = jwtTokenService.extractRoles(jwtToken)
             val courierDetails: AccessTokenData = AccessTokenData(                            
-                additonalClaims = AdditionalAccessTokenClaims(
+                    accountID = accountID,
                     accountName = accountName,
                     roles = accountRoles
-                ),
-                accountID = accountID
             )
             val authenticationToken = UsernamePasswordAuthenticationToken(
                 courierDetails, // principal
