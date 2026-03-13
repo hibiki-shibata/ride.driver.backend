@@ -75,7 +75,6 @@ class LogisticsController (
         return ResponseEntity.ok("Task $taskId is now ready for assignment")
     }
 
-
    @PostMapping("/task/accept")
     fun acceptTask(@RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO): ResponseEntity<String> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
