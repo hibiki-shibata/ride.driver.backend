@@ -32,7 +32,7 @@ class DbDemoDataInitializerConfig {
         }
 
 
-        val john: CourierProfile = courierProfileRepository.save(
+        val courierJohn: CourierProfile = courierProfileRepository.save(
             CourierProfile(
                 cpFirstName = "John",
                 cpLastName = "Doe",
@@ -47,7 +47,7 @@ class DbDemoDataInitializerConfig {
             )
         )
 
-        val jane: CourierProfile = courierProfileRepository.save(
+        val courierJane: CourierProfile = courierProfileRepository.save(
             CourierProfile(
                 cpFirstName = "Jane",
                 cpLastName = "Smith",
@@ -62,7 +62,7 @@ class DbDemoDataInitializerConfig {
             )
         )
 
-        val alice: CourierProfile = courierProfileRepository.save(
+        val courierAlice: CourierProfile = courierProfileRepository.save(
             CourierProfile(
                 cpFirstName = "Alice",
                 cpLastName = "Johnson",

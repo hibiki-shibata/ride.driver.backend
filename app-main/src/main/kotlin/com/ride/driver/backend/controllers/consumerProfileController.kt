@@ -91,7 +91,7 @@ class ConsumerProfileController (
         return ResponseEntity.ok(
             tasks.map { task ->
                 ConsumerOrderHistoryDTO(
-                    venueName = task.venueName,
+                    venueName = task.venueProfile.venueName,
                     orderDate = task.orderTime.toString(),
                     orderStatus = task.taskStatus.toString()
                 )
@@ -105,7 +105,7 @@ class ConsumerProfileController (
         val consumerId: UUID = consumerDetails.additonalClaims.accountID
         taskRepository.save(
             Task(
-                consumerId = consumerId,
+                consumerProfile = consumerProfileRepository.findById(consumerId) ?: return ResponseEntity.status(404).body("Consumer not found"),
                 venueId = createConsumerOrderDTO.venueID,
                 pickupLocation = createConsumerOrderDTO.pickupLocation,
                 dropoffLocation = createConsumerOrderDTO.dropoffLocation,

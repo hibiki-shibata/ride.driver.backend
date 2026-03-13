@@ -17,6 +17,9 @@ import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.AttributeOverride
 import com.ride.driver.backend.models.Coordinate
 import java.util.UUID
+import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
+import com.ride.driver.backend.models.courierProfile.CourierProfile
+import com.ride.driver.backend.models.venueProfile.VenueProfile
 
 @Entity
 @Table(
@@ -34,40 +37,30 @@ data class Task(
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: Long? = null,
 
-    @Column(name = "assigned_courier_id", nullable = false)
-    val assignedCourierId: UUID? = null,
-
-    @Column(name = "consumer_id", nullable = false)
-    val consumerId: UUID,
-
-    @Column(name = "venue_id", nullable = false)
-    val venueId: UUID,
+    // @Column(name = "assigned_courier_id", nullable = false)
+    // val assignedCourierId: UUID? = null,
 
     @Column(name = "order_time", nullable = false)
     val orderTime: Long = System.currentTimeMillis(),
 
-    @Embedded
-    @AttributeOverrides(
-        AttributeOverride(name = "latitude", column = Column(name = "pickup_latitude")),
-        AttributeOverride(name = "longitude", column = Column(name = "pickup_longitude"))
-    )
-    val pickupLocation: Coordinate,
-
-    @Embedded
-    @AttributeOverrides(
-        AttributeOverride(name = "latitude", column = Column(name = "dropoff_latitude")),
-        AttributeOverride(name = "longitude", column = Column(name = "dropoff_longitude"))
-    )
-    val dropoffLocation: Coordinate,
-
     @Column(name = "task_note", nullable = true)
     val taskNote: String? = null,
 
-    @Column(name = "consumer_name", nullable = false)
-    val consumerName: String,
+    @ManyToOne
+    @JoinColumn(name = "assigned_courier", referencedColumnName = "id", insertable = false, updatable = false)
+    val assignedCourier: CourierProfile? = null,
 
-    @Column(name = "venue_name", nullable = false)
-    val venueName: String,
+    // @Column(name = "consumer_name", nullable = false)
+    // val consumerName: String,
+    @ManyToOne
+    @JoinColumn(name = "consumer_id", referencedColumnName = "id", insertable = false, updatable = false)
+    val consumerProfile: ConsumerProfile,
+
+    // @Column(name = "venue_name", nullable = false)
+    // val venueName: String,
+    @ManyToOne
+    @JoinColumn(name = "venue_id", referencedColumnName = "id", insertable = false, updatable = false)
+    val venueProfile: VenueProfile,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "task_status", nullable = false)
