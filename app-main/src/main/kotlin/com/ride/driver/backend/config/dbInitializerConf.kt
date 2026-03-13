@@ -78,7 +78,7 @@ class DbDemoDataInitializerConfig {
                 vehicleType = VehicleType.BICYCLE,
                 passwordHash = "alice_hashed_password",
                 cpRate = 4.2,
-                cpStatus = CourierStatus.ONBOARDING,
+                cpStatus = CourierStatus.ONLINE,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
                 operationArea = operationAreaRepository.findByName("Tokyo")?.firstOrNull(),
                 cpComments = "New courier"
@@ -135,6 +135,14 @@ class DbDemoDataInitializerConfig {
                 taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
             )
         )
+
+        taskRepository.save(
+            Task(
+                consumerProfile = consumerBob,
+                venueProfile = venueFiveGuys,
+                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
+             )
+         )
 
         taskRepository.save(
             Task(
