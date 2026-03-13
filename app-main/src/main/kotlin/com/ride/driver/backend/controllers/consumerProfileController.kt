@@ -49,7 +49,6 @@ class ConsumerProfileController (
 ){
     @GetMapping("/consumer/me")
     fun findConsumerProfile(): ResponseEntity<ConsumerProfileDTO> {        
-        println("Finding consumer profile...")
         val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val consumerId: UUID = consumerDetails.additonalClaims.accountID
         val consumer: ConsumerProfile = consumerProfileRepository.findById(consumerId) ?: throw Exception("Consumer not found with ID: $consumerId")

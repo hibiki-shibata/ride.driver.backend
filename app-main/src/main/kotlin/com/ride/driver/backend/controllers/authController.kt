@@ -54,7 +54,6 @@ class AuthController(
     ) {
     @PostMapping("/courier/signup")
     fun signup(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<JwtTokensDTO> {
-        println("Signup request received: $req")
         val isCourierExists: Boolean = repository.existsByPhoneNumber(req.phoneNumber)
         if (isCourierExists) throw BadRequestException("Courier with phone number ${req.phoneNumber} already exists")          
         val newCourierToRegister = CourierProfile(
@@ -66,7 +65,6 @@ class AuthController(
             cpStatus = CourierStatus.ONBOARDING
         )
         val savedCourier: CourierProfile = repository.save(newCourierToRegister)
-        println("New courier registered with ID: ${savedCourier}")
         if (savedCourier.id == null) throw Exception("Failed to save new courier profile")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
@@ -121,7 +119,6 @@ class AuthController(
             homeAddressCoordinate = req.homeAddressCoordinate,
             hashPassword = req.password.hashCode().toString() // Simple hash for demonstration. Use a proper hashing algorithm in production.
         ))
-        println("New consumer registered with ID: ${savedConsumer}")
         if (savedConsumer.id == null) throw Exception("Failed to save new consumer profile")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
@@ -167,8 +164,7 @@ class AuthController(
 
     @PostMapping("/refresh-token")
     fun refreshToken(@RequestBody @Valid req: JwtTokensDTO): ResponseEntity<JwtTokensDTO> {
-        val courierId: UUID = jwtTokenService.extractAccountId(req.refreshToken
-            ?: throw BadRequestException("Refresh token is required"))
+        val courierId: UUID = jwtTokenService.extractAccountId(req.refreshToken ?: throw BadRequestException("Refresh token is required"))
         if (!jwtTokenService.isTokenValid(req.refreshToken)) throw BadRequestException("Invalid or expired refresh token")
         val savedCourier: CourierProfile = repository.findById(courierId)
             ?: throw BadRequestException("Courier with ID $courierId does not exist.")

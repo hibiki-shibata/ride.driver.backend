@@ -81,6 +81,7 @@ class DbDemoDataInitializerConfig {
                 cpComments = "New courier"
             )
         )
+        
     // Consumer Profiles
         val consumerAlice: ConsumerProfile = consumerProfileRepository.save(
             ConsumerProfile(
@@ -149,13 +150,13 @@ class DbDemoDataInitializerConfig {
              )
          )
 
-         taskRepository.save(
-            Task(
-                consumerProfile = consumerAlice,
-                venueProfile = venueFiveGuys,
-                taskStatus = TaskStatus.DELIVERED,
-                courierProfile = courierJohn
-             )
+        taskRepository.save(
+        Task(
+            consumerProfile = consumerAlice,
+            venueProfile = venueFiveGuys,
+            taskStatus = TaskStatus.DELIVERED,
+            courierProfile = courierJohn
+            )
          )
     }
 }

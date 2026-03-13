@@ -54,7 +54,6 @@ class LogisticsController (
 
     @PostMapping("/update/status")
     fun updateStatus(@RequestBody @Valid statusUpdateDTO: StatusUpdateDTO): ResponseEntity<String> {
-        println("Status update request received: $statusUpdateDTO")
         val isOnline: Boolean = statusUpdateDTO.isOnline
         // val isOnline: Boolean = statusUpdateDTO.isOnline
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()

@@ -40,7 +40,6 @@ class CourierProfileController (
 ){
     @GetMapping("/courier/me")
     fun findCourierProfile(): ResponseEntity<CourierProfileDTO> {        
-        println("Finding all couriers...")
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.additonalClaims.accountID
         val courier: CourierProfile = courierProfileRepository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
