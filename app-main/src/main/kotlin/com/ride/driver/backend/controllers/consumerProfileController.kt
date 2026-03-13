@@ -3,7 +3,6 @@ package com.ride.driver.backend.controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
-
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
@@ -39,7 +38,6 @@ data class CreateConsumerOrderDTO(
     val dropoffLocation: Coordinate
 )
 
-
 @RestController
 @RequestMapping("api/v1/consumers")
 class ConsumerProfileController (   
@@ -60,7 +58,6 @@ class ConsumerProfileController (
          )
         )
     }
-
 
     @PostMapping("/consumer/update")
     fun updateConsumerProfile(@RequestBody consumerProfileDTO: ConsumerProfileDTO): ResponseEntity<ConsumerProfileDTO> {
