@@ -47,19 +47,18 @@ data class Task(
     val taskNote: String? = null,
 
     @ManyToOne
-    @JoinColumn(name = "courierProfile", referencedColumnName = "id", insertable = false, updatable = false)
+    // @JoinColumn(name = "courier_profile", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "courier_profile", nullable = true, referencedColumnName = "id")
     val courierProfile: CourierProfile? = null,
-
-    // @Column(name = "consumer_name", nullable = false)
-    // val consumerName: String,
+    
     @ManyToOne
-    @JoinColumn(name = "consumerProfile", referencedColumnName = "id", insertable = false, updatable = false)
+    // @JoinColumn(name = "consumer_profile", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "consumer_profile", nullable = false, referencedColumnName = "id")
     val consumerProfile: ConsumerProfile,
 
-    // @Column(name = "venue_name", nullable = false)
-    // val venueName: String,
     @ManyToOne
-    @JoinColumn(name = "venue_id", referencedColumnName = "id", insertable = false, updatable = false)
+    // @JoinColumn(name = "venue_profile", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "venue_profile", nullable = false, referencedColumnName = "id")
     val venueProfile: VenueProfile,
 
     @Enumerated(EnumType.STRING)

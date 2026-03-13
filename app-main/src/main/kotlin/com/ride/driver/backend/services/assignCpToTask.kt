@@ -15,7 +15,7 @@ public class ScheduledTasks (
     private val courierProfileRepository: CourierProfileRepository,
     private val taskRepository: TaskRepository
 ){
-	@Scheduled(fixedRate = 3000) // Run every 17 seconds
+	@Scheduled(fixedRate = 3000, initialDelay = 1500) // Run every 3 seconds with an initial delay of 5 seconds
     public fun assignCpToTask() {
         val availableTasks: List<Task> = taskRepository.findByTaskStatus(TaskStatus.READY_FOR_ASSIGNMENT)
         if (availableTasks.isEmpty()) return
@@ -23,16 +23,21 @@ public class ScheduledTasks (
         val onlineCouriers: List<CourierProfile> = courierProfileRepository.findByCpStatus(CourierStatus.ONLINE)
         if (onlineCouriers.isEmpty()) return
         
-        var shuffledCouriers: List<CourierProfile> = onlineCouriers.shuffled()
+        var shuffledCourierProfiles: List<CourierProfile> = onlineCouriers.shuffled()
+        println("")
+        println("Shuffled::")
+        println("$shuffledCourierProfiles")
 
         for (task in availableTasks) {
-            val courierToAssign: CourierProfile = shuffledCouriers.firstOrNull() ?: return // No more couriers available            
+            val assignedCourierProfile: CourierProfile? = shuffledCourierProfiles.firstOrNull() ?: return // No more couriers available
             taskRepository.save(
                 task.copy(
-                    courierProfile = courierToAssign,
+                    courierProfile = assignedCourierProfile,
                 )
             )
-            shuffledCouriers = shuffledCouriers.drop(1) // Remove the assigned courier from the list
+            shuffledCourierProfiles = shuffledCourierProfiles.drop(1) // Remove the assigned courier from the list
+            println("Dropped::")
+            println("${shuffledCourierProfiles}")
         }
     }
 }
