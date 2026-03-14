@@ -63,8 +63,6 @@ class LogisticsController (
         val merchantId: UUID = merchantDetails.accountID
         val taskId: String = taskStatusActionDTO.taskId
         val taskToUpdate: Task = taskRepository.findById(UUID.fromString(taskId)) ?: throw Exception("Task not found with ID: $taskId")
-        println("Merchant ID from token: $merchantId")
-        println("Merchant ID associated with task: ${taskToUpdate.merchantProfile.id}")
         if (taskToUpdate.merchantProfile.id != merchantId) return ResponseEntity.status(403).body("This task does not belong to the merchant associated with the authenticated account")
         if (taskToUpdate.taskStatus != TaskStatus.CREATED) return ResponseEntity.status(400).body("Only tasks in CREATED status can be marked as READY_FOR_ASSIGNMENT")
         taskRepository.save(
