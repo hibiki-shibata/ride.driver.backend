@@ -4,22 +4,15 @@ import java.util.UUID
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import com.ride.driver.backend.courier.repositories.CourierProfileRepository
 import com.ride.driver.backend.courier.models.CourierProfile
-import com.ride.driver.backend.courier.models.CourierStatus
 import com.ride.driver.backend.consumer.models.ConsumerProfile
-import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
 import com.ride.driver.backend.merchant.models.MerchantProfile
-import com.ride.driver.backend.merchant.models.MerchantStatus
-import com.ride.driver.backend.merchant.repositories.MerchantProfileRepository
 import com.ride.driver.backend.shared.exceptions.BadRequestException
 import com.ride.driver.backend.shared.models.Coordinate
 import com.ride.driver.backend.auth.services.JwtTokenService
 import com.ride.driver.backend.auth.dto.*
 import com.ride.driver.backend.auth.domain.*
-import com.ride.driver.backend.auth.services.CourierAuthService
-import com.ride.driver.backend.auth.services.ConsumerAuthService
-import com.ride.driver.backend.auth.services.MerchantAuthService
+import com.ride.driver.backend.auth.services.*
 
 @RestController
 @RequestMapping("/api/v1/auth")
