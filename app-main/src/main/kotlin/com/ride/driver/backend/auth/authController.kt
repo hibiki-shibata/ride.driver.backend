@@ -7,44 +7,13 @@ import org.springframework.web.bind.annotation.*
 import com.ride.driver.backend.courier.repositories.CourierProfileRepository
 import com.ride.driver.backend.courier.models.CourierProfile
 import com.ride.driver.backend.courier.models.CourierStatus
-import com.ride.driver.backend.courier.models.VehicleType
 import com.ride.driver.backend.consumer.models.ConsumerProfile
 import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
-import com.ride.driver.backend.auth.services.JwtTokenService
-import com.ride.driver.backend.auth.domain.AccountRoles
-import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.exceptions.BadRequestException
 import com.ride.driver.backend.shared.models.Coordinate
-
-data class CourierSignInDTO(
-    val name: String,
-    val phoneNumber: String,
-    val password: String,
-    val vehicleType: VehicleType,
-)
-
-data class CourierLoginDTO(
-    val phoneNumber: String,
-    val password: String
-)
-
-data class ConsumerSignInDTO(
-    val name: String,
-    val homeAddress: String,
-    val homeAddressCoordinate: Coordinate,
-    val emailAddress: String,
-    val password: String
-)
-
-data class ConsumerLoginDTO(
-    val emailAddress: String,
-    val password: String
-)
-
-data class JwtTokensDTO(
-    val accessToken: String,
-    val refreshToken: String
-)
+import com.ride.driver.backend.auth.services.JwtTokenService
+import com.ride.driver.backend.auth.dto.*
+import com.ride.driver.backend.auth.domain.*
 
 @RestController
 @RequestMapping("/api/v1/auth")
