@@ -16,6 +16,7 @@ import com.ride.driver.backend.logistic.repositories.TaskRepository
 import com.ride.driver.backend.merchant.models.MerchantProfile
 import com.ride.driver.backend.merchant.models.MerchantStatus
 import com.ride.driver.backend.merchant.repositories.MerchantProfileRepository
+import com.ride.driver.backend.merchant.repositories.MerchantItemRepository
 import com.ride.driver.backend.merchant.models.MerchantItem
 import com.ride.driver.backend.consumer.models.ConsumerProfile
 import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
@@ -29,6 +30,7 @@ class DbDemoDataInitializerConfig {
             operationAreaRepository: OperationAreaRepository,
             taskRepository: TaskRepository,
             merchantProfileRepository: MerchantProfileRepository,
+            merchantItemRepository: MerchantItemRepository,
             consumerProfileRepository: ConsumerProfileRepository
     ) = ApplicationRunner {
         // Initialize the database with some default data
@@ -126,8 +128,46 @@ class DbDemoDataInitializerConfig {
                 merchantComments = "Popular burger joint"
             )
         )
-        
-        taskRepository.save(
+
+        // Merchant Items
+        val kfcMenuItem1: MerchantItem = merchantItemRepository.save(
+            MerchantItem(
+                name = "Original Recipe Chicken",
+                description = "Classic KFC chicken with 11 herbs and spices",
+                price = 5.99,
+                merchantProfile = merchantKfc
+            )
+        )
+
+        val kfcMenuItem2: MerchantItem = merchantItemRepository.save(
+            MerchantItem(
+                name = "Extra Crispy Chicken",
+                description = "Crispy fried chicken with a crunchy coating",
+                price = 6.49,
+                merchantProfile = merchantKfc
+            )
+        )
+
+        val fiveGuysMenuItem1: MerchantItem = merchantItemRepository.save(
+            MerchantItem(
+                name = "Bacon Cheeseburger",
+                description = "Juicy burger with crispy bacon and melted cheese",
+                price = 8.99,
+                merchantProfile = merchantFiveGuys
+            )
+        )
+
+        val fiveGuysMenuItem2: MerchantItem = merchantItemRepository.save(
+            MerchantItem(
+                name = "Fries",
+                description = "Crispy golden fries",
+                price = 3.49,
+                merchantProfile = merchantFiveGuys
+            )
+        )
+
+        // Tasks
+        val firstTask: Task = taskRepository.save(
             Task(
                 consumerProfile = consumerAlice,
                 merchantProfile = merchantKfc,          
@@ -135,7 +175,7 @@ class DbDemoDataInitializerConfig {
             )
         )
 
-        taskRepository.save(
+        val secondTask: Task = taskRepository.save(
             Task(
                 consumerProfile = consumerBob,
                 merchantProfile = merchantFiveGuys,
@@ -143,7 +183,7 @@ class DbDemoDataInitializerConfig {
              )
          )
 
-        taskRepository.save(
+        val thirdTask: Task = taskRepository.save(
             Task(
                 consumerProfile = consumerBob,
                 merchantProfile = merchantFiveGuys,
@@ -151,7 +191,7 @@ class DbDemoDataInitializerConfig {
              )
          )
 
-        taskRepository.save(
+        val forthTask: Task = taskRepository.save(
         Task(
             consumerProfile = consumerAlice,
             merchantProfile = merchantFiveGuys,
