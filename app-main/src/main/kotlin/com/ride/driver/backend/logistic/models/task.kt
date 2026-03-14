@@ -19,7 +19,7 @@ import com.ride.driver.backend.models.Coordinate
 import java.util.UUID
 import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
 import com.ride.driver.backend.models.courierProfile.CourierProfile
-import com.ride.driver.backend.models.venueProfile.VenueProfile
+import com.ride.driver.backend.models.merchantProfile.MerchantProfile
 
 @Entity
 @Table(
@@ -57,9 +57,9 @@ data class Task(
     val consumerProfile: ConsumerProfile,
 
     @ManyToOne
-    // @JoinColumn(name = "venue_profile", referencedColumnName = "id", insertable = false, updatable = false)
-    @JoinColumn(name = "venue_profile", nullable = false, referencedColumnName = "id")
-    val venueProfile: VenueProfile,
+    // @JoinColumn(name = "merchant_profile", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name = "merchant_profile", nullable = false, referencedColumnName = "id")
+    val merchantProfile: MerchantProfile,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "task_status", nullable = false)

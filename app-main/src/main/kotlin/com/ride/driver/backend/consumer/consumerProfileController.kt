@@ -11,12 +11,12 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import com.ride.driver.backend.repositories.ConsumerProfileRepository
 import com.ride.driver.backend.repositories.TaskRepository
-import com.ride.driver.backend.repositories.VenueProfileRepository
+import com.ride.driver.backend.repositories.MerchantProfileRepository
 import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
 import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.models.logistics.Task
 import com.ride.driver.backend.models.logistics.TaskStatus
-import com.ride.driver.backend.models.venueProfile.VenueProfile
+import com.ride.driver.backend.models.merchantProfile.MerchantProfile
 import com.ride.driver.backend.services.AccessTokenData
 import java.util.UUID
 
@@ -27,7 +27,7 @@ data class ConsumerProfileDTO(
 )
 
 data class ConsumerOrderHistoryDTO(
-    val venueName: String,
+    val merchantName: String,
     val orderDate: String,
     val orderStatus: String,
 )
@@ -37,7 +37,7 @@ data class ConsumerOrderHistoryDTO(
 class ConsumerProfileController (   
     private val consumerProfileRepository: ConsumerProfileRepository,
     private val taskRepository: TaskRepository,
-    private val venueProfileRepository: VenueProfileRepository
+    private val merchantProfileRepository: MerchantProfileRepository
 ){
     @GetMapping("/consumer/me")
     fun findConsumerProfile(): ResponseEntity<ConsumerProfileDTO> {        
@@ -84,7 +84,7 @@ class ConsumerProfileController (
         return ResponseEntity.ok(
             tasks.map { task ->
                 ConsumerOrderHistoryDTO(
-                    venueName = task.venueProfile.venueName,
+                    merchantName = task.merchantProfile.merchantName,
                     orderDate = task.orderTime.toString(),
                     orderStatus = task.taskStatus.toString()
                 )

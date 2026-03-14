@@ -14,7 +14,7 @@ import com.ride.driver.backend.models.logistics.TaskStatus
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.TaskRepository
 import com.ride.driver.backend.repositories.ConsumerProfileRepository
-import com.ride.driver.backend.repositories.VenueProfileRepository
+import com.ride.driver.backend.repositories.MerchantProfileRepository
 import com.ride.driver.backend.services.AccessTokenData
 import java.util.UUID
 import jakarta.validation.Valid
@@ -24,7 +24,7 @@ data class TaskStatusActionDTO(
 )
 
 data class CreateTaskDTO(
-    val venueID: UUID,
+    val merchantID: UUID,
     val pickupLocation: Coordinate,
     val dropoffLocation: Coordinate
 )
@@ -34,7 +34,7 @@ data class CreateTaskDTO(
 class LogisticsController (
     private val courierProfileRepository: CourierProfileRepository,
     private val consumerProfileRepository: ConsumerProfileRepository,
-    private val venueProfileRepository: VenueProfileRepository,
+    private val merchantProfileRepository: MerchantProfileRepository,
     private val taskRepository: TaskRepository
 ){
     @GetMapping("/poll/task")
@@ -52,7 +52,7 @@ class LogisticsController (
         taskRepository.save(
             Task(
                 consumerProfile = consumerProfileRepository.findById(consumerId) ?: return ResponseEntity.status(404).body("Consumer not found"),
-                venueProfile = venueProfileRepository.findById(createTaskDTO.venueID) ?: return ResponseEntity.status(404).body("Venue not found"),                
+                merchantProfile = merchantProfileRepository.findById(createTaskDTO.merchantID) ?: return ResponseEntity.status(404).body("merchant not found"),                
                 taskStatus = TaskStatus.CREATED
              )
         )
@@ -61,11 +61,11 @@ class LogisticsController (
 
     @PostMapping("/task/ready")
     fun readyTaskForAssignment(@RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO): ResponseEntity<String> {
-        val venueDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val venueId: UUID = venueDetails.accountID
+        val merchantDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+        val merchantId: UUID = merchantDetails.accountID
         val taskId: String = taskStatusActionDTO.taskId
         val taskToUpdate: Task = taskRepository.findById(UUID.fromString(taskId)) ?: throw Exception("Task not found with ID: $taskId")
-        if (taskToUpdate.venueProfile.id != venueId) return ResponseEntity.status(403).body("This task does not belong to the venue associated with the authenticated account")
+        if (taskToUpdate.merchantProfile.id != merchantId) return ResponseEntity.status(403).body("This task does not belong to the merchant associated with the authenticated account")
         if (taskToUpdate.taskStatus != TaskStatus.CREATED) return ResponseEntity.status(400).body("Only tasks in CREATED status can be marked as READY_FOR_ASSIGNMENT")
         taskRepository.save(
             taskToUpdate.copy(

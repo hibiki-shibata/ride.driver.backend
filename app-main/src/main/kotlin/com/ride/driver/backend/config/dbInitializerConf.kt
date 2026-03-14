@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 import com.ride.driver.backend.repositories.CourierProfileRepository
 import com.ride.driver.backend.repositories.OperationAreaRepository
 import com.ride.driver.backend.repositories.TaskRepository
-import com.ride.driver.backend.repositories.VenueProfileRepository
+import com.ride.driver.backend.repositories.MerchantProfileRepository
 import com.ride.driver.backend.repositories.ConsumerProfileRepository
 import com.ride.driver.backend.models.courierProfile.CourierProfile
 import com.ride.driver.backend.models.courierProfile.CourierStatus
@@ -15,8 +15,8 @@ import com.ride.driver.backend.models.courierProfile.VehicleType
 import com.ride.driver.backend.models.Coordinate
 import com.ride.driver.backend.models.logistics.Task
 import com.ride.driver.backend.models.logistics.TaskStatus
-import com.ride.driver.backend.models.venueProfile.VenueProfile
-import com.ride.driver.backend.models.venueProfile.VenueStatus
+import com.ride.driver.backend.models.merchantProfile.MerchantProfile
+import com.ride.driver.backend.models.merchantProfile.MerchantStatus
 import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
 
 import java.util.UUID
@@ -28,7 +28,7 @@ class DbDemoDataInitializerConfig {
             courierProfileRepository: CourierProfileRepository, 
             operationAreaRepository: OperationAreaRepository,
             taskRepository: TaskRepository,
-            venueProfileRepository: VenueProfileRepository,
+            merchantProfileRepository: MerchantProfileRepository,
             consumerProfileRepository: ConsumerProfileRepository
     ) = ApplicationRunner {
         // Initialize the database with some default data
@@ -103,33 +103,33 @@ class DbDemoDataInitializerConfig {
         )
 
 
-    // Venue Profiles
-        val venueKfc: VenueProfile = venueProfileRepository.save(
-            VenueProfile(
-                venueName = "KFC",
+    // merchant Profiles
+        val merchantKfc: MerchantProfile = merchantProfileRepository.save(
+            MerchantProfile(
+                merchantName = "KFC",
                 phoneNumber = "111-222-3333",
-                venueStatus = VenueStatus.OPEN,
-                venueAddress = "123 Fried Chicken St, Tokyo",
-                venueAddressCoordiate = Coordinate(latitude = 35.6895, longitude = 139.6917),                
-                venueComments = "Famous fried chicken restaurant"
+                merchantStatus = MerchantStatus.OPEN,
+                merchantAddress = "123 Fried Chicken St, Tokyo",
+                merchantAddressCoordiate = Coordinate(latitude = 35.6895, longitude = 139.6917),                
+                merchantComments = "Famous fried chicken restaurant"
             )
         )
 
-        val venueFiveGuys: VenueProfile = venueProfileRepository.save(
-            VenueProfile(
-                venueName = "Five Guys",
+        val merchantFiveGuys: MerchantProfile = merchantProfileRepository.save(
+            MerchantProfile(
+                merchantName = "Five Guys",
                 phoneNumber = "444-555-6666",
-                venueStatus = VenueStatus.OPEN,
-                venueAddress = "456 Burger Ave, Tokyo",
-                venueAddressCoordiate = Coordinate(latitude = 35.6762, longitude = 139.6503),                
-                venueComments = "Popular burger joint"
+                merchantStatus = MerchantStatus.OPEN,
+                merchantAddress = "456 Burger Ave, Tokyo",
+                merchantAddressCoordiate = Coordinate(latitude = 35.6762, longitude = 139.6503),                
+                merchantComments = "Popular burger joint"
             )
         )
         
         taskRepository.save(
             Task(
                 consumerProfile = consumerAlice,
-                venueProfile = venueKfc,          
+                merchantProfile = merchantKfc,          
                 taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
             )
         )
@@ -137,7 +137,7 @@ class DbDemoDataInitializerConfig {
         taskRepository.save(
             Task(
                 consumerProfile = consumerBob,
-                venueProfile = venueFiveGuys,
+                merchantProfile = merchantFiveGuys,
                 taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
              )
          )
@@ -145,7 +145,7 @@ class DbDemoDataInitializerConfig {
         taskRepository.save(
             Task(
                 consumerProfile = consumerBob,
-                venueProfile = venueFiveGuys,
+                merchantProfile = merchantFiveGuys,
                 taskStatus = TaskStatus.CREATED
              )
          )
@@ -153,7 +153,7 @@ class DbDemoDataInitializerConfig {
         taskRepository.save(
         Task(
             consumerProfile = consumerAlice,
-            venueProfile = venueFiveGuys,
+            merchantProfile = merchantFiveGuys,
             taskStatus = TaskStatus.DELIVERED,
             courierProfile = courierJohn
             )

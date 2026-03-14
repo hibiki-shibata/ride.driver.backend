@@ -18,13 +18,13 @@ import com.ride.driver.backend.repositories.TaskRepository
 import jakarta.validation.Valid
 
 @RestController
-@RequestMapping("/api/v1/venues")
-class venuesController (
+@RequestMapping("/api/v1/merchants")
+class MerchantsController (
     private val taskRepository: TaskRepository
 ){
-    @PostMapping("/venue/me")
-    fun findVenueProfile(@RequestBody taskStatusActionDTO: TaskStatusActionDTO): ResponseEntity<String> {
-        // Venue profile update location logic goes here. For now, just return a success message.
-        return ResponseEntity.ok("Venue location updated successfully")
+    @PostMapping("/merchant/me")
+    fun findmerchantProfile(@RequestBody taskStatusActionDTO: TaskStatusActionDTO): ResponseEntity<String> {
+        // merchant profile update location logic goes here. For now, just return a success message.
+        return ResponseEntity.ok("merchant location updated successfully")
     }
 }
