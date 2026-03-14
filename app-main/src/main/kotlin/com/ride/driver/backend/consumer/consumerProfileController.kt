@@ -8,17 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
-import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
+import com.ride.driver.backend.consumer.services.ConsumerProfileService
 import com.ride.driver.backend.consumer.models.ConsumerProfile
 import com.ride.driver.backend.logistic.models.Task
-import com.ride.driver.backend.logistic.models.TaskStatus
-import com.ride.driver.backend.logistic.repositories.TaskRepository
-import com.ride.driver.backend.merchant.models.MerchantProfile
-import com.ride.driver.backend.merchant.repositories.MerchantProfileRepository
 import com.ride.driver.backend.auth.domain.AccessTokenData
-import com.ride.driver.backend.shared.models.Coordinate
+
 
 data class ConsumerProfileDTO(
     val name: String,
@@ -33,40 +27,30 @@ data class ConsumerOrderHistoryDTO(
 
 @RestController
 @RequestMapping("api/v1/consumers")
-class ConsumerProfileController (   
-    private val consumerProfileRepository: ConsumerProfileRepository,
-    private val taskRepository: TaskRepository,
-    private val merchantProfileRepository: MerchantProfileRepository
+class ConsumerProfileController ( 
+    private val consumerProfileService: ConsumerProfileService
 ){
     @GetMapping("/consumer/me")
     fun findConsumerProfile(): ResponseEntity<ConsumerProfileDTO> {        
         val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val consumerId: UUID = consumerDetails.accountID
-        val consumer: ConsumerProfile = consumerProfileRepository.findById(consumerId) ?: throw Exception("Consumer not found with ID: $consumerId")
+        val myConsumerProfile: ConsumerProfile = consumerProfileService.getConsumerProfile(
+                consumerId = consumerDetails.accountID
+        )
         return ResponseEntity.ok(
             ConsumerProfileDTO(
-            name = consumer.name,
-            emailAddress = consumer.emailAddress
+            name = myConsumerProfile.name,
+            emailAddress = myConsumerProfile.emailAddress
          )
-        )
+      )
     }
 
     @PostMapping("/consumer/update")
     fun updateConsumerProfile(@RequestBody consumerProfileDTO: ConsumerProfileDTO): ResponseEntity<ConsumerProfileDTO> {
-        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData 
-            ?: return ResponseEntity.status(401).build()
-        val consumerId: UUID = consumerDetails.accountID        
-        val consumerDetailsInDb: ConsumerProfile = consumerProfileRepository.findById(consumerId) 
-            ?: throw Exception("Consumer not found with ID: $consumerId")
-        if (consumerProfileDTO.emailAddress == consumerDetailsInDb.emailAddress) throw Exception("The new email address is the same as the current email address")
-        if (consumerProfileRepository.existsByEmailAddress(consumerProfileDTO.emailAddress)) 
-            throw Exception("Email address ${consumerProfileDTO.emailAddress} is already in use by another consumer")
-        
-        val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(
-                consumerDetailsInDb.copy(
-                    emailAddress = consumerProfileDTO.emailAddress,
-                    name = consumerProfileDTO.name
-                )
+        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()        
+        val updatedConsumerProfile: ConsumerProfile = consumerProfileService.updateConsumerProfile(
+                consumerId = consumerDetails.accountID,
+                newEmailAddress = consumerProfileDTO.emailAddress,
+                newName = consumerProfileDTO.name
         )
         return ResponseEntity.ok(
             ConsumerProfileDTO(
@@ -76,12 +60,13 @@ class ConsumerProfileController (
          )
 
     @GetMapping("/consumer/order/history")
-    fun findConsumerOrderHistory(): ResponseEntity<List<ConsumerOrderHistoryDTO>> {
+    fun findConsumerOrderHistory(): ResponseEntity<List<ConsumerOrderHistoryDTO?>> {
         val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val consumerId: UUID = consumerDetails.accountID
-        val tasks: List<Task?> = taskRepository.findByConsumerProfile_Id(consumerId)        
+        val consumerOrderHistory: List<Task?> = consumerProfileService.getConsumerOrderHistory(
+                consumerId = consumerDetails.accountID
+        )
         return ResponseEntity.ok(
-            tasks.map { task ->
+            consumerOrderHistory.map { task ->
                 ConsumerOrderHistoryDTO(
                     merchantName = task?.merchantProfile?.name ?: "Unknown Merchant",
                     orderTime = task?.orderTime?.toString() ?: "Unknown Date",
