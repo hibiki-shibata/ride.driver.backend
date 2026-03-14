@@ -18,8 +18,8 @@ import com.ride.driver.backend.shared.models.Coordinate
 @Table(
     name = "consumer_profile",
     indexes = [
+        Index(name = "idx_consumer_id", columnList = "id"),
         Index(name = "idx_consumer_email_address", columnList = "email_address"),
-        Index(name = "idx_consumer__id", columnList = "id"),
     ]
 )
 

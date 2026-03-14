@@ -26,7 +26,8 @@ import com.ride.driver.backend.merchant.models.MerchantProfile
     name = "Task",
     indexes = [
         Index(name = "idx_assigned_courier_id", columnList = "assigned_courier_id"),
-        Index(name = "idx_consumer_id", columnList = "consumer_id"),
+        Index(name = "idx_consumer_profile_id", columnList = "consumer_profile"),
+        Index(name = "idx_merchant_profile_id", columnList = "merchant_profile"),
         Index(name = "idx_task_status", columnList = "task_status")
     ]
 )

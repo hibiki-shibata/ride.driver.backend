@@ -17,6 +17,8 @@ import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.AttributeOverride
+import jakarta.persistence.OneToMany
+import java.util.List
 import com.ride.driver.backend.shared.models.Coordinate
 
 @Entity
@@ -60,6 +62,9 @@ data class MerchantProfile(
         AttributeOverride(name = "latitude", column = Column(name = "latitude")),
         AttributeOverride(name = "longitude", column = Column(name = "longitude"))
     )
-    val merchantAddressCoordiate: Coordinate
+    val merchantAddressCoordiate: Coordinate,
+
+    @OneToMany(mappedBy = "merchantProfile")
+    val merchantItems: List<MerchantItem>? = null
 )
 
