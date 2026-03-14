@@ -9,19 +9,10 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
+import com.ride.driver.backend.auth.domain.AccountRoles
+import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.exceptions.AuthenticationException
 
-enum class AccountRoles {
-    BASE_ROLE,
-    ADMIN_ROLE,
-    DEVELOPER_ROLE
-}
-
-data class AccessTokenData(
-    val accountID: UUID,
-    val accountName: String,
-    val roles: List<AccountRoles>,
-)
 
 @Service
 open class JwtTokenService(

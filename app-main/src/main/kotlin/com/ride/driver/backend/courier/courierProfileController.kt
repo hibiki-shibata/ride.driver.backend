@@ -20,7 +20,7 @@ import com.ride.driver.backend.courier.models.CourierStatus
 import com.ride.driver.backend.logistic.models.Task
 import com.ride.driver.backend.logistic.models.TaskStatus
 import com.ride.driver.backend.logistic.repositories.TaskRepository
-import com.ride.driver.backend.auth.services.AccessTokenData
+import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.models.Coordinate
 import java.util.UUID
 

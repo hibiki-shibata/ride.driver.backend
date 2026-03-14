@@ -17,7 +17,7 @@ import com.ride.driver.backend.logistic.models.TaskStatus
 import com.ride.driver.backend.logistic.repositories.TaskRepository
 import com.ride.driver.backend.merchant.models.MerchantProfile
 import com.ride.driver.backend.merchant.repositories.MerchantProfileRepository
-import com.ride.driver.backend.auth.services.AccessTokenData
+import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.models.Coordinate
 
 data class ConsumerProfileDTO(

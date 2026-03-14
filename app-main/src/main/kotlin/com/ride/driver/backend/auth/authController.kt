@@ -11,8 +11,8 @@ import com.ride.driver.backend.courier.models.VehicleType
 import com.ride.driver.backend.consumer.models.ConsumerProfile
 import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
 import com.ride.driver.backend.auth.services.JwtTokenService
-import com.ride.driver.backend.auth.services.AccountRoles
-import com.ride.driver.backend.auth.services.AccessTokenData
+import com.ride.driver.backend.auth.domain.AccountRoles
+import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.exceptions.BadRequestException
 import com.ride.driver.backend.shared.models.Coordinate
 

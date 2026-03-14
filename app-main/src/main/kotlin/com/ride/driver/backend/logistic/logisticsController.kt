@@ -14,7 +14,7 @@ import com.ride.driver.backend.logistic.models.Task
 import com.ride.driver.backend.logistic.repositories.TaskRepository
 import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
 import com.ride.driver.backend.merchant.repositories.MerchantProfileRepository
-import com.ride.driver.backend.auth.services.AccessTokenData
+import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.models.Coordinate
 import java.util.UUID
 import jakarta.validation.Valid
