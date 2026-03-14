@@ -71,7 +71,7 @@ class AuthController(
             AccessTokenData(
                 accountID = savedCourier.id,
                 accountName = savedCourier.name,
-                roles = listOf(AccountRoles.BASE_ROLE)
+                accountRoles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val refreshToken = jwtTokenService.generateRefreshToken(savedCourier.id)
@@ -87,7 +87,7 @@ class AuthController(
             AccessTokenData(
                 accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
                 accountName = savedCourier.name,
-                roles = listOf(AccountRoles.BASE_ROLE)
+                accountRoles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val refreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.id)
@@ -111,7 +111,7 @@ class AuthController(
             AccessTokenData(
                 accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
                 accountName = savedConsumer.name,
-                roles = listOf(AccountRoles.BASE_ROLE)
+                accountRoles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val refreshToken = jwtTokenService.generateRefreshToken(savedConsumer.id)
@@ -127,7 +127,7 @@ class AuthController(
             AccessTokenData(
                 accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
                 accountName = savedConsumer.name,
-                roles = listOf(AccountRoles.BASE_ROLE)
+                accountRoles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val refreshToken: String = jwtTokenService.generateRefreshToken(savedConsumer.id)
@@ -145,7 +145,7 @@ class AuthController(
             AccessTokenData(
                 accountID = accountIdOfRefreshToken,
                 accountName = accountName,
-                roles = listOf(AccountRoles.BASE_ROLE)
+                accountRoles = listOf(AccountRoles.BASE_ROLE)
             )
         )
         val newRefreshToken: String = jwtTokenService.generateRefreshToken(accountIdOfRefreshToken)

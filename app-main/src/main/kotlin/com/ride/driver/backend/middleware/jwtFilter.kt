@@ -26,26 +26,23 @@ class JwtFilter(
     try{
         SecurityContextHolder.getContext().authentication == null
         val authHeader: String? = request.getHeader("Authorization")
-        if (authHeader !== null && authHeader.startsWith("Bearer ")) {
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
             val jwtToken: String = authHeader.substringAfter("Bearer ")
-            if (!jwtTokenService.isTokenValid(jwtToken)) throw Exception("Invalid or expired JWT token")
-            val accountID: UUID = jwtTokenService.extractAccountId(jwtToken)
-            val accountName: String = jwtTokenService.extractAccountName(jwtToken)
-            val accountRoles: List<AccountRoles> = jwtTokenService.extractRoles(jwtToken)
-            val courierDetails: AccessTokenData = AccessTokenData(                            
-                    accountID = accountID,
-                    accountName = accountName,
-                    roles = accountRoles
+            if (!jwtTokenService.isTokenValid(jwtToken)) throw Exception("Invalid or Expired JWT token")
+            val accountDetails = AccessTokenData(                            
+                    accountID = jwtTokenService.extractAccountId(jwtToken),
+                    accountName = jwtTokenService.extractAccountName(jwtToken),
+                    accountRoles = jwtTokenService.extractRoles(jwtToken)
             )
             val authenticationToken = UsernamePasswordAuthenticationToken(
-                courierDetails, // principal
+                accountDetails, // principal
                 null, // credentials
-                accountRoles.map { SimpleGrantedAuthority(it.name) } // authorities
+                accountDetails.accountRoles.map { SimpleGrantedAuthority(it.name) } // authorities
             )
             authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
             SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that business logic can use it
         }
-        filterChain.doFilter(request, response)    
+        filterChain.doFilter(request, response) // Continue with the next filter in the chain
     } catch (ex: Exception) {
         response.status = HttpServletResponse.SC_UNAUTHORIZED
         response.writer.write("{\"error\": \"jwtFilter error\", \"message\": \"${ex.message}\"}")

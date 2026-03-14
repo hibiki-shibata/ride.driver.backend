@@ -21,14 +21,13 @@ import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.models.Coordinate
 
 data class ConsumerProfileDTO(
-    val id: UUID?,
     val name: String,
     val emailAddress: String,
 )
 
 data class ConsumerOrderHistoryDTO(
     val merchantName: String,
-    val orderDate: String,
+    val orderTime: String,
     val orderStatus: String,
 )
 
@@ -46,7 +45,6 @@ class ConsumerProfileController (
         val consumer: ConsumerProfile = consumerProfileRepository.findById(consumerId) ?: throw Exception("Consumer not found with ID: $consumerId")
         return ResponseEntity.ok(
             ConsumerProfileDTO(
-            id = consumer.id,
             name = consumer.name,
             emailAddress = consumer.emailAddress
          )
@@ -60,17 +58,18 @@ class ConsumerProfileController (
         val consumerId: UUID = consumerDetails.accountID        
         val consumerDetailsInDb: ConsumerProfile = consumerProfileRepository.findById(consumerId) 
             ?: throw Exception("Consumer not found with ID: $consumerId")
-        if (consumerProfileDTO.emailAddress != consumerDetailsInDb.emailAddress)
-             throw Exception("Email address cannot be updated to a different value than the original email address used during registration") 
+        if (consumerProfileDTO.emailAddress == consumerDetailsInDb.emailAddress) throw Exception("The new email address is the same as the current email address")
         if (consumerProfileRepository.existsByEmailAddress(consumerProfileDTO.emailAddress)) 
             throw Exception("Email address ${consumerProfileDTO.emailAddress} is already in use by another consumer")
         
         val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(
-                consumerDetailsInDb.copy(emailAddress = consumerProfileDTO.emailAddress)
+                consumerDetailsInDb.copy(
+                    emailAddress = consumerProfileDTO.emailAddress,
+                    name = consumerProfileDTO.name
+                )
         )
         return ResponseEntity.ok(
             ConsumerProfileDTO(
-                id = updatedConsumerProfile.id,
                 name = updatedConsumerProfile.name,
                 emailAddress = updatedConsumerProfile.emailAddress
              )
@@ -80,13 +79,13 @@ class ConsumerProfileController (
     fun findConsumerOrderHistory(): ResponseEntity<List<ConsumerOrderHistoryDTO>> {
         val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val consumerId: UUID = consumerDetails.accountID
-        val tasks: List<Task> = taskRepository.findByConsumerProfile_Id(consumerId) 
+        val tasks: List<Task?> = taskRepository.findByConsumerProfile_Id(consumerId)        
         return ResponseEntity.ok(
             tasks.map { task ->
                 ConsumerOrderHistoryDTO(
-                    merchantName = task.merchantProfile.merchantName,
-                    orderDate = task.orderTime.toString(),
-                    orderStatus = task.taskStatus.toString()
+                    merchantName = task?.merchantProfile?.name ?: "Unknown Merchant",
+                    orderTime = task?.orderTime?.toString() ?: "Unknown Date",
+                    orderStatus = task?.taskStatus?.toString() ?: "Unknown Status"
                 )
             }
         )        

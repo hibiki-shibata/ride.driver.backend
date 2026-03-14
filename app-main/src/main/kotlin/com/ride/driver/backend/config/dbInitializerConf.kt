@@ -104,7 +104,7 @@ class DbDemoDataInitializerConfig {
     // merchant Profiles
         val merchantKfc: MerchantProfile = merchantProfileRepository.save(
             MerchantProfile(
-                merchantName = "KFC",
+                name = "KFC",
                 phoneNumber = "111-222-3333",
                 merchantStatus = MerchantStatus.OPEN,
                 merchantAddress = "123 Fried Chicken St, Tokyo",
@@ -115,7 +115,7 @@ class DbDemoDataInitializerConfig {
 
         val merchantFiveGuys: MerchantProfile = merchantProfileRepository.save(
             MerchantProfile(
-                merchantName = "Five Guys",
+                name = "Five Guys",
                 phoneNumber = "444-555-6666",
                 merchantStatus = MerchantStatus.OPEN,
                 merchantAddress = "456 Burger Ave, Tokyo",

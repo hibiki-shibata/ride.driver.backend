@@ -13,7 +13,7 @@ import java.util.UUID
 @Repository
 interface TaskRepository: CrudRepository<Task, Long> {
    fun save(courierProfile: Task): Task
-   fun findById(id: UUID): Task?
+   fun findById(id: UUID): Task
    fun findByConsumerProfile_Id(consumerProfileId: UUID): List<Task>
    fun findByCourierProfile_Id(courierProfileId: UUID): List<Task>
    fun findByMerchantProfile_Id(merchantProfileId: UUID): List<Task>

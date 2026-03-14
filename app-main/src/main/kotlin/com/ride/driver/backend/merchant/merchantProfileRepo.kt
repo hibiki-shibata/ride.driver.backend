@@ -12,7 +12,7 @@ import java.util.UUID
 open interface MerchantProfileRepository : CrudRepository<MerchantProfile, Long> {
    fun save(merchantProfile: MerchantProfile): MerchantProfile
    fun findByPhoneNumber(phoneNumber: String): MerchantProfile?
-   fun findBymerchantStatus(merchantStatus: String): List<MerchantProfile>
-   fun findBymerchantName(merchantName: String): List<MerchantProfile>
+   fun findByMerchantStatus(merchantStatus: String): List<MerchantProfile>
+   fun findByName(merchantName: String): List<MerchantProfile>
    fun findById(id: UUID): MerchantProfile?
 }

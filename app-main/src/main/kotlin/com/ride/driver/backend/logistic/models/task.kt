@@ -35,7 +35,7 @@ data class Task(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    val id: Long? = null,
+    val id: UUID? = null,
 
     // @Column(name = "assigned_courier_id", nullable = false)
     // val assignedCourierId: UUID? = null,

@@ -63,7 +63,7 @@ class CourierProfileController (
         return ResponseEntity.ok(courierDTO)
     }
 
-    @PostMapping("/update/mylocation")
+    @PostMapping("/courier/location")
     fun updateLocation(@RequestBody @Valid location: Coordinate): ResponseEntity<String> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.accountID
@@ -75,7 +75,7 @@ class CourierProfileController (
         return ResponseEntity.ok("Location updated successfully")
     }    
 
-    @PostMapping("/update/online")
+    @PostMapping("/courier/online")
     fun updateStatus(@RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO): ResponseEntity<String> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val isOnline: Boolean = courierStatusUpdateDTO.isOnline
@@ -86,14 +86,14 @@ class CourierProfileController (
                 cpStatus = if (isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
             ) ?: return ResponseEntity.status(404).body("Courier not found")
         )
-        return ResponseEntity.ok("Status updated successfully")
+        return ResponseEntity.ok("Your status has been updated to ${if (isOnline) "ONLINE" else "OFFLINE"}")
     }
 
-    @GetMapping("/courier/task-history")
-    fun getTaskHistory(): ResponseEntity<List<Task>> {
+    @GetMapping("/courier/history")
+    fun getTaskHistory(): ResponseEntity<List<Task?>> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.accountID
-        val taskHistory: List<Task> = taskRepository.findByCourierProfile_IdAndTaskStatus(courierId, TaskStatus.DELIVERED)
+        val taskHistory: List<Task?> = taskRepository.findByCourierProfile_IdAndTaskStatus(courierId, TaskStatus.DELIVERED) ?: return ResponseEntity.status(404).build()
         return ResponseEntity.ok(taskHistory)
     }
 }

@@ -27,7 +27,7 @@ open class JwtTokenService(
         val now = System.currentTimeMillis()
         val additionalClaims =  mapOf(
             "accountID" to accountTokenData.accountID.toString(),
-            "roles" to accountTokenData.roles.map { it.name }
+            "accountRoles" to accountTokenData.accountRoles.map { it.name }
         )
         return Jwts.builder()
             .setClaims(additionalClaims)
@@ -73,7 +73,7 @@ open class JwtTokenService(
 
     fun extractRoles(token: String): List<AccountRoles> {
         val claims = extractAllClaims(token)
-        return (claims["roles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
+        return (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
     }
 
     private fun extractAllClaims(token: String): Claims {

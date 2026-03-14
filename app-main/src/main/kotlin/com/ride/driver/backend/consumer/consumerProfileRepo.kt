@@ -12,7 +12,7 @@ import com.ride.driver.backend.consumer.models.ConsumerProfile
 open interface ConsumerProfileRepository : CrudRepository<ConsumerProfile, Long> {
    fun save(consumerProfile: ConsumerProfile): ConsumerProfile
    fun existsByEmailAddress(emailAddress: String): Boolean
-   fun findById(id: UUID): ConsumerProfile?
-   fun findByEmailAddress(emailAddress: String): ConsumerProfile?
+   fun findById(id: UUID): ConsumerProfile
+   fun findByEmailAddress(emailAddress: String): ConsumerProfile
    fun findAll(pageable: Pageable): Page<ConsumerProfile>
 }

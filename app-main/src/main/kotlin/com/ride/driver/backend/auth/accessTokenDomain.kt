@@ -11,5 +11,5 @@ enum class AccountRoles {
 data class AccessTokenData(
     val accountID: UUID,
     val accountName: String,
-    val roles: List<AccountRoles>,
+    val accountRoles: List<AccountRoles>,
 )

@@ -25,8 +25,6 @@ data class TaskStatusActionDTO(
 
 data class CreateTaskDTO(
     val merchantID: UUID,
-    val pickupLocation: Coordinate,
-    val dropoffLocation: Coordinate
 )
 
 @RestController
@@ -37,7 +35,7 @@ class LogisticsController (
     private val merchantProfileRepository: MerchantProfileRepository,
     private val taskRepository: TaskRepository
 ){
-    @GetMapping("/poll/task")
+    @GetMapping("/task/poll")
     fun pollForTask(): ResponseEntity<Task> {
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.accountID
@@ -65,6 +63,8 @@ class LogisticsController (
         val merchantId: UUID = merchantDetails.accountID
         val taskId: String = taskStatusActionDTO.taskId
         val taskToUpdate: Task = taskRepository.findById(UUID.fromString(taskId)) ?: throw Exception("Task not found with ID: $taskId")
+        println("Merchant ID from token: $merchantId")
+        println("Merchant ID associated with task: ${taskToUpdate.merchantProfile.id}")
         if (taskToUpdate.merchantProfile.id != merchantId) return ResponseEntity.status(403).body("This task does not belong to the merchant associated with the authenticated account")
         if (taskToUpdate.taskStatus != TaskStatus.CREATED) return ResponseEntity.status(400).body("Only tasks in CREATED status can be marked as READY_FOR_ASSIGNMENT")
         taskRepository.save(
@@ -80,7 +80,7 @@ class LogisticsController (
         val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val taskId: String = taskStatusActionDTO.taskId
         val courierId: UUID = courierDetails.accountID
-        val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull() ?: return ResponseEntity.status(404).body("No task assigned to this courier")
+        val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull() ?: return ResponseEntity.status(400).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
         taskRepository.save(
             assignedTask.copy(
@@ -114,7 +114,7 @@ class LogisticsController (
             ?: return ResponseEntity.status(401).build()
         val courierId: UUID = courierDetails.accountID
         val assignedTask: Task = taskRepository.findByConsumerProfile_IdAndTaskStatus(courierId, TaskStatus.IN_DROPOFF).firstOrNull()
-            ?: return ResponseEntity.status(404).body("No task assigned to this courier")
+            ?: return ResponseEntity.status(400).body("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
         if (assignedTask.taskStatus != TaskStatus.IN_DROPOFF) return ResponseEntity.status(400).body("Cannot complete dropoff for task that is not in DROPOFF status")
         taskRepository.save(

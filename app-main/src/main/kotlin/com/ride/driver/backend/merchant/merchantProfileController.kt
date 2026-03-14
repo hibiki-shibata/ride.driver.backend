@@ -19,10 +19,10 @@ import jakarta.validation.Valid
 
 @RestController
 @RequestMapping("/api/v1/merchants")
-class MerchantsController (
+class MerchantProfileController (
     private val taskRepository: TaskRepository
 ){
-    @PostMapping("/merchant/me")
+    @GetMapping("/merchant/me")
     fun findmerchantProfile(@RequestBody string: String): ResponseEntity<String> {
         // merchant profile update location logic goes here. For now, just return a success message.
         return ResponseEntity.ok("merchant location updated successfully")

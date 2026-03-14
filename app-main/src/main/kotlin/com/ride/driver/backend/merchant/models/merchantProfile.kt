@@ -37,7 +37,7 @@ data class MerchantProfile(
     val id: UUID? = null,
 
     @Column(name = "merchant_name", nullable = false)
-    val merchantName: String,
+    val name: String,
 
     @Column(name = "phone_number", unique = true, nullable = false)
     val phoneNumber: String,
