@@ -1,4 +1,4 @@
-package com.ride.driver.backend.controller
+package com.ride.driver.backend.courier.controller
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -12,16 +12,16 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import jakarta.validation.Valid
-import com.ride.driver.backend.repositories.CourierProfileRepository
-import com.ride.driver.backend.repositories.TaskRepository
-import com.ride.driver.backend.models.courierProfile.CourierProfile
-import com.ride.driver.backend.models.courierProfile.OperationArea
-import com.ride.driver.backend.models.courierProfile.VehicleType
-import com.ride.driver.backend.models.courierProfile.CourierStatus
-import com.ride.driver.backend.models.logistics.Task
-import com.ride.driver.backend.models.Coordinate
-import com.ride.driver.backend.models.logistics.TaskStatus
-import com.ride.driver.backend.services.AccessTokenData
+import com.ride.driver.backend.courier.repositories.CourierProfileRepository
+import com.ride.driver.backend.courier.models.CourierProfile
+import com.ride.driver.backend.courier.models.OperationArea
+import com.ride.driver.backend.courier.models.VehicleType
+import com.ride.driver.backend.courier.models.CourierStatus
+import com.ride.driver.backend.logistic.models.Task
+import com.ride.driver.backend.logistic.models.TaskStatus
+import com.ride.driver.backend.logistic.repositories.TaskRepository
+import com.ride.driver.backend.auth.services.AccessTokenData
+import com.ride.driver.backend.shared.models.Coordinate
 import java.util.UUID
 
 data class CourierProfileDTO(

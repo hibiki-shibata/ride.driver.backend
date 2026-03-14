@@ -1,4 +1,4 @@
-package com.ride.driver.backend.models.merchantProfile
+package com.ride.driver.backend.merchant.models
 
 enum class MerchantStatus {
     OPEN,

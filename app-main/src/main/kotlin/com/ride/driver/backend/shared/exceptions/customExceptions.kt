@@ -1,4 +1,4 @@
-package com.ride.driver.backend.exceptions
+package com.ride.driver.backend.shared.exceptions
 
 open class HttpException(
     val status: String? = "500",

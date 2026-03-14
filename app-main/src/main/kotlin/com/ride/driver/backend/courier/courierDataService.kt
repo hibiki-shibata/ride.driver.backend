@@ -1,13 +1,13 @@
-package com.ride.driver.backend.services
+package com.ride.driver.backend.courier.services
 
 import org.springframework.stereotype.Service
 
-import com.ride.driver.backend.models.courierProfile.CourierProfile
-import com.ride.driver.backend.models.courierProfile.CourierStatus 
-import com.ride.driver.backend.models.courierProfile.OperationArea
-import com.ride.driver.backend.models.courierProfile.VehicleType
-import com.ride.driver.backend.models.Coordinate
-import com.ride.driver.backend.repositories.CourierProfileRepository
+import com.ride.driver.backend.courier.models.CourierProfile
+import com.ride.driver.backend.courier.models.CourierStatus 
+import com.ride.driver.backend.courier.models.OperationArea
+import com.ride.driver.backend.courier.models.VehicleType
+import com.ride.driver.backend.courier.repositories.CourierProfileRepository
+import com.ride.driver.backend.shared.models.Coordinate
 import java.util.UUID
 
 @Service

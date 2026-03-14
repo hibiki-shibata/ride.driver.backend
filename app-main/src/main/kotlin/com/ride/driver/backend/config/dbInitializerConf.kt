@@ -3,21 +3,21 @@ package com.ride.driver.backend.config
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import com.ride.driver.backend.repositories.CourierProfileRepository
-import com.ride.driver.backend.repositories.OperationAreaRepository
-import com.ride.driver.backend.repositories.TaskRepository
-import com.ride.driver.backend.repositories.MerchantProfileRepository
-import com.ride.driver.backend.repositories.ConsumerProfileRepository
-import com.ride.driver.backend.models.courierProfile.CourierProfile
-import com.ride.driver.backend.models.courierProfile.CourierStatus
-import com.ride.driver.backend.models.courierProfile.OperationArea
-import com.ride.driver.backend.models.courierProfile.VehicleType
-import com.ride.driver.backend.models.Coordinate
-import com.ride.driver.backend.models.logistics.Task
-import com.ride.driver.backend.models.logistics.TaskStatus
-import com.ride.driver.backend.models.merchantProfile.MerchantProfile
-import com.ride.driver.backend.models.merchantProfile.MerchantStatus
-import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
+import com.ride.driver.backend.courier.repositories.CourierProfileRepository
+import com.ride.driver.backend.courier.repositories.OperationAreaRepository
+import com.ride.driver.backend.courier.models.CourierProfile
+import com.ride.driver.backend.courier.models.CourierStatus
+import com.ride.driver.backend.courier.models.OperationArea
+import com.ride.driver.backend.courier.models.VehicleType
+import com.ride.driver.backend.shared.models.Coordinate
+import com.ride.driver.backend.logistic.models.Task
+import com.ride.driver.backend.logistic.models.TaskStatus
+import com.ride.driver.backend.logistic.repositories.TaskRepository
+import com.ride.driver.backend.merchant.models.MerchantProfile
+import com.ride.driver.backend.merchant.models.MerchantStatus
+import com.ride.driver.backend.merchant.repositories.MerchantProfileRepository
+import com.ride.driver.backend.consumer.models.ConsumerProfile
+import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
 
 import java.util.UUID
 

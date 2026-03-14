@@ -1,4 +1,4 @@
-package com.ride.driver.backend.exceptions
+package com.ride.driver.backend.shared.exceptions
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

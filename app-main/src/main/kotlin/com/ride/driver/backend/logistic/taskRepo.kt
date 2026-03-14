@@ -1,13 +1,13 @@
 // https://spring.io/projects/spring-data-jpa
-package com.ride.driver.backend.repositories
+package com.ride.driver.backend.logistic.repositories
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
-import com.ride.driver.backend.models.logistics.Task
-import com.ride.driver.backend.models.logistics.TaskStatus
-import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
+import com.ride.driver.backend.logistic.models.Task
+import com.ride.driver.backend.logistic.models.TaskStatus
+import com.ride.driver.backend.consumer.models.ConsumerProfile
 import java.util.UUID
 
 @Repository

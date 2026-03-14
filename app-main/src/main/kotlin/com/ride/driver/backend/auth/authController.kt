@@ -1,20 +1,20 @@
-package com.ride.driver.backend.controller
+package com.ride.driver.backend.auth.controller
 
+import java.util.UUID
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import com.ride.driver.backend.models.Coordinate
-import com.ride.driver.backend.repositories.CourierProfileRepository
-import com.ride.driver.backend.repositories.ConsumerProfileRepository
-import com.ride.driver.backend.models.courierProfile.CourierProfile
-import com.ride.driver.backend.models.courierProfile.CourierStatus
-import com.ride.driver.backend.models.courierProfile.VehicleType
-import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
-import com.ride.driver.backend.services.JwtTokenService
-import com.ride.driver.backend.services.AccountRoles
-import com.ride.driver.backend.services.AccessTokenData
-import com.ride.driver.backend.exceptions.BadRequestException
-import java.util.UUID
+import com.ride.driver.backend.courier.repositories.CourierProfileRepository
+import com.ride.driver.backend.courier.models.CourierProfile
+import com.ride.driver.backend.courier.models.CourierStatus
+import com.ride.driver.backend.courier.models.VehicleType
+import com.ride.driver.backend.consumer.models.ConsumerProfile
+import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
+import com.ride.driver.backend.auth.services.JwtTokenService
+import com.ride.driver.backend.auth.services.AccountRoles
+import com.ride.driver.backend.auth.services.AccessTokenData
+import com.ride.driver.backend.shared.exceptions.BadRequestException
+import com.ride.driver.backend.shared.models.Coordinate
 
 data class CourierSignInDTO(
     val name: String,

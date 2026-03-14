@@ -1,4 +1,4 @@
-package com.ride.driver.backend.models
+package com.ride.driver.backend.shared.models
 
 import jakarta.persistence.Column
 import jakarta.persistence.Embeddable

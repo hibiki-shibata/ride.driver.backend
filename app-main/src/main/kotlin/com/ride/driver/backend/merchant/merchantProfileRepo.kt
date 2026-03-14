@@ -1,11 +1,11 @@
 // https://spring.io/projects/spring-data-jpa
-package com.ride.driver.backend.repositories
+package com.ride.driver.backend.merchant.repositories
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
-import com.ride.driver.backend.models.merchantProfile.MerchantProfile
+import com.ride.driver.backend.merchant.models.MerchantProfile
 import java.util.UUID
 
 @Repository

@@ -1,7 +1,7 @@
-package com.ride.driver.backend.repositories
+package com.ride.driver.backend.auth.repositories
  
 import org.springframework.stereotype.Repository
-import com.ride.driver.backend.models.courierProfile.CourierProfile
+import com.ride.driver.backend.courier.models.CourierProfile
 
 @Repository
 class RefreshTokenRepository {

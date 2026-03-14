@@ -1,4 +1,4 @@
-package com.ride.driver.backend.models.logistics
+package com.ride.driver.backend.logistic.models
 
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
@@ -15,11 +15,11 @@ import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.AttributeOverride
-import com.ride.driver.backend.models.Coordinate
 import java.util.UUID
-import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
-import com.ride.driver.backend.models.courierProfile.CourierProfile
-import com.ride.driver.backend.models.merchantProfile.MerchantProfile
+import com.ride.driver.backend.shared.models.Coordinate
+import com.ride.driver.backend.consumer.models.ConsumerProfile
+import com.ride.driver.backend.courier.models.CourierProfile
+import com.ride.driver.backend.merchant.models.MerchantProfile
 
 @Entity
 @Table(

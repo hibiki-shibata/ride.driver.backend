@@ -9,9 +9,9 @@ import org.springframework.web.filter.OncePerRequestFilter
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.FilterChain
-import com.ride.driver.backend.services.JwtTokenService
-import com.ride.driver.backend.services.AccessTokenData
-import com.ride.driver.backend.services.AccountRoles
+import com.ride.driver.backend.auth.services.JwtTokenService
+import com.ride.driver.backend.auth.services.AccessTokenData
+import com.ride.driver.backend.auth.services.AccountRoles
 import java.util.UUID
 
 @Component 

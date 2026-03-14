@@ -1,4 +1,4 @@
-package com.ride.driver.backend.services
+package com.ride.driver.backend.auth.services
 
 import java.util.Date
 import java.util.UUID
@@ -9,7 +9,7 @@ import io.jsonwebtoken.Claims
 import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
-import com.ride.driver.backend.exceptions.AuthenticationException
+import com.ride.driver.backend.shared.exceptions.AuthenticationException
 
 enum class AccountRoles {
     BASE_ROLE,

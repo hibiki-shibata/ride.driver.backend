@@ -1,4 +1,4 @@
-package com.ride.driver.backend.models.courierProfile
+package com.ride.driver.backend.courier.models
 
 enum class CourierStatus {
     ONBOARDING,

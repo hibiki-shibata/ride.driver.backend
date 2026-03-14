@@ -1,5 +1,6 @@
-package com.ride.driver.backend.controller
+package com.ride.driver.backend.consumer.controller
 
+import java.util.UUID
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -9,16 +10,15 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import com.ride.driver.backend.repositories.ConsumerProfileRepository
-import com.ride.driver.backend.repositories.TaskRepository
-import com.ride.driver.backend.repositories.MerchantProfileRepository
-import com.ride.driver.backend.models.consumerProfile.ConsumerProfile
-import com.ride.driver.backend.models.Coordinate
-import com.ride.driver.backend.models.logistics.Task
-import com.ride.driver.backend.models.logistics.TaskStatus
-import com.ride.driver.backend.models.merchantProfile.MerchantProfile
-import com.ride.driver.backend.services.AccessTokenData
-import java.util.UUID
+import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
+import com.ride.driver.backend.consumer.models.ConsumerProfile
+import com.ride.driver.backend.logistic.models.Task
+import com.ride.driver.backend.logistic.models.TaskStatus
+import com.ride.driver.backend.logistic.repositories.TaskRepository
+import com.ride.driver.backend.merchant.models.MerchantProfile
+import com.ride.driver.backend.merchant.repositories.MerchantProfileRepository
+import com.ride.driver.backend.auth.services.AccessTokenData
+import com.ride.driver.backend.shared.models.Coordinate
 
 data class ConsumerProfileDTO(
     val id: UUID?,

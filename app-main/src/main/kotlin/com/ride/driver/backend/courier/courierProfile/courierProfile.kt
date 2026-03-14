@@ -1,5 +1,5 @@
 // https://spring.io/guides/gs/accessing-data-jpa
-package com.ride.driver.backend.models.courierProfile
+package com.ride.driver.backend.courier.models
 
 import java.util.UUID
 import jakarta.persistence.Entity
@@ -17,7 +17,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.AttributeOverride
-import com.ride.driver.backend.models.Coordinate
+import com.ride.driver.backend.shared.models.Coordinate
 
 @Entity
 @Table(

@@ -1,14 +1,14 @@
-package com.ride.driver.backend.services
+package com.ride.driver.backend.logistic.services
 
+import java.util.UUID
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
-import com.ride.driver.backend.repositories.CourierProfileRepository
-import com.ride.driver.backend.repositories.TaskRepository
-import com.ride.driver.backend.models.courierProfile.CourierProfile
-import com.ride.driver.backend.models.logistics.Task
-import com.ride.driver.backend.models.logistics.TaskStatus
-import com.ride.driver.backend.models.courierProfile.CourierStatus
-import java.util.UUID
+import com.ride.driver.backend.logistic.models.Task
+import com.ride.driver.backend.logistic.models.TaskStatus
+import com.ride.driver.backend.logistic.repositories.TaskRepository
+import com.ride.driver.backend.courier.models.CourierStatus
+import com.ride.driver.backend.courier.models.CourierProfile
+import com.ride.driver.backend.courier.repositories.CourierProfileRepository
 
 @Service
 public class ScheduledTasks (

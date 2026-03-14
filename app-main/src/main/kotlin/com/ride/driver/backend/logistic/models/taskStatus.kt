@@ -1,4 +1,4 @@
-package com.ride.driver.backend.models.logistics
+package com.ride.driver.backend.logistic.models
 
 enum class TaskStatus {
     CREATED,
