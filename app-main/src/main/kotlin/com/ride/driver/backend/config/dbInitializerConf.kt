@@ -108,7 +108,8 @@ class DbDemoDataInitializerConfig {
                 phoneNumber = "111-222-3333",
                 merchantStatus = MerchantStatus.OPEN,
                 merchantAddress = "123 Fried Chicken St, Tokyo",
-                merchantAddressCoordiate = Coordinate(latitude = 35.6895, longitude = 139.6917),                
+                merchantAddressCoordiate = Coordinate(latitude = 35.6895, longitude = 139.6917),
+                passwordHash = "kfc_hashed_password",
                 merchantComments = "Famous fried chicken restaurant"
             )
         )
@@ -120,6 +121,7 @@ class DbDemoDataInitializerConfig {
                 merchantStatus = MerchantStatus.OPEN,
                 merchantAddress = "456 Burger Ave, Tokyo",
                 merchantAddressCoordiate = Coordinate(latitude = 35.6762, longitude = 139.6503),                
+                passwordHash = "fiveguys_hashed_password",
                 merchantComments = "Popular burger joint"
             )
         )

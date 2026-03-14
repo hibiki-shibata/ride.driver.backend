@@ -36,20 +36,23 @@ data class MerchantProfile(
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: UUID? = null,
 
-    @Column(name = "merchant_name", nullable = false)
+    @Column(name = "name", nullable = false)
     val name: String,
 
     @Column(name = "phone_number", unique = true, nullable = false)
     val phoneNumber: String,
 
-    @Column(name = "merchant_address", nullable = false)
+    @Column(name = "password_hash")
+    val passwordHash: String,
+
+    @Column(name = "mx_address", nullable = false)
     val merchantAddress: String,
 
-    @Column(name = "merchant_comments", nullable = true)
+    @Column(name = "mx_comments", nullable = true)
     val merchantComments: String? = null,
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "merchant_status", nullable = false)
+    @Column(name = "mx_status", nullable = false)
     val merchantStatus: MerchantStatus = MerchantStatus.CLOSED,
 
     @Embedded
