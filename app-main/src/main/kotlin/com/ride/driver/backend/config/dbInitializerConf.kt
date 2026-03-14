@@ -16,6 +16,7 @@ import com.ride.driver.backend.logistic.repositories.TaskRepository
 import com.ride.driver.backend.merchant.models.MerchantProfile
 import com.ride.driver.backend.merchant.models.MerchantStatus
 import com.ride.driver.backend.merchant.repositories.MerchantProfileRepository
+import com.ride.driver.backend.merchant.models.MerchantItem
 import com.ride.driver.backend.consumer.models.ConsumerProfile
 import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
 import java.util.UUID

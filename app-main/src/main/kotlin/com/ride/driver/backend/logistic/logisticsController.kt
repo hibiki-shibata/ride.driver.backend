@@ -1,4 +1,4 @@
-package com.ride.driver.backend.logistic.controller
+package com.ride.driver.backend.logistic.controllers
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping

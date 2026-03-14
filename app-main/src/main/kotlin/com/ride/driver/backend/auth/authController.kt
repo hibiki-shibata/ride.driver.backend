@@ -1,4 +1,4 @@
-package com.ride.driver.backend.auth.controller
+package com.ride.driver.backend.auth.controllers
 
 import java.util.UUID
 import jakarta.validation.Valid

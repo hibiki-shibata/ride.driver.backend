@@ -1,4 +1,4 @@
-package com.ride.driver.backend.courier.controller
+package com.ride.driver.backend.courier.controllers
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping

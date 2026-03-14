@@ -1,4 +1,4 @@
-package com.ride.driver.backend.consumer.controller
+package com.ride.driver.backend.consumer.controllers
 
 import java.util.UUID
 import org.springframework.web.bind.annotation.GetMapping
