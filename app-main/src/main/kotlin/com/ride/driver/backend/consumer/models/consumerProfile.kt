@@ -44,8 +44,8 @@ data class ConsumerProfile(
 
     @Column(name = "home_address", nullable = false)
     val homeAddress: String,
-    
+
     @Column(name = "hash_password", nullable = false)
-    val hashPassword: String,
+    val passwordHash: String,
 )
     

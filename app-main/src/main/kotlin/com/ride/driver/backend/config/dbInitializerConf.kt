@@ -86,7 +86,7 @@ class DbDemoDataInitializerConfig {
             ConsumerProfile(
                 name = "Alice Smith",
                 emailAddress = "alicesmith@gmail.com",
-                hashPassword = "hashed_password",
+                passwordHash = "hashed_password",
                 homeAddress = "123 Main St, Tokyo",
                 homeAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
             )
@@ -95,7 +95,7 @@ class DbDemoDataInitializerConfig {
             ConsumerProfile(
                 name = "Bob Johnson",
                 emailAddress = "bobjonhson@gmail.com",
-                hashPassword = "another_hashed_password",
+                passwordHash = "another_hashed_password",
                 homeAddress = "456 Elm St, Tokyo",
                 homeAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
             )

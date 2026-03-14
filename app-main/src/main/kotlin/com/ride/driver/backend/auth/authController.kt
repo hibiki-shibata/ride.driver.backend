@@ -21,7 +21,7 @@ class AuthController(
     private val jwtTokenService: JwtTokenService,
     private val repository: CourierProfileRepository,
     private val consumerProfileRepository: ConsumerProfileRepository
-    ) {
+) {
     @PostMapping("/courier/signup")
     fun signup(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<JwtTokensDTO> {
         val isCourierExists: Boolean = repository.existsByPhoneNumber(req.phoneNumber)
@@ -73,7 +73,7 @@ class AuthController(
             emailAddress = req.emailAddress,
             homeAddress = req.homeAddress,
             homeAddressCoordinate = req.homeAddressCoordinate,
-            hashPassword = req.password.hashCode().toString() // Simple hash for demonstration. Use a proper hashing algorithm in production.
+            passwordHash = req.password.hashCode().toString() // Simple hash for demonstration. Use a proper hashing algorithm in production.
         ))
         if (savedConsumer.id == null) throw Exception("Failed to save new consumer profile")
         val accessToken: String = jwtTokenService.generateAccessToken(
@@ -91,7 +91,7 @@ class AuthController(
     fun consumerLogin(@RequestBody @Valid req: ConsumerLoginDTO): ResponseEntity<JwtTokensDTO> {
         val savedConsumer: ConsumerProfile = consumerProfileRepository.findByEmailAddress(req.emailAddress) ?: 
             throw BadRequestException("Consumer with email address ${req.emailAddress} does not exist. Please sign up first.")
-        if (req.password.hashCode().toString() != savedConsumer.hashPassword) throw BadRequestException("Incorrect password for email address ${req.emailAddress}")
+        if (req.password.hashCode().toString() != savedConsumer.passwordHash) throw BadRequestException("Incorrect password for email address ${req.emailAddress}")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
                 accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
