@@ -17,45 +17,45 @@ import com.ride.driver.backend.shared.models.Coordinate
 import com.ride.driver.backend.auth.services.JwtTokenService
 import com.ride.driver.backend.auth.dto.*
 import com.ride.driver.backend.auth.domain.*
+import com.ride.driver.backend.auth.services.CourierAuthService
+import com.ride.driver.backend.auth.services.ConsumerAuthService
+import com.ride.driver.backend.auth.services.MerchantAuthService
 
 @RestController
 @RequestMapping("/api/v1/auth")
 class AuthController(
+    private val courierAuthService: CourierAuthService,
+    private val consumerAuthService: ConsumerAuthService,
+    private val merchantAuthService: MerchantAuthService,
     private val jwtTokenService: JwtTokenService,
-    private val courierProfileRepository: CourierProfileRepository,
-    private val consumerProfileRepository: ConsumerProfileRepository,
-    private val merchantProfileRepository: MerchantProfileRepository
 ) {
+    private fun isPasswordValid(inputPassword: String, storedPasswordHash: String): Boolean {
+        return inputPassword.hashCode().toString() == storedPasswordHash        
+    } 
+    
     @PostMapping("/courier/signup")
     fun signup(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<JwtTokensDTO> {
-        val isCourierExists: Boolean = courierProfileRepository.existsByPhoneNumber(req.phoneNumber)
-        if (isCourierExists) throw BadRequestException("Courier with phone number ${req.phoneNumber} already exists")          
-        val newCourierToRegister = CourierProfile(
-            name = req.name,
+        val savedCourier: CourierProfile = courierAuthService.registerNewCourier(
             phoneNumber = req.phoneNumber,
-            passwordHash = req.password.hashCode().toString(), // Simple hash for demonstration. Use a proper hashing algorithm in production.
-            vehicleType = req.vehicleType,
-            currentLocation = Coordinate(latitude = 0.0, longitude = 0.0), // Default location for new couriers
-            cpStatus = CourierStatus.ONBOARDING
+            password = req.password,
+            name = req.name,
+            vehicleType = req.vehicleType
         )
-        val savedCourier: CourierProfile = courierProfileRepository.save(newCourierToRegister)
-        if (savedCourier.id == null) throw Exception("Failed to save new courier profile")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
-                accountID = savedCourier.id,
+                accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
                 accountName = savedCourier.name,
                 accountRoles = listOf(AccountRoles.BASE_ROLE)
             )
         )
-        val refreshToken = jwtTokenService.generateRefreshToken(savedCourier.id)
+        val refreshToken = jwtTokenService.generateRefreshToken(savedCourier.id ?: throw Exception("Courier ID is null"))
         return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 
     @PostMapping("/courier/login")
     fun login(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<JwtTokensDTO> {
-        val savedCourier: CourierProfile = courierProfileRepository.findByPhoneNumber(req.phoneNumber) ?: 
-            throw BadRequestException("Courier with phone number ${req.phoneNumber} does not exist. Please sign up first.")
-        if (req.password.hashCode().toString() != savedCourier.passwordHash) throw BadRequestException("Incorrect password for phone number ${req.phoneNumber}")
+        val savedCourier: CourierProfile = courierAuthService.getCourierProfileByPhoneNumber(req.phoneNumber)
+        if (!isPasswordValid(req.password, savedCourier.passwordHash)) throw BadRequestException("Incorrect password for phone number ${req.phoneNumber}")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
                 accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
@@ -69,17 +69,13 @@ class AuthController(
 
     @PostMapping("/consumer/signup")
     fun consumerSignup(@RequestBody @Valid req: ConsumerSignInDTO): ResponseEntity<JwtTokensDTO> {
-        val isConsumerExists: Boolean = consumerProfileRepository.existsByEmailAddress(req.emailAddress)
-        if (isConsumerExists) throw BadRequestException("Consumer with email address ${req.emailAddress} already exists")
-        val savedConsumer: ConsumerProfile = consumerProfileRepository.save(
-            ConsumerProfile(
+        val savedConsumer: ConsumerProfile = consumerAuthService.registerNewConsumer(
             name = req.name,
             emailAddress = req.emailAddress,
+            password = req.password,
             homeAddress = req.homeAddress,
-            homeAddressCoordinate = req.homeAddressCoordinate,
-            passwordHash = req.password.hashCode().toString() // Simple hash for demonstration. Use a proper hashing algorithm in production.
-        ))
-        if (savedConsumer.id == null) throw Exception("Failed to save new consumer profile")
+            homeAddressCoordinate = req.homeAddressCoordinate
+        )   
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
                 accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
@@ -93,9 +89,8 @@ class AuthController(
 
     @PostMapping("/consumer/login")
     fun consumerLogin(@RequestBody @Valid req: ConsumerLoginDTO): ResponseEntity<JwtTokensDTO> {
-        val savedConsumer: ConsumerProfile = consumerProfileRepository.findByEmailAddress(req.emailAddress) ?: 
-            throw BadRequestException("Consumer with email address ${req.emailAddress} does not exist. Please sign up first.")
-        if (req.password.hashCode().toString() != savedConsumer.passwordHash) throw BadRequestException("Incorrect password for email address ${req.emailAddress}")
+        val savedConsumer: ConsumerProfile = consumerAuthService.getConsumerProfileByEmailAddress(req.emailAddress)
+        if (!isPasswordValid(req.password, savedConsumer.passwordHash)) throw BadRequestException("Incorrect password for email address ${req.emailAddress}")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
                 accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
@@ -109,19 +104,13 @@ class AuthController(
 
     @PostMapping("/merchant/signup")
     fun merchantSignup(@RequestBody @Valid req: MerchantSignInDTO): ResponseEntity<JwtTokensDTO> {
-        val isMerchantExists: Boolean = merchantProfileRepository.existsByPhoneNumber(req.phoneNumber)
-        if (isMerchantExists) throw BadRequestException("Merchant with phone number ${req.phoneNumber} already exists")
-        val savedMerchant: MerchantProfile = merchantProfileRepository.save(
-            MerchantProfile(
-                name = req.name,
-                phoneNumber = req.phoneNumber,
-                merchantAddress = req.merchantAddress,
-                merchantAddressCoordiate = req.merchantAddressCoordinate,
-                passwordHash = req.password.hashCode().toString(), // Simple hash for demonstration. Use a proper hashing algorithm in production.
-                merchantStatus = MerchantStatus.CLOSED
-            )
+        val savedMerchant: MerchantProfile = merchantAuthService.registerNewMerchant(
+            name = req.name,
+            phoneNumber = req.phoneNumber,
+            password = req.password,
+            merchantAddress = req.merchantAddress,
+            merchantAddressCoordinate = req.merchantAddressCoordinate
         )
-        if (savedMerchant.id == null) throw Exception("Failed to save new merchant profile")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
                 accountID = savedMerchant.id ?: throw Exception("Merchant ID is null"),
@@ -135,9 +124,8 @@ class AuthController(
 
     @PostMapping("/merchant/login")
     fun merchantLogin(@RequestBody @Valid req: MerchantLoginDTO): ResponseEntity<JwtTokensDTO> {
-        val savedMerchant: MerchantProfile = merchantProfileRepository.findByPhoneNumber(req.phoneNumber) ?: 
-            throw BadRequestException("Merchant with phone number ${req.phoneNumber} does not exist. Please sign up first.")
-        if (req.password.hashCode().toString() != savedMerchant.passwordHash) throw BadRequestException("Incorrect password for phone number ${req.phoneNumber}")
+        val savedMerchant: MerchantProfile = merchantAuthService.getMerchantProfileByPhoneNumber(req.phoneNumber)
+        if (!isPasswordValid(req.password, savedMerchant.passwordHash)) throw BadRequestException("Incorrect password for phone number ${req.phoneNumber}")
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(
                 accountID = savedMerchant.id ?: throw Exception("Merchant ID is null"),

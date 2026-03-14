@@ -1,7 +1,6 @@
 package com.ride.driver.backend.courier.services
 
 import org.springframework.stereotype.Service
-
 import com.ride.driver.backend.courier.models.CourierProfile
 import com.ride.driver.backend.courier.models.CourierStatus 
 import com.ride.driver.backend.courier.models.OperationArea
@@ -11,7 +10,7 @@ import com.ride.driver.backend.shared.models.Coordinate
 import java.util.UUID
 
 @Service
-class CourierDataService(){
+class CourierProfileService(){
     fun saveCoureirData(): CourierProfile {
             // Example data to save
             val courierProfile = CourierProfile(
