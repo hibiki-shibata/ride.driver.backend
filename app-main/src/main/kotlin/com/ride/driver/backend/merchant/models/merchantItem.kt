@@ -17,6 +17,7 @@ import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.AttributeOverrides
 import jakarta.persistence.AttributeOverride
+import jakarta.persistence.FetchType
 import com.ride.driver.backend.shared.models.Coordinate
 
 @Entity
@@ -47,8 +48,7 @@ data class MerchantItem(
     @Column(name = "enabled", nullable = false)
     val enabled: Boolean = false,
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_profile", referencedColumnName = "id", nullable = false)
     val merchantProfile: MerchantProfile
 )
-

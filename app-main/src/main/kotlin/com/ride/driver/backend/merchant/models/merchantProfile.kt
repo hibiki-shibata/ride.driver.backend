@@ -64,7 +64,7 @@ data class MerchantProfile(
     )
     val merchantAddressCoordiate: Coordinate,
 
-    @OneToMany(mappedBy = "merchantProfile")
-    val merchantItems: List<MerchantItem>? = null
+    // @OneToMany(mappedBy = "merchantProfile")
+    // val merchantItems: List<MerchantItem>? = null
 )
 

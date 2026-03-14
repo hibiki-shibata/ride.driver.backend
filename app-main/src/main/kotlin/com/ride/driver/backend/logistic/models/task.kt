@@ -14,6 +14,7 @@ import jakarta.persistence.Index
 import jakarta.persistence.Column
 import jakarta.persistence.Embedded
 import jakarta.persistence.AttributeOverrides
+import jakarta.persistence.FetchType
 import jakarta.persistence.AttributeOverride
 import java.util.UUID
 import com.ride.driver.backend.shared.models.Coordinate
@@ -47,18 +48,19 @@ data class Task(
     @Column(name = "task_note", nullable = true)
     val taskNote: String? = null,
 
-    @ManyToOne
     // @JoinColumn(name = "courier_profile", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courier_profile", nullable = true, referencedColumnName = "id")
     val courierProfile: CourierProfile? = null,
     
-    @ManyToOne
     // @JoinColumn(name = "consumer_profile", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consumer_profile", nullable = false, referencedColumnName = "id")
     val consumerProfile: ConsumerProfile,
 
-    @ManyToOne
+    // @ManyToOne(fetch = FetchType.LAZY)
     // @JoinColumn(name = "merchant_profile", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_profile", nullable = false, referencedColumnName = "id")
     val merchantProfile: MerchantProfile,
 
