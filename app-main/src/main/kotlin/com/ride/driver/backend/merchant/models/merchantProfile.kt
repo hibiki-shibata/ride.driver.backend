@@ -24,7 +24,7 @@ import com.ride.driver.backend.shared.models.Coordinate
     name = "merchant_profile",
     indexes = [
         Index(name = "idx_merchant_id", columnList = "id"),
-        Index(name = "idx_merchant_name", columnList = "merchant_name"),
+        Index(name = "idx_merchant_name", columnList = "name"),
         Index(name = "idx_merchant_phone_number", columnList = "phone_number"),
         Index(name = "idx_merchant_status", columnList = "merchant_status")
     ]
