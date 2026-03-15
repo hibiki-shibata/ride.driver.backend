@@ -23,15 +23,33 @@ import com.ride.driver.backend.logistic.repositories.TaskRepository
 import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.models.Coordinate
 import java.util.UUID
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Pattern
 
 data class CourierProfileDTO(
+    @field:NotBlank
     val id: UUID?,
+
+    @field:NotBlank
     val name: String,
+
+    @field:NotBlank
+    @field:Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     val phoneNumber: String,
+
+    @field:NotBlank
     val vehicleType: VehicleType?,
+
+    @field:NotBlank
     val rate: Double?,
+
+    @field:NotBlank
     val status: CourierStatus,
+
+    @field:NotBlank
     val operationArea: OperationArea?,
+
+    @field:NotBlank
     val comments: String?
 )
 

@@ -18,12 +18,15 @@ import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.models.Coordinate
 import java.util.UUID
 import jakarta.validation.Valid
+import jakarta.validation.constraints.NotBlank
 
 data class TaskStatusActionDTO(
+    @field:NotBlank
     val taskId: String
 )
 
 data class CreateTaskDTO(
+    @field:NotBlank
     val merchantID: UUID,
 )
 
