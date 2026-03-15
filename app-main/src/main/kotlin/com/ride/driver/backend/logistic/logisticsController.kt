@@ -14,10 +14,13 @@ import com.ride.driver.backend.logistic.models.Task
 import com.ride.driver.backend.logistic.repositories.TaskRepository
 import com.ride.driver.backend.consumer.repositories.ConsumerProfileRepository
 import com.ride.driver.backend.merchant.repositories.MerchantProfileRepository
+import com.ride.driver.backend.merchant.models.MerchantItem
 import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.models.Coordinate
+import com.ride.driver.backend.logistic.services.LogisticsService
 import java.util.UUID
 import jakarta.validation.Valid
+import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotBlank
 
 data class TaskStatusActionDTO(
@@ -28,112 +31,85 @@ data class TaskStatusActionDTO(
 data class CreateTaskDTO(
     @field:NotBlank
     val merchantID: UUID,
+
+    @field:NotBlank
+    @field:NotEmpty
+    val orderedItemIDs: List<String>
 )
 
 @RestController
 @RequestMapping("/api/v1/logistics")
 class LogisticsController (
-    private val courierProfileRepository: CourierProfileRepository,
-    private val consumerProfileRepository: ConsumerProfileRepository,
-    private val merchantProfileRepository: MerchantProfileRepository,
-    private val taskRepository: TaskRepository
+    private val logisticsService: LogisticsService
 ){
     @GetMapping("/task/poll")
-    fun pollForTask(
+    fun cpPollForTask(
         @AuthenticationPrincipal courierDetails: AccessTokenData
     ): ResponseEntity<Task> {
-        val courierId: UUID = courierDetails.accountID
-        val assignedTask: Task? = taskRepository.findByCourierProfile_IdAndTaskStatus(courierId, TaskStatus.READY_FOR_ASSIGNMENT).firstOrNull()
-        return if (assignedTask != null) ResponseEntity.ok(assignedTask) else ResponseEntity.status(204).build()        
+        val assignedTask: Task? = logisticsService.pollForTask(
+            courierId = courierDetails.accountID
+        )
+        return ResponseEntity.ok(assignedTask)
     }
 
     @PostMapping("/task/create")
-    fun createTask(
+    fun cxCreateTask(
         @RequestBody createTaskDTO: CreateTaskDTO,
         @AuthenticationPrincipal consumerDetails: AccessTokenData        
-    ): ResponseEntity<String> {
-        val consumerId: UUID = consumerDetails.accountID
-        taskRepository.save(
-            Task(
-                consumerProfile = consumerProfileRepository.findById(consumerId) ?: return ResponseEntity.status(404).body("Consumer not found"),
-                merchantProfile = merchantProfileRepository.findById(createTaskDTO.merchantID) ?: return ResponseEntity.status(404).body("merchant not found"),                
-                taskStatus = TaskStatus.CREATED
-             )
+    ): ResponseEntity<Task> {
+        val createdTask: Task = logisticsService.createTask(
+            consumerId = consumerDetails.accountID,
+            merchantId = createTaskDTO.merchantID,
+            orderedItemIDs = createTaskDTO.orderedItemIDs
         )
-        return ResponseEntity.ok("Order created successfully")
+        return ResponseEntity.ok(createdTask)
     }
 
     @PostMapping("/task/ready")
-    fun readyTaskForAssignment(
+    fun MxReadyTaskForAssignment(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal merchantDetails: AccessTokenData
-    ): ResponseEntity<String> {
-        val merchantId: UUID = merchantDetails.accountID
-        val taskId: String = taskStatusActionDTO.taskId
-        val taskToUpdate: Task = taskRepository.findById(UUID.fromString(taskId)) ?: throw Exception("Task not found with ID: $taskId")
-        if (taskToUpdate.merchantProfile.id != merchantId) return ResponseEntity.status(403).body("This task does not belong to the merchant associated with the authenticated account")
-        if (taskToUpdate.taskStatus != TaskStatus.CREATED) return ResponseEntity.status(400).body("Only tasks in CREATED status can be marked as READY_FOR_ASSIGNMENT")
-        taskRepository.save(
-            taskToUpdate.copy(
-                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
-            )
+    ): ResponseEntity<Task> {
+        val updatedTask: Task = logisticsService.markTaskAsReadyForAssignment(
+            merchantId = merchantDetails.accountID,
+            taskId = taskStatusActionDTO.taskId
         )
-        return ResponseEntity.ok("Task $taskId is now ready for assignment")
+        return ResponseEntity.ok(updatedTask)
     }
 
    @PostMapping("/task/accept")
-    fun acceptTask(
+    fun cpAcceptTask(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal courierDetails: AccessTokenData
-    ): ResponseEntity<String> {
-        val taskId: String = taskStatusActionDTO.taskId
-        val courierId: UUID = courierDetails.accountID
-        val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull() ?: return ResponseEntity.status(400).body("No task assigned to this courier")
-        if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
-        taskRepository.save(
-            assignedTask.copy(
-                taskStatus = TaskStatus.IN_PICKUP
-            )
+    ): ResponseEntity<Task> {
+        val updatedTask: Task = logisticsService.markTaskAsAccepted(
+            courierId = courierDetails.accountID,
+            taskId = taskStatusActionDTO.taskId
         )
-        return ResponseEntity.ok("Task $taskId accepted successfully")
+        return ResponseEntity.ok(updatedTask)
     }
 
    @PostMapping("/task/complete/pickup")
-    fun completePickup(
+    fun cpCompletePickup(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal courierDetails: AccessTokenData
-    ): ResponseEntity<String> {
-        val taskId: String = taskStatusActionDTO.taskId
-        val courierId: UUID = courierDetails.accountID
-        val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull()
-             ?: return ResponseEntity.status(404).body("No task assigned to this courier")
-        if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
-        if (assignedTask.taskStatus != TaskStatus.IN_PICKUP) return ResponseEntity.status(400).body("Cannot complete pickup for task that is not in PICKUP status")
-        taskRepository.save(
-            assignedTask.copy(
-                taskStatus = TaskStatus.IN_DROPOFF
-            )
+    ): ResponseEntity<Task> {
+        val updatedTask: Task = logisticsService.markTaskAsPickedUp(
+            courierId = courierDetails.accountID,
+            taskId = taskStatusActionDTO.taskId
         )
-        return ResponseEntity.ok("Pickup for task $taskId completed successfully")
+        return ResponseEntity.ok(updatedTask)
     }
 
     @PostMapping("/task/complete/dropoff")
-    fun completeDropoff(
+    fun cpCompleteDropoff(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal courierDetails: AccessTokenData        
-    ): ResponseEntity<String> {
-        val taskId: String = taskStatusActionDTO.taskId
-            ?: return ResponseEntity.status(401).build()
-        val courierId: UUID = courierDetails.accountID
-        val assignedTask: Task = taskRepository.findByConsumerProfile_IdAndTaskStatus(courierId, TaskStatus.IN_DROPOFF).firstOrNull()
-            ?: return ResponseEntity.status(400).body("No task assigned to this courier")
-        if (assignedTask.id.toString() != taskId) return ResponseEntity.status(400).body("Task ID does not match the assigned task for this courier")
-        if (assignedTask.taskStatus != TaskStatus.IN_DROPOFF) return ResponseEntity.status(400).body("Cannot complete dropoff for task that is not in DROPOFF status")
-        taskRepository.save(
-            assignedTask.copy(
-                taskStatus = TaskStatus.DELIVERED
-            )
+    ): ResponseEntity<Task> {
+        val updatedTask: Task = logisticsService.markTaskAsDroppedOff(
+            courierId = courierDetails.accountID,
+            taskId = taskStatusActionDTO.taskId
         )
-        return ResponseEntity.ok("Dropoff for task $taskId completed successfully")
+        return ResponseEntity.ok(updatedTask)
     }    
 }

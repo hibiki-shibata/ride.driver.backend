@@ -12,6 +12,7 @@ import com.ride.driver.backend.courier.models.VehicleType
 import com.ride.driver.backend.shared.models.Coordinate
 import com.ride.driver.backend.logistic.models.Task
 import com.ride.driver.backend.logistic.models.TaskStatus
+import com.ride.driver.backend.logistic.models.OrderedItem
 import com.ride.driver.backend.logistic.repositories.TaskRepository
 import com.ride.driver.backend.merchant.models.MerchantProfile
 import com.ride.driver.backend.merchant.models.MerchantStatus
@@ -171,7 +172,23 @@ class DbDemoDataInitializerConfig {
             Task(
                 consumerProfile = consumerAlice,
                 merchantProfile = merchantKfc,          
-                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
+                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT,
+                orderedItems = listOf(
+                    OrderedItem(
+                        itemId = kfcMenuItem1.id ?: throw Exception("Menu item ID is null"),
+                        name = kfcMenuItem1.name,
+                        description = kfcMenuItem1.description,
+                        price = kfcMenuItem1.price,
+                        merchantId = kfcMenuItem1.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                    ),
+                    OrderedItem(
+                        itemId = kfcMenuItem2.id ?: throw Exception("Menu item ID is null"),
+                        name = kfcMenuItem2.name,
+                        description = kfcMenuItem2.description,
+                        price = kfcMenuItem2.price,
+                        merchantId = kfcMenuItem2.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                    )
+                )
             )
         )
 
@@ -179,7 +196,23 @@ class DbDemoDataInitializerConfig {
             Task(
                 consumerProfile = consumerBob,
                 merchantProfile = merchantFiveGuys,
-                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
+                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT,
+                orderedItems = listOf(
+                    OrderedItem(
+                        itemId = fiveGuysMenuItem1.id ?: throw Exception("Menu item ID is null"),
+                        name = fiveGuysMenuItem1.name,
+                        description = fiveGuysMenuItem1.description,
+                        price = fiveGuysMenuItem1.price,
+                        merchantId = fiveGuysMenuItem1.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                    ),
+                    OrderedItem(
+                        itemId = fiveGuysMenuItem2.id ?: throw Exception("Menu item ID is null"),
+                        name = fiveGuysMenuItem2.name,
+                        description = fiveGuysMenuItem2.description,
+                        price = fiveGuysMenuItem2.price,
+                        merchantId = fiveGuysMenuItem2.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                    )
+                )
              )
          )
 
@@ -187,7 +220,16 @@ class DbDemoDataInitializerConfig {
             Task(
                 consumerProfile = consumerBob,
                 merchantProfile = merchantFiveGuys,
-                taskStatus = TaskStatus.CREATED
+                taskStatus = TaskStatus.CREATED,
+                orderedItems = listOf(
+                    OrderedItem(
+                        itemId = fiveGuysMenuItem1.id ?: throw Exception("Menu item ID is null"),
+                        name = fiveGuysMenuItem1.name,
+                        description = fiveGuysMenuItem1.description,
+                        price = fiveGuysMenuItem1.price,
+                        merchantId = fiveGuysMenuItem1.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                    )
+                )
              )
          )
 
@@ -196,8 +238,24 @@ class DbDemoDataInitializerConfig {
             consumerProfile = consumerAlice,
             merchantProfile = merchantFiveGuys,
             taskStatus = TaskStatus.DELIVERED,
-            courierProfile = courierJohn
+            courierProfile = courierJohn,
+            orderedItems = listOf(
+                OrderedItem(
+                    itemId = fiveGuysMenuItem2.id ?: throw Exception("Menu item ID is null"),
+                    name = fiveGuysMenuItem2.name,
+                    description = fiveGuysMenuItem2.description,
+                    price = fiveGuysMenuItem2.price,
+                    merchantId = fiveGuysMenuItem2.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                ),
+                OrderedItem(
+                    itemId = fiveGuysMenuItem1.id ?: throw Exception("Menu item ID is null"),
+                    name = fiveGuysMenuItem1.name,
+                    description = fiveGuysMenuItem1.description,
+                    price = fiveGuysMenuItem1.price,
+                    merchantId = fiveGuysMenuItem1.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                )
             )
          )
+        )
     }
 }

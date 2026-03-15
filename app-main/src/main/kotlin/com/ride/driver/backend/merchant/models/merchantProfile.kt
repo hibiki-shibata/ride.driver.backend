@@ -63,8 +63,4 @@ data class MerchantProfile(
         AttributeOverride(name = "longitude", column = Column(name = "longitude"))
     )
     val merchantAddressCoordiate: Coordinate,
-
-    // @OneToMany(mappedBy = "merchantProfile")
-    // val merchantItems: List<MerchantItem>? = null
 )
-

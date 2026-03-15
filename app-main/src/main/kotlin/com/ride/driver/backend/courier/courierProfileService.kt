@@ -70,5 +70,4 @@ class CourierProfileService(
         val taskHistories: List<Task?> = taskRepository.findByCourierProfile_Id(courierId)  
         return taskHistories ?: emptyList()
     }
-
 }
