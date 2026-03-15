@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import jakarta.validation.Valid
@@ -46,8 +46,9 @@ class CourierProfileController (
     private val taskRepository: TaskRepository
 ){
     @GetMapping("/courier/me")
-    fun findCourierProfile(): ResponseEntity<CourierProfileDTO> {        
-        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+    fun findCourierProfile(
+        @AuthenticationPrincipal courierDetails: AccessTokenData
+    ): ResponseEntity<CourierProfileDTO> {        
         val courierId: UUID = courierDetails.accountID
         val courier: CourierProfile = courierProfileRepository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
         val courierDTO = CourierProfileDTO(
@@ -64,8 +65,10 @@ class CourierProfileController (
     }
 
     @PostMapping("/courier/location")
-    fun updateLocation(@RequestBody @Valid location: Coordinate): ResponseEntity<String> {
-        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+    fun updateLocation(
+        @RequestBody @Valid location: Coordinate,
+        @AuthenticationPrincipal courierDetails: AccessTokenData
+    ): ResponseEntity<String> {
         val courierId: UUID = courierDetails.accountID
         courierProfileRepository.save(
             courierProfileRepository.findById(courierId)?.copy(
@@ -76,8 +79,10 @@ class CourierProfileController (
     }    
 
     @PostMapping("/courier/online")
-    fun updateStatus(@RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO): ResponseEntity<String> {
-        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+    fun updateStatus(
+        @RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO, 
+        @AuthenticationPrincipal courierDetails: AccessTokenData
+    ): ResponseEntity<String> {
         val isOnline: Boolean = courierStatusUpdateDTO.isOnline
         // val isOnline: Boolean = statusUpdateDTO.isOnline
         val courierId: UUID = courierDetails.accountID
@@ -90,8 +95,9 @@ class CourierProfileController (
     }
 
     @GetMapping("/courier/history")
-    fun getTaskHistory(): ResponseEntity<List<Task?>> {
-        val courierDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+    fun getTaskHistory(
+        @AuthenticationPrincipal courierDetails: AccessTokenData
+    ): ResponseEntity<List<Task?>> {
         val courierId: UUID = courierDetails.accountID
         val taskHistory: List<Task?> = taskRepository.findByCourierProfile_IdAndTaskStatus(courierId, TaskStatus.DELIVERED) ?: return ResponseEntity.status(404).build()
         return ResponseEntity.ok(taskHistory)

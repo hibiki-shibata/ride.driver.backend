@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import com.ride.driver.backend.courier.models.CourierStatus
 import com.ride.driver.backend.courier.repositories.CourierProfileRepository
 import com.ride.driver.backend.logistic.models.Task
@@ -23,7 +23,10 @@ class MerchantProfileController (
     private val taskRepository: TaskRepository
 ){
     @GetMapping("/merchant/me")
-    fun findmerchantProfile(@RequestBody string: String): ResponseEntity<String> {
+    fun findmerchantProfile(
+        @RequestBody string: String,
+        @AuthenticationPrincipal merchantDetails: AccessTokenData
+    ): ResponseEntity<String> {
         // merchant profile update location logic goes here. For now, just return a success message.
         return ResponseEntity.ok("merchant location updated successfully")
     }

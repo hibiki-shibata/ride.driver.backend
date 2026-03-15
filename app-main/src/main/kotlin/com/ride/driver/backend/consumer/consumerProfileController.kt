@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import com.ride.driver.backend.consumer.services.ConsumerProfileService
 import com.ride.driver.backend.consumer.models.ConsumerProfile
 import com.ride.driver.backend.logistic.models.Task
@@ -31,8 +31,10 @@ class ConsumerProfileController (
     private val consumerProfileService: ConsumerProfileService
 ){
     @GetMapping("/consumer/me")
-    fun findConsumerProfile(): ResponseEntity<ConsumerProfileDTO> {        
-        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+    fun findConsumerProfile(
+        @AuthenticationPrincipal consumerDetails: AccessTokenData
+    ): ResponseEntity<ConsumerProfileDTO> {        
+        // val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val myConsumerProfile: ConsumerProfile = consumerProfileService.getConsumerProfile(
                 consumerId = consumerDetails.accountID
         )
@@ -45,8 +47,11 @@ class ConsumerProfileController (
     }
 
     @PostMapping("/consumer/update")
-    fun updateConsumerProfile(@RequestBody consumerProfileDTO: ConsumerProfileDTO): ResponseEntity<ConsumerProfileDTO> {
-        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()        
+    fun updateConsumerProfile(
+        @RequestBody consumerProfileDTO: ConsumerProfileDTO,
+        @AuthenticationPrincipal consumerDetails: AccessTokenData
+    ): ResponseEntity<ConsumerProfileDTO> {
+        
         val updatedConsumerProfile: ConsumerProfile = consumerProfileService.updateConsumerProfile(
                 consumerId = consumerDetails.accountID,
                 newEmailAddress = consumerProfileDTO.emailAddress,
@@ -60,8 +65,9 @@ class ConsumerProfileController (
          )
 
     @GetMapping("/consumer/order/history")
-    fun findConsumerOrderHistory(): ResponseEntity<List<ConsumerOrderHistoryDTO?>> {
-        val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
+    fun findConsumerOrderHistory(
+        @AuthenticationPrincipal consumerDetails: AccessTokenData
+    ): ResponseEntity<List<ConsumerOrderHistoryDTO?>> {        
         val consumerOrderHistory: List<Task?> = consumerProfileService.getConsumerOrderHistory(
                 consumerId = consumerDetails.accountID
         )
