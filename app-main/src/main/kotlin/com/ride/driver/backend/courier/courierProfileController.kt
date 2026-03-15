@@ -1,7 +1,7 @@
 package com.ride.driver.backend.courier.controllers
 
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestParam
@@ -19,12 +19,12 @@ import com.ride.driver.backend.courier.models.VehicleType
 import com.ride.driver.backend.courier.models.CourierStatus
 import com.ride.driver.backend.logistic.models.Task
 import com.ride.driver.backend.logistic.models.TaskStatus
-import com.ride.driver.backend.logistic.repositories.TaskRepository
 import com.ride.driver.backend.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.models.Coordinate
 import java.util.UUID
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
+import com.ride.driver.backend.courier.services.CourierProfileService
 
 data class CourierProfileDTO(
     @field:NotBlank
@@ -59,65 +59,88 @@ data class CourierStatusUpdateDTO(
 
 @RestController
 @RequestMapping("api/v1/couriers")
-class CourierProfileController (   
-    private val courierProfileRepository: CourierProfileRepository,
-    private val taskRepository: TaskRepository
+class CourierProfileController ( 
+    private val courierProfileService: CourierProfileService, 
 ){
     @GetMapping("/courier/me")
     fun findCourierProfile(
         @AuthenticationPrincipal courierDetails: AccessTokenData
     ): ResponseEntity<CourierProfileDTO> {        
-        val courierId: UUID = courierDetails.accountID
-        val courier: CourierProfile = courierProfileRepository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
-        val courierDTO = CourierProfileDTO(
-            id = courier.id,
-            name = courier.name,
-            phoneNumber = courier.phoneNumber,
-            vehicleType = courier.vehicleType,
-            rate = courier.cpRate,
-            status = courier.cpStatus,
-            operationArea = courier.operationArea,
-            comments = courier.cpComments
+        val courierProfile: CourierProfile = courierProfileService.getCourierProfile(
+            courierId = courierDetails.accountID
         )
-        return ResponseEntity.ok(courierDTO)
+        return ResponseEntity.ok(
+            CourierProfileDTO(
+                id = courierProfile.id,
+                name = courierProfile.name,
+                phoneNumber = courierProfile.phoneNumber,
+                vehicleType = courierProfile.vehicleType,
+                rate = courierProfile.cpRate,
+                status = courierProfile.cpStatus,
+                operationArea = courierProfile.operationArea,
+                comments = courierProfile.cpComments
+            )
+        )
     }
 
-    @PostMapping("/courier/location")
+    @PutMapping("/courier/update")
+    fun updateCourierProfile(
+        @RequestBody courierProfileDTO: CourierProfileDTO,
+        @AuthenticationPrincipal courierDetails: AccessTokenData
+    ): ResponseEntity<CourierProfileDTO> {
+        val updatedProfile: CourierProfile = courierProfileService.updateCourierProfile(
+            courierId = courierDetails.accountID,
+            newName = courierProfileDTO.name,
+            newPhoneNumber = courierProfileDTO.phoneNumber,
+            newVehicleType = courierProfileDTO.vehicleType,
+            newOperationArea = courierProfileDTO.operationArea,
+            newComments = courierProfileDTO.comments
+        )
+        return ResponseEntity.ok(
+            CourierProfileDTO(
+                id = updatedProfile.id,
+                name = updatedProfile.name,
+                phoneNumber = updatedProfile.phoneNumber,
+                vehicleType = updatedProfile.vehicleType,
+                rate = updatedProfile.cpRate,
+                status = updatedProfile.cpStatus,
+                operationArea = updatedProfile.operationArea,
+                comments = updatedProfile.cpComments
+            )
+        )
+    }
+
+    @PutMapping("/courier/location")
     fun updateLocation(
         @RequestBody @Valid location: Coordinate,
         @AuthenticationPrincipal courierDetails: AccessTokenData
     ): ResponseEntity<String> {
-        val courierId: UUID = courierDetails.accountID
-        courierProfileRepository.save(
-            courierProfileRepository.findById(courierId)?.copy(
-                currentLocation = location                
-            ) ?: return ResponseEntity.status(404).body("Courier not found")
+        val updatedProfile: CourierProfile = courierProfileService.updateCourierLocation(
+            courierId = courierDetails.accountID,
+            location = location
         )
         return ResponseEntity.ok("Location updated successfully")
     }    
 
-    @PostMapping("/courier/online")
+    @PutMapping("/courier/online")
     fun updateStatus(
         @RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO, 
         @AuthenticationPrincipal courierDetails: AccessTokenData
     ): ResponseEntity<String> {
-        val isOnline: Boolean = courierStatusUpdateDTO.isOnline
-        // val isOnline: Boolean = statusUpdateDTO.isOnline
-        val courierId: UUID = courierDetails.accountID
-        courierProfileRepository.save(
-            courierProfileRepository.findById(courierId)?.copy(
-                cpStatus = if (isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
-            ) ?: return ResponseEntity.status(404).body("Courier not found")
+        val updatedProfile: CourierProfile = courierProfileService.updateCourierOnlineStatus(
+            courierId = courierDetails.accountID,
+            isOnline = courierStatusUpdateDTO.isOnline
         )
-        return ResponseEntity.ok("Your status has been updated to ${if (isOnline) "ONLINE" else "OFFLINE"}")
+        return ResponseEntity.ok("Courier status updated to ${if (courierStatusUpdateDTO.isOnline) "ONLINE" else "OFFLINE"} successfully")
     }
 
     @GetMapping("/courier/history")
     fun getTaskHistory(
         @AuthenticationPrincipal courierDetails: AccessTokenData
     ): ResponseEntity<List<Task?>> {
-        val courierId: UUID = courierDetails.accountID
-        val taskHistory: List<Task?> = taskRepository.findByCourierProfile_IdAndTaskStatus(courierId, TaskStatus.DELIVERED) ?: return ResponseEntity.status(404).build()
+        val taskHistory: List<Task?> = courierProfileService.getCourierOrderHistory(
+            courierId = courierDetails.accountID
+        )
         return ResponseEntity.ok(taskHistory)
     }
 }
