@@ -15,7 +15,6 @@ data class CourierSignInDTO(
     @field:NotBlank
     val password: String,
 
-    @field:NotBlank
     val vehicleType: VehicleType,
 )
 

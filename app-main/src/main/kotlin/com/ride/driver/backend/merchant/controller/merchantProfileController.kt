@@ -25,7 +25,7 @@ class MerchantProfileController (
 ){
     @GetMapping("/me")
     fun findmerchantProfile(
-        @RequestBody string: String,
+        @RequestBody @Valid string: String,
         @AuthenticationPrincipal merchantDetails: AccessTokenData
     ): ResponseEntity<String> {
         // merchant profile update location logic goes here. For now, just return a success message.

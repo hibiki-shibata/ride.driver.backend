@@ -32,7 +32,6 @@ data class CreateTaskDTO(
     @field:NotBlank
     val merchantID: UUID,
 
-    @field:NotBlank
     @field:NotEmpty
     val orderedItemIDs: List<String>
 )

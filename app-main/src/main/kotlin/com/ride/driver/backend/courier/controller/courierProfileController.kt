@@ -4,58 +4,20 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import jakarta.validation.Valid
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.courier.model.CourierProfile
-import com.ride.driver.backend.courier.model.OperationArea
-import com.ride.driver.backend.courier.model.VehicleType
-import com.ride.driver.backend.courier.model.CourierStatus
+import com.ride.driver.backend.courier.dto.CourierProfileDTO
+import com.ride.driver.backend.courier.dto.CourierStatusUpdateDTO
 import com.ride.driver.backend.logistic.model.Task
-import com.ride.driver.backend.logistic.model.TaskStatus
+import com.ride.driver.backend.logistic.repository.TaskRepository
+import com.ride.driver.backend.courier.service.CourierProfileService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.model.Coordinate
-import java.util.UUID
-import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Pattern
-import com.ride.driver.backend.courier.service.CourierProfileService
 
-data class CourierProfileDTO(
-    @field:NotBlank
-    val id: UUID?,
-
-    @field:NotBlank
-    val name: String,
-
-    @field:NotBlank
-    @field:Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
-    val phoneNumber: String,
-
-    @field:NotBlank
-    val vehicleType: VehicleType?,
-
-    @field:NotBlank
-    val rate: Double?,
-
-    @field:NotBlank
-    val status: CourierStatus,
-
-    @field:NotBlank
-    val operationArea: OperationArea?,
-
-    @field:NotBlank
-    val comments: String?
-)
-
-data class CourierStatusUpdateDTO(
-    val isOnline: Boolean,
-)
 
 @RestController
 @RequestMapping("api/v1/couriers")
@@ -85,7 +47,7 @@ class CourierProfileController (
 
     @PutMapping("/me")
     fun updateCourierProfile(
-        @RequestBody courierProfileDTO: CourierProfileDTO,
+        @RequestBody @Valid courierProfileDTO: CourierProfileDTO,
         @AuthenticationPrincipal courierDetails: AccessTokenData
     ): ResponseEntity<CourierProfileDTO> {
         val updatedProfile: CourierProfile = courierProfileService.updateCourierProfile(

@@ -1,43 +1,19 @@
 package com.ride.driver.backend.consumer.controller
 
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import jakarta.validation.Valid
 import com.ride.driver.backend.consumer.service.ConsumerProfileService
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
-import jakarta.validation.Valid
-import jakarta.validation.constraints.Email
-import jakarta.validation.constraints.NotBlank
-import org.springframework.format.annotation.DateTimeFormat
-
-
-data class ConsumerProfileDTO(
-    @field:NotBlank
-    val name: String,
-
-    @field:NotBlank
-    @field:Email
-    val emailAddress: String,
-)
-
-data class ConsumerOrderHistoryDTO(
-    @field:NotBlank
-    val merchantName: String,
-
-    @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @field:NotBlank 
-    val orderTime: String,
-
-    @field:NotBlank
-    val orderStatus: String,
-)
+import com.ride.driver.backend.consumer.dto.ConsumerProfileDTO
+import com.ride.driver.backend.consumer.dto.ConsumerOrderHistoryDTO
 
 @RestController
 @RequestMapping("api/v1/consumers")
@@ -62,7 +38,7 @@ class ConsumerProfileController (
 
     @PutMapping("/me")
     fun updateConsumerProfile(
-        @RequestBody consumerProfileDTO: ConsumerProfileDTO,
+        @RequestBody @Valid  consumerProfileDTO: ConsumerProfileDTO,
         @AuthenticationPrincipal consumerDetails: AccessTokenData
     ): ResponseEntity<ConsumerProfileDTO> {
         
