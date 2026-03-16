@@ -85,7 +85,7 @@ class CourierProfileController (
     }    
 
     @PutMapping("/online")
-    fun updateStatus(
+    fun updateOnlineStatus(
         @RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO, 
         @AuthenticationPrincipal courierDetails: AccessTokenData
     ): ResponseEntity<String> {

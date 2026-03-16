@@ -38,7 +38,10 @@ class MerchantAuthService(
     fun getMerchantProfileByPhoneNumberAndValidatePassword(phoneNumber: String, password: String): MerchantProfile {
         val savedMerchant: MerchantProfile = merchantProfileRepository.findByPhoneNumber(phoneNumber) ?: 
             throw BadRequestException("Merchant with phone number ${phoneNumber} does not exist. Please sign up first.")
-        if (savedMerchant.passwordHash != passwordService.hashPassword(password)) throw BadRequestException("Incorrect password for phone number ${phoneNumber}")
+        if (!passwordService.isPasswordValid(
+            inputPassword = password,
+            storedHashedPassword = savedMerchant.passwordHash
+        )) throw BadRequestException("Incorrect password for phone number ${phoneNumber}")
         return savedMerchant
     }
 }

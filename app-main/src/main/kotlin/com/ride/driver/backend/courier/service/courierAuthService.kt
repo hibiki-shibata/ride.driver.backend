@@ -38,10 +38,10 @@ class CourierAuthService(
     fun getCourierProfileByPhoneNumberAndValidatePassword(phoneNumber: String, password: String): CourierProfile {
         val savedCourier: CourierProfile = courierProfileRepository.findByPhoneNumber(phoneNumber) ?: 
             throw BadRequestException("Courier with phone number ${phoneNumber} does not exist. Please sign up first.")
-        if (savedCourier.passwordHash != passwordService.hashPassword(password)) 
-            throw BadRequestException("Incorrect password for phone number ${phoneNumber}")
+        if (!passwordService.isPasswordValid(
+            inputPassword = password,
+            storedHashedPassword = savedCourier.passwordHash
+        )) throw BadRequestException("Incorrect password for phone number ${phoneNumber}")
         return savedCourier
-            
-        
     }
 }
