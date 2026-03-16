@@ -21,7 +21,7 @@ class CourierAuthController (
     private val jwtTokenService: JwtTokenService
 
 ){
-@PostMapping("/courier/signup")
+@PostMapping("/auth/signup")
     fun signup(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<JwtTokensDTO> {
         val savedCourier: CourierProfile = courierAuthService.registerNewCourier(
             phoneNumber = req.phoneNumber,
@@ -40,7 +40,7 @@ class CourierAuthController (
         return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 
-    @PostMapping("/courier/login")
+    @PostMapping("/auth/login")
     fun login(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<JwtTokensDTO> {
         val savedCourier: CourierProfile = courierAuthService.getCourierProfileByPhoneNumberAndValidatePassword(
             phoneNumber = req.phoneNumber,

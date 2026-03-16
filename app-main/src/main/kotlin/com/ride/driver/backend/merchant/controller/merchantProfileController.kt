@@ -23,7 +23,7 @@ import jakarta.validation.Valid
 class MerchantProfileController (
     private val taskRepository: TaskRepository
 ){
-    @GetMapping("/merchant/me")
+    @GetMapping("/me")
     fun findmerchantProfile(
         @RequestBody string: String,
         @AuthenticationPrincipal merchantDetails: AccessTokenData

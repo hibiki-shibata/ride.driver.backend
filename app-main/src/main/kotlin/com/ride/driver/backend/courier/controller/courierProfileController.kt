@@ -62,8 +62,8 @@ data class CourierStatusUpdateDTO(
 class CourierProfileController ( 
     private val courierProfileService: CourierProfileService, 
 ){
-    @GetMapping("/courier/me")
-    fun findCourierProfile(
+    @GetMapping("/me")
+    fun getCourierProfile(
         @AuthenticationPrincipal courierDetails: AccessTokenData
     ): ResponseEntity<CourierProfileDTO> {        
         val courierProfile: CourierProfile = courierProfileService.getCourierProfile(
@@ -83,7 +83,7 @@ class CourierProfileController (
         )
     }
 
-    @PutMapping("/courier/update")
+    @PutMapping("/me")
     fun updateCourierProfile(
         @RequestBody courierProfileDTO: CourierProfileDTO,
         @AuthenticationPrincipal courierDetails: AccessTokenData
@@ -110,7 +110,7 @@ class CourierProfileController (
         )
     }
 
-    @PutMapping("/courier/location")
+    @PutMapping("/location")
     fun updateLocation(
         @RequestBody @Valid location: Coordinate,
         @AuthenticationPrincipal courierDetails: AccessTokenData
@@ -122,7 +122,7 @@ class CourierProfileController (
         return ResponseEntity.ok("Location updated successfully")
     }    
 
-    @PutMapping("/courier/online")
+    @PutMapping("/online")
     fun updateStatus(
         @RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO, 
         @AuthenticationPrincipal courierDetails: AccessTokenData
@@ -134,7 +134,7 @@ class CourierProfileController (
         return ResponseEntity.ok("Courier status updated to ${if (courierStatusUpdateDTO.isOnline) "ONLINE" else "OFFLINE"} successfully")
     }
 
-    @GetMapping("/courier/history")
+    @GetMapping("/history")
     fun getTaskHistory(
         @AuthenticationPrincipal courierDetails: AccessTokenData
     ): ResponseEntity<List<Task?>> {

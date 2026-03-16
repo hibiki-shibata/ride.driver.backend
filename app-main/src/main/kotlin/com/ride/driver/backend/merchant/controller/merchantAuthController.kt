@@ -27,7 +27,7 @@ class MerchantAuthController(
         return inputPassword.hashCode().toString() == storedPasswordHash        
     } 
     
-    @PostMapping("/signup")
+    @PostMapping("/auth/signup")
     fun merchantSignup(@RequestBody @Valid req: MerchantSignInDTO): ResponseEntity<JwtTokensDTO> {
         val savedMerchant: MerchantProfile = merchantAuthService.registerNewMerchant(
             name = req.name,
@@ -47,7 +47,7 @@ class MerchantAuthController(
         return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))        
     }
 
-    @PostMapping("/login")
+    @PostMapping("/auth/login")
     fun merchantLogin(@RequestBody @Valid req: MerchantLoginDTO): ResponseEntity<JwtTokensDTO> {
         val savedMerchant: MerchantProfile = merchantAuthService.getMerchantProfileByPhoneNumberAndValidatePassword(
             phoneNumber = req.phoneNumber,
