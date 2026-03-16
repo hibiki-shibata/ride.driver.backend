@@ -1,13 +1,13 @@
 // https://spring.io/projects/spring-data-jpa
-package com.ride.driver.backend.courier.repositories
+package com.ride.driver.backend.courier.repository
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
-import com.ride.driver.backend.courier.models.CourierProfile
-import com.ride.driver.backend.courier.models.OperationArea
-import com.ride.driver.backend.courier.models.CourierStatus
+import com.ride.driver.backend.courier.model.CourierProfile
+import com.ride.driver.backend.courier.model.OperationArea
+import com.ride.driver.backend.courier.model.CourierStatus
 import java.util.UUID
 
 @Repository

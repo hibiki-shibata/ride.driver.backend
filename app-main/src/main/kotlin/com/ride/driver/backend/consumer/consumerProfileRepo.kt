@@ -1,12 +1,12 @@
 // https://spring.io/projects/spring-data-jpa
-package com.ride.driver.backend.consumer.repositories
+package com.ride.driver.backend.consumer.repository
 
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import java.util.UUID
-import com.ride.driver.backend.consumer.models.ConsumerProfile
+import com.ride.driver.backend.consumer.model.ConsumerProfile
 
 @Repository
 open interface ConsumerProfileRepository : CrudRepository<ConsumerProfile, Long> {
