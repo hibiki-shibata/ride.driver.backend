@@ -1,6 +1,6 @@
 package com.ride.driver.backend.logistic.controller.courier
 
-import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -43,7 +43,7 @@ class CourierTaskController (
         )
     }
 
-   @PostMapping("/task/accept")
+   @PutMapping("/task/accept")
     fun cpAcceptTask(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal courierDetails: AccessTokenData
@@ -69,7 +69,7 @@ class CourierTaskController (
         )
     }
 
-   @PostMapping("/task/complete/pickup")
+   @PutMapping("/task/complete/pickup")
     fun cpCompletePickup(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal courierDetails: AccessTokenData
@@ -95,7 +95,7 @@ class CourierTaskController (
         )
     }
 
-    @PostMapping("/task/complete/dropoff")
+    @PutMapping("/task/complete/dropoff")
     fun cpCompleteDropoff(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal courierDetails: AccessTokenData        

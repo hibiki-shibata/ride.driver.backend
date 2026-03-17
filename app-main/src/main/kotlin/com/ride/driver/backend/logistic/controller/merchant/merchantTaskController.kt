@@ -1,6 +1,6 @@
 package com.ride.driver.backend.logistic.merchant.controller
 
-import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -18,7 +18,7 @@ import com.ride.driver.backend.logistic.dto.TaskDataDTO
 class MerchantTaskController (
     private val logisticsService: LogisticsService
 ){
-    @PostMapping("/task/ready")
+    @PutMapping("/task/ready")
     fun MxReadyTaskForAssignment(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal merchantDetails: AccessTokenData
