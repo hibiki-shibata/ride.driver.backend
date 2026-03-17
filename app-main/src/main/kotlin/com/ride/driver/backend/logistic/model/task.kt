@@ -41,8 +41,11 @@ data class Task(
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: UUID? = null,
 
-    // @Column(name = "assigned_courier_id", nullable = false)
-    // val assignedCourierId: UUID? = null,
+    @Column(name = "total_price", nullable = false)
+    val totalPrice: Double = 0.0,
+
+    @Column(name = "courier_earning", nullable = false)
+    val courierEarning: Double = 0.0,
 
     @Column(name = "order_time", nullable = false)
     val orderTime: Long = System.currentTimeMillis(),

@@ -5,12 +5,13 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
-import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import jakarta.validation.Valid
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.logistic.service.LogisticsService
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import jakarta.validation.Valid
+import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
+import com.ride.driver.backend.logistic.dto.TaskDataDTO
 
 @RestController
 @RequestMapping("/api/v1/merchants")
@@ -21,11 +22,25 @@ class MerchantTaskController (
     fun MxReadyTaskForAssignment(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal merchantDetails: AccessTokenData
-    ): ResponseEntity<Task> {
+    ): ResponseEntity<TaskDataDTO> {
         val updatedTask: Task = logisticsService.markTaskAsReadyForAssignment(
             merchantId = merchantDetails.accountID,
             taskId = taskStatusActionDTO.taskId
         )
-        return ResponseEntity.ok(updatedTask)
+        return ResponseEntity.ok(
+            TaskDataDTO(
+                taskId = updatedTask.id.toString(),
+                consumerName = updatedTask.consumerProfile?.name ?: "Unknown Consumer",
+                consumerEmailaddress = updatedTask.consumerProfile?.emailAddress ?: "Unknown Phone Number",
+                pickupAddress = updatedTask.merchantProfile?.merchantAddress ?: "Unknown Pickup Address",
+                pickupLatitude = updatedTask.merchantProfile?.merchantAddressCoordiate?.latitude ?: 0.0,
+                pickupLongitude = updatedTask.merchantProfile?.merchantAddressCoordiate?.longitude ?: 0.0,
+                dropoffAddress = updatedTask.consumerProfile?.consumerAddress ?: "Unknown Dropoff Address",
+                dropoffLatitude = updatedTask.consumerProfile?.consumerAddressCoordinate?.latitude ?: 0.0,
+                dropoffLongitude = updatedTask.consumerProfile?.consumerAddressCoordinate?.longitude ?: 0.0,
+                itemNames = updatedTask.orderedItems.map { it.name },
+                totalPrice = updatedTask.totalPrice
+            )
+        )
     }  
 }    

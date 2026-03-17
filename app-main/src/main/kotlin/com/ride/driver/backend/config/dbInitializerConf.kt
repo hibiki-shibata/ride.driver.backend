@@ -91,8 +91,8 @@ class DbDemoDataInitializerConfig {
                 name = "Alice Smith",
                 emailAddress = "alicesmith@gmail.com",
                 passwordHash = "hashed_password",
-                homeAddress = "123 Main St, Tokyo",
-                homeAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
+                consumerAddress = "123 Main St, Tokyo",
+                consumerAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
             )
         )
         val consumerBob: ConsumerProfile = consumerProfileRepository.save(
@@ -100,8 +100,8 @@ class DbDemoDataInitializerConfig {
                 name = "Bob Johnson",
                 emailAddress = "bobjonhson@gmail.com",
                 passwordHash = "another_hashed_password",
-                homeAddress = "456 Elm St, Tokyo",
-                homeAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
+                consumerAddress = "456 Elm St, Tokyo",
+                consumerAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
             )
         )
 

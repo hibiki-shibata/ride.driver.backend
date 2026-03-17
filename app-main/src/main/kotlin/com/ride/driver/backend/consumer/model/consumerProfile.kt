@@ -40,10 +40,10 @@ data class ConsumerProfile(
         AttributeOverride(name = "latitude", column = Column(name = "latitude")),
         AttributeOverride(name = "longitude", column = Column(name = "longitude"))
     )
-    val homeAddressCoordinate: Coordinate,
+    val consumerAddressCoordinate: Coordinate,
 
     @Column(name = "home_address", nullable = false)
-    val homeAddress: String,
+    val consumerAddress: String,
 
     @Column(name = "hash_password", nullable = false)
     val passwordHash: String,

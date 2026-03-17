@@ -26,8 +26,8 @@ class ConsumerAuthController(
             name = req.name,
             emailAddress = req.emailAddress,
             password = req.password,
-            homeAddress = req.homeAddress,
-            homeAddressCoordinate = req.homeAddressCoordinate
+            consumerAddress = req.consumerAddress,
+            consumerAddressCoordinate = req.consumerAddressCoordinate
         )   
         val accessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenData(

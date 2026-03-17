@@ -16,8 +16,8 @@ class ConsumerAuthService(
         name: String,
         emailAddress: String,
         password: String,
-        homeAddress: String,
-        homeAddressCoordinate: Coordinate
+        consumerAddress: String,
+        consumerAddressCoordinate: Coordinate
     ): ConsumerProfile {
         val isConsumerExists: Boolean = consumerProfileRepository.existsByEmailAddress(emailAddress)
         if (isConsumerExists) throw BadRequestException("Consumer with email address ${emailAddress} already exists")
@@ -25,8 +25,8 @@ class ConsumerAuthService(
             ConsumerProfile(
                 name = name,
                 emailAddress = emailAddress,
-                homeAddress = homeAddress,
-                homeAddressCoordinate = homeAddressCoordinate,
+                consumerAddress = consumerAddress,
+                consumerAddressCoordinate = consumerAddressCoordinate,
                 passwordHash = passwordService.hashPassword(password)
         ))
         return savedConsumer

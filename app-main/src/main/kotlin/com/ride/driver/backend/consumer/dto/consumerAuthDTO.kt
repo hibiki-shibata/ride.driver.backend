@@ -9,10 +9,10 @@ data class ConsumerSignInDTO(
     val name: String,
 
     @field:NotBlank
-    val homeAddress: String,
+    val consumerAddress: String,
 
     @field:NotBlank
-    val homeAddressCoordinate: Coordinate,
+    val consumerAddressCoordinate: Coordinate,
 
     @field:NotBlank
     @field:Email

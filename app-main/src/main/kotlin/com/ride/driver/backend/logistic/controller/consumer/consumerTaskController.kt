@@ -10,6 +10,7 @@ import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
 import com.ride.driver.backend.logistic.service.LogisticsService
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.logistic.dto.TaskDataDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
@@ -32,12 +33,26 @@ class ConsumerTaskController (
     fun cxCreateTask(
         @RequestBody createTaskDTO: CreateTaskDTO,
         @AuthenticationPrincipal consumerDetails: AccessTokenData        
-    ): ResponseEntity<Task> {
+    ): ResponseEntity<TaskDataDTO> {
         val createdTask: Task = logisticsService.createTask(
             consumerId = consumerDetails.accountID,
             merchantId = createTaskDTO.merchantID,
             orderedItemIDs = createTaskDTO.orderedItemIDs
         )
-        return ResponseEntity.ok(createdTask)
+        return ResponseEntity.ok(
+            TaskDataDTO(
+                taskId = createdTask.id.toString(),
+                consumerName = createdTask.consumerProfile?.name ?: "Unknown Consumer",
+                consumerEmailaddress = createdTask.consumerProfile?.emailAddress ?: "Unknown Phone Number",
+                pickupAddress = createdTask.merchantProfile?.merchantAddress ?: "Unknown Pickup Address",
+                pickupLatitude = createdTask.merchantProfile?.merchantAddressCoordiate?.latitude ?: 0.0,
+                pickupLongitude = createdTask.merchantProfile?.merchantAddressCoordiate?.longitude ?: 0.0,
+                dropoffAddress = createdTask.consumerProfile?.consumerAddress ?: "Unknown Dropoff Address",
+                dropoffLatitude = createdTask.consumerProfile?.consumerAddressCoordinate?.latitude ?: 0.0,
+                dropoffLongitude = createdTask.consumerProfile?.consumerAddressCoordinate?.longitude ?: 0.0,
+                itemNames = createdTask.orderedItems.map { it.name },
+                totalPrice = createdTask.totalPrice
+            )
+        )
     }
 }
