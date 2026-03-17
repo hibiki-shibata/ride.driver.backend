@@ -10,11 +10,12 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import jakarta.validation.Valid
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.courier.model.CourierProfile
+import com.ride.driver.backend.courier.service.CourierProfileService
 import com.ride.driver.backend.courier.dto.CourierProfileDTO
+import com.ride.driver.backend.courier.dto.CourierTaskHistoryDTO
 import com.ride.driver.backend.courier.dto.CourierStatusUpdateDTO
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.logistic.repository.TaskRepository
-import com.ride.driver.backend.courier.service.CourierProfileService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.model.Coordinate
 
@@ -76,33 +77,43 @@ class CourierProfileController (
     fun updateLocation(
         @RequestBody @Valid location: Coordinate,
         @AuthenticationPrincipal courierDetails: AccessTokenData
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Void> {
         val updatedProfile: CourierProfile = courierProfileService.updateCourierLocation(
             courierId = courierDetails.accountID,
             location = location
         )
-        return ResponseEntity.ok("Location updated successfully")
+        return ResponseEntity.ok().build()
     }    
 
     @PutMapping("/online")
     fun updateOnlineStatus(
         @RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO, 
         @AuthenticationPrincipal courierDetails: AccessTokenData
-    ): ResponseEntity<String> {
+    ): ResponseEntity<Void> {
         val updatedProfile: CourierProfile = courierProfileService.updateCourierOnlineStatus(
             courierId = courierDetails.accountID,
             isOnline = courierStatusUpdateDTO.isOnline
         )
-        return ResponseEntity.ok("Courier status updated to ${if (courierStatusUpdateDTO.isOnline) "ONLINE" else "OFFLINE"} successfully")
+        return ResponseEntity.ok().build()
     }
 
     @GetMapping("/history")
     fun getTaskHistory(
         @AuthenticationPrincipal courierDetails: AccessTokenData
-    ): ResponseEntity<List<Task?>> {
+    ): ResponseEntity<List<CourierTaskHistoryDTO>> {
         val taskHistory: List<Task?> = courierProfileService.getCourierOrderHistory(
             courierId = courierDetails.accountID
         )
-        return ResponseEntity.ok(taskHistory)
+        return ResponseEntity.ok(
+            taskHistory.map { task ->
+                CourierTaskHistoryDTO(
+                    taskId = task?.id.toString(),
+                    courierEarning = task?.courierEarning ?: 0.0,
+                    orderTime = task?.orderTime.toString(),
+                    consumerName = task?.consumerProfile?.name ?: "Unknown Consumer",
+                    merchantName = task?.merchantProfile?.name ?: "Unknown Merchant"
+                )
+            }
+        )
     }
 }
