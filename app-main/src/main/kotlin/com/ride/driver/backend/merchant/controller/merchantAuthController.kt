@@ -35,16 +35,16 @@ class MerchantAuthController(
             password = req.password,
             merchantAddress = req.merchantAddress,
             merchantAddressCoordinate = req.merchantAddressCoordinate
-        )
-        val accessToken: String = jwtTokenService.generateAccessToken(
-            AccessTokenData(
-                accountID = savedMerchant.id ?: throw Exception("Merchant ID is null"),
-                accountName = savedMerchant.name,
-                accountRoles = listOf(AccountRoles.BASE_ROLE)
+        )   
+        return ResponseEntity.ok(
+            jwtTokenService.generateAccessTokenAndRefreshToken(
+                AccessTokenData(
+                    accountID = savedMerchant.id ?: throw Exception("Merchant ID is null"),
+                    accountName = savedMerchant.name,
+                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                )
             )
         )
-        val refreshToken = jwtTokenService.generateRefreshToken(savedMerchant.id)
-        return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))        
     }
 
     @PostMapping("/auth/login")
@@ -53,14 +53,14 @@ class MerchantAuthController(
             phoneNumber = req.phoneNumber,
             password = req.password
         )
-        val accessToken: String = jwtTokenService.generateAccessToken(
-            AccessTokenData(
-                accountID = savedMerchant.id ?: throw Exception("Merchant ID is null"),
-                accountName = savedMerchant.name,
-                accountRoles = listOf(AccountRoles.BASE_ROLE)
+        return ResponseEntity.ok(
+            jwtTokenService.generateAccessTokenAndRefreshToken(
+                AccessTokenData(
+                    accountID = savedMerchant.id ?: throw Exception("Merchant ID is null"),
+                    accountName = savedMerchant.name,
+                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                )
             )
         )
-        val refreshToken: String = jwtTokenService.generateRefreshToken(savedMerchant.id)
-        return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 }
