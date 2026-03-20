@@ -2,7 +2,9 @@ package com.ride.driver.backend.merchant.service
 
 import org.springframework.stereotype.Service
 import com.ride.driver.backend.shared.model.Coordinate
-import com.ride.driver.backend.shared.exceptions.BadRequestException
+import com.ride.driver.backend.shared.exception.AccountConflictException
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
+import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 import com.ride.driver.backend.merchant.model.MerchantProfile
 import com.ride.driver.backend.merchant.model.MerchantStatus
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
@@ -21,7 +23,7 @@ class MerchantAuthService(
         merchantAddressCoordinate: Coordinate        
     ): MerchantProfile {
         val isMerchantExists: Boolean = merchantProfileRepository.existsByPhoneNumber(phoneNumber)
-        if (isMerchantExists) throw BadRequestException("Merchant with phone number ${phoneNumber} already exists")
+        if (isMerchantExists) throw AccountConflictException("Merchant with phone number ${phoneNumber} already exists")
         val savedMerchant: MerchantProfile = merchantProfileRepository.save(
             MerchantProfile(
                 name = name,
@@ -37,11 +39,11 @@ class MerchantAuthService(
 
     fun getMerchantProfileByPhoneNumberAndValidatePassword(phoneNumber: String, password: String): MerchantProfile {
         val savedMerchant: MerchantProfile = merchantProfileRepository.findByPhoneNumber(phoneNumber) ?: 
-            throw BadRequestException("Merchant with phone number ${phoneNumber} does not exist. Please sign up first.")
+            throw AccountNotFoundException("Merchant with phone number ${phoneNumber} does not exist. Please sign up first.")
         if (!passwordService.isPasswordValid(
             inputPassword = password,
             storedHashedPassword = savedMerchant.passwordHash
-        )) throw BadRequestException("Incorrect password for phone number ${phoneNumber}")
+        )) throw IncorrectPasswordException("Incorrect password for phone number ${phoneNumber}")
         return savedMerchant
     }
 }

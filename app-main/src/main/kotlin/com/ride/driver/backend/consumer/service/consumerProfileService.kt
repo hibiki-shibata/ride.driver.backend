@@ -11,6 +11,8 @@ import com.ride.driver.backend.merchant.model.MerchantProfile
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.model.Coordinate
+import com.ride.driver.backend.shared.exception.AccountConflictException
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
 
 @Service
 class ConsumerProfileService(
@@ -20,17 +22,17 @@ class ConsumerProfileService(
 ) {
     fun getConsumerProfile(consumerId: UUID): ConsumerProfile {
         val consumer: ConsumerProfile = consumerProfileRepository.findById(consumerId) 
-                ?: throw Exception("Consumer not found with ID: $consumerId")
+                ?: throw AccountNotFoundException("Consumer not found with ID: $consumerId")
         return consumer
     }
 
     fun updateConsumerProfile(consumerId: UUID, newEmailAddress: String, newName: String): ConsumerProfile {
        val consumerDetailsInDb: ConsumerProfile = consumerProfileRepository.findById(consumerId) 
-            ?: throw Exception("Consumer not found with ID: $consumerId")
+            ?:  throw AccountNotFoundException("Consumer not found with ID: $consumerId")
         if (newEmailAddress == consumerDetailsInDb.emailAddress)
-             throw Exception("Email address is the same as the current one")
+            throw AccountConflictException("New email address is the same as the current email address")
         if (consumerProfileRepository.existsByEmailAddress(newEmailAddress)) 
-            throw Exception("Email address is already exists by another consumer")
+            throw AccountConflictException("Consumer with email address ${newEmailAddress} already exists")
         
         val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(
                 consumerDetailsInDb.copy(

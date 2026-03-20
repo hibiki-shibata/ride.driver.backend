@@ -12,7 +12,7 @@ import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-import com.ride.driver.backend.shared.exceptions.BadRequestException
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.merchant.service.MerchantAuthService
 import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
@@ -38,7 +38,7 @@ class MerchantAuthController(
         ).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
-                    accountID = savedMerchant.id ?: throw Exception("Merchant ID is null"),
+                    accountID = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
                     accountName = savedMerchant.name,
                     accountRoles = listOf(AccountRoles.BASE_ROLE)
                 )
@@ -55,7 +55,7 @@ class MerchantAuthController(
         return ResponseEntity.ok(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
-                    accountID = savedMerchant.id ?: throw Exception("Merchant ID is null"),
+                    accountID = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
                     accountName = savedMerchant.name,
                     accountRoles = listOf(AccountRoles.BASE_ROLE)
                 )

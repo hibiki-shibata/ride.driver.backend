@@ -2,10 +2,13 @@ package com.ride.driver.backend.consumer.service
 
 import org.springframework.stereotype.Service
 import com.ride.driver.backend.shared.model.Coordinate
-import com.ride.driver.backend.shared.exceptions.BadRequestException
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.shared.auth.service.PasswordService
+import com.ride.driver.backend.shared.exception.AccountConflictException
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
+import com.ride.driver.backend.shared.exception.IncorrectPasswordException
+
 
 @Service
 class ConsumerAuthService(
@@ -20,7 +23,7 @@ class ConsumerAuthService(
         consumerAddressCoordinate: Coordinate
     ): ConsumerProfile {
         val isConsumerExists: Boolean = consumerProfileRepository.existsByEmailAddress(emailAddress)
-        if (isConsumerExists) throw BadRequestException("Consumer with email address ${emailAddress} already exists")
+        if (isConsumerExists) throw AccountConflictException("Consumer with email address ${emailAddress} already exists")
         val savedConsumer: ConsumerProfile = consumerProfileRepository.save(
             ConsumerProfile(
                 name = name,
@@ -37,11 +40,11 @@ class ConsumerAuthService(
         password: String
     ): ConsumerProfile {
         val savedConsumer: ConsumerProfile = consumerProfileRepository.findByEmailAddress(emailAddress) ?: 
-            throw BadRequestException("Consumer with email address ${emailAddress} does not exist. Please sign up first.")
+            throw AccountNotFoundException("Consumer with email address ${emailAddress} does not exist. Please sign up first.")
         if (!passwordService.isPasswordValid(
             inputPassword = password,
             storedHashedPassword = savedConsumer.passwordHash
-        )) throw BadRequestException("Incorrect password for email address ${emailAddress}")
+        )) throw IncorrectPasswordException("Incorrect password for email address ${emailAddress}")
         return savedConsumer
     }
 }

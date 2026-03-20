@@ -1,6 +1,7 @@
 package com.ride.driver.backend.courier.service
 
 import org.springframework.stereotype.Service
+import java.util.UUID
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus 
 import com.ride.driver.backend.courier.model.OperationArea
@@ -10,7 +11,8 @@ import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.logistic.model.TaskStatus
 import com.ride.driver.backend.logistic.repository.TaskRepository
-import java.util.UUID
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
+
 
 @Service
 class CourierProfileService(
@@ -42,7 +44,7 @@ class CourierProfileService(
         newOperationArea: OperationArea?,
         newComments: String?
     ): CourierProfile {
-        val existingProfile = courierProfileRepository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
+        val existingProfile = courierProfileRepository.findById(courierId) ?: throw AccountNotFoundException("Courier not found with ID: $courierId")
         val updatedProfile = existingProfile.copy(
             name = newName ?: existingProfile.name,
             phoneNumber = newPhoneNumber ?: existingProfile.phoneNumber,
@@ -61,7 +63,7 @@ class CourierProfileService(
         val updatedProfile = courierProfileRepository.save(
             courierProfileRepository.findById(courierId)?.copy(
                 cpStatus = if (isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
-            ) ?: throw Exception("Courier not found with ID: $courierId")
+            ) ?: throw AccountNotFoundException("Courier not found with ID: $courierId")
         )
         return updatedProfile
     }

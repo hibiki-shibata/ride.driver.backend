@@ -12,6 +12,7 @@ import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
 
 @RestController
 @RequestMapping("/api/v1/consumers")
@@ -33,7 +34,7 @@ class ConsumerAuthController(
         ).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
-                    accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
+                    accountID = savedConsumer.id ?: throw AccountNotFoundException("Consumer ID is null"),
                     accountName = savedConsumer.name,
                     accountRoles = listOf(AccountRoles.BASE_ROLE)
                 )
@@ -50,7 +51,7 @@ class ConsumerAuthController(
         return ResponseEntity.ok(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
-                    accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
+                    accountID = savedConsumer.id ?: throw AccountNotFoundException("Consumer ID is null"),
                     accountName = savedConsumer.name,
                     accountRoles = listOf(AccountRoles.BASE_ROLE)
                 )

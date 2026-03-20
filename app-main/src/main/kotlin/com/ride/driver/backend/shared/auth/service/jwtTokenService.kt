@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
-import com.ride.driver.backend.shared.exceptions.AuthenticationException
+import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 
 @Service
@@ -67,16 +67,16 @@ open class JwtTokenService(
     }
 
     fun extractAccountDetails(token: String): Claims {
-        return extractAllClaims(token) ?: throw AuthenticationException("Account details not found in token")
+        return extractAllClaims(token) ?: throw InvalidJwtTokenException("Failed to extract claims from token")
     }
 
     fun extractAccountName(token: String): String {
-        return extractAllClaims(token).subject ?: throw AuthenticationException("Account Name not found in token")
+        return extractAllClaims(token).subject ?: throw InvalidJwtTokenException("Account name not found in token")
     }
 
     fun extractAccountId(token: String): UUID {
         val claims = extractAllClaims(token)
-        return UUID.fromString(claims["accountID"].toString() ?: throw AuthenticationException("Account ID not found in token"))
+        return UUID.fromString(claims["accountID"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token"))
     }
 
     fun extractRoles(token: String): List<AccountRoles> {
@@ -93,7 +93,7 @@ open class JwtTokenService(
               .body
             return claims
         } catch (ex: Exception) {
-            throw AuthenticationException("Failed to extract claims from token: ${ex.message}")
+            throw InvalidJwtTokenException("Failed to parse JWT token: ${ex.message}")
         }
     }
 }
