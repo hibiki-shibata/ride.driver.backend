@@ -4,7 +4,7 @@ import com.ride.driver.backend.shared.model.Coordinate
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 
-data class ConsumerSignInDTO(
+data class ConsumerSignupDTO(
     @field:NotBlank
     val name: String,
 

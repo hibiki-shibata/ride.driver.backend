@@ -3,11 +3,10 @@ package com.ride.driver.backend.courier.controller
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import com.ride.driver.backend.courier.dto.CourierSignInDTO
+import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
 import com.ride.driver.backend.courier.service.CourierAuthService
-import com.ride.driver.backend.shared.exceptions.BadRequestException
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
@@ -22,7 +21,7 @@ class CourierAuthController (
 
 ){
 @PostMapping("/auth/signup")
-    fun signup(@RequestBody @Valid req: CourierSignInDTO): ResponseEntity<JwtTokensDTO> {
+    fun signup(@RequestBody @Valid req: CourierSignupDTO): ResponseEntity<JwtTokensDTO> {
         val savedCourier: CourierProfile = courierAuthService.registerNewCourier(
             phoneNumber = req.phoneNumber,
             password = req.password,

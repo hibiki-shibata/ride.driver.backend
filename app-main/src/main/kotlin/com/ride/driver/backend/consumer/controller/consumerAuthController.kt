@@ -5,10 +5,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
-import com.ride.driver.backend.consumer.dto.ConsumerSignInDTO
+import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
-import com.ride.driver.backend.shared.exceptions.BadRequestException
-import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
@@ -21,7 +19,7 @@ class ConsumerAuthController(
     private val jwtTokenService: JwtTokenService
 ){
     @PostMapping("/auth/signup")
-    fun consumerSignup(@RequestBody @Valid req: ConsumerSignInDTO): ResponseEntity<JwtTokensDTO> {
+    fun consumerSignup(@RequestBody @Valid req: ConsumerSignupDTO): ResponseEntity<JwtTokensDTO> {
         val savedConsumer: ConsumerProfile = consumerAuthService.registerNewConsumer(
             name = req.name,
             emailAddress = req.emailAddress,

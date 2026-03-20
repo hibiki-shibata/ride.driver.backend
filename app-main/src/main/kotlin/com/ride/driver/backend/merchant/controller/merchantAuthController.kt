@@ -13,7 +13,7 @@ import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import com.ride.driver.backend.shared.exceptions.BadRequestException
 import com.ride.driver.backend.merchant.service.MerchantAuthService
-import com.ride.driver.backend.merchant.dto.MerchantSignInDTO
+import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
 import com.ride.driver.backend.merchant.model.MerchantProfile
 
@@ -24,7 +24,7 @@ class MerchantAuthController(
     private val jwtTokenService: JwtTokenService,
 ) {    
     @PostMapping("/auth/signup")
-    fun merchantSignup(@RequestBody @Valid req: MerchantSignInDTO): ResponseEntity<JwtTokensDTO> {
+    fun merchantSignup(@RequestBody @Valid req: MerchantSignupDTO): ResponseEntity<JwtTokensDTO> {
         val savedMerchant: MerchantProfile = merchantAuthService.registerNewMerchant(
             name = req.name,
             phoneNumber = req.phoneNumber,

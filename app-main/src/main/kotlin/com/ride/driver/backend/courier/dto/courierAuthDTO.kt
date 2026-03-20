@@ -4,7 +4,7 @@ import com.ride.driver.backend.courier.model.VehicleType
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
 
-data class CourierSignInDTO(
+data class CourierSignupDTO(
     @field:NotBlank
     val name: String,
     
