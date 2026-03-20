@@ -1,5 +1,6 @@
 package com.ride.driver.backend.courier.controller
 
+import java.net.URI
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -21,14 +22,16 @@ class CourierAuthController (
 
 ){
 @PostMapping("/auth/signup")
-    fun signup(@RequestBody @Valid req: CourierSignupDTO): ResponseEntity<JwtTokensDTO> {
+    fun courierSignup(@RequestBody @Valid req: CourierSignupDTO): ResponseEntity<JwtTokensDTO> {
         val savedCourier: CourierProfile = courierAuthService.registerNewCourier(
             phoneNumber = req.phoneNumber,
             password = req.password,
             name = req.name,
             vehicleType = req.vehicleType
         )
-        return ResponseEntity.ok(
+        return ResponseEntity.created(
+            URI("/api/v1/couriers/${savedCourier.id}")
+        ).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
                     accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
@@ -40,7 +43,7 @@ class CourierAuthController (
     }
 
     @PostMapping("/auth/login")
-    fun login(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<JwtTokensDTO> {
+    fun courierLogin(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<JwtTokensDTO> {
         val savedCourier: CourierProfile = courierAuthService.getCourierProfileByPhoneNumberAndValidatePassword(
             phoneNumber = req.phoneNumber,
             password = req.password

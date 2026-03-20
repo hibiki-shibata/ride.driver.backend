@@ -1,5 +1,6 @@
 package com.ride.driver.backend.merchant.controller
 
+import java.net.URI
 import java.util.UUID
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.RestController
@@ -32,7 +33,9 @@ class MerchantAuthController(
             merchantAddress = req.merchantAddress,
             merchantAddressCoordinate = req.merchantAddressCoordinate
         )   
-        return ResponseEntity.ok(
+        return ResponseEntity.created(
+            URI("/api/v1/merchants/${savedMerchant.id}")
+        ).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
                     accountID = savedMerchant.id ?: throw Exception("Merchant ID is null"),

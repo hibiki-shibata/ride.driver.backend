@@ -3,6 +3,7 @@ package com.ride.driver.backend.consumer.controller
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import java.net.URI
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
@@ -27,7 +28,9 @@ class ConsumerAuthController(
             consumerAddress = req.consumerAddress,
             consumerAddressCoordinate = req.consumerAddressCoordinate
         )
-        return ResponseEntity.ok(
+        return ResponseEntity.created(
+            URI("/api/v1/consumers/${savedConsumer.id}")
+        ).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
                     accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
