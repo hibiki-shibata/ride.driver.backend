@@ -29,15 +29,15 @@ class CourierAuthController (
             name = req.name,
             vehicleType = req.vehicleType
         )
-        val accessToken: String = jwtTokenService.generateAccessToken(
-            AccessTokenData(
-                accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
-                accountName = savedCourier.name,
-                accountRoles = listOf(AccountRoles.BASE_ROLE)
+        return ResponseEntity.ok(
+            jwtTokenService.generateAccessTokenAndRefreshToken(
+                AccessTokenData(
+                    accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
+                    accountName = savedCourier.name,
+                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                )
             )
         )
-        val refreshToken = jwtTokenService.generateRefreshToken(savedCourier.id ?: throw Exception("Courier ID is null"))
-        return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 
     @PostMapping("/auth/login")
@@ -46,15 +46,14 @@ class CourierAuthController (
             phoneNumber = req.phoneNumber,
             password = req.password
         )
-        val accessToken: String = jwtTokenService.generateAccessToken(
-            AccessTokenData(
-                accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
-                accountName = savedCourier.name,
-                accountRoles = listOf(AccountRoles.BASE_ROLE)
+        return ResponseEntity.ok(
+            jwtTokenService.generateAccessTokenAndRefreshToken(
+                AccessTokenData(
+                    accountID = savedCourier.id ?: throw Exception("Courier ID is null"),
+                    accountName = savedCourier.name,
+                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                )
             )
         )
-        val refreshToken: String = jwtTokenService.generateRefreshToken(savedCourier.id)
-        return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
-
 }
