@@ -27,3 +27,7 @@ data class MerchantProfileDTO(
     // @field:NotBlank
     val location: Coordinate
 )
+
+data class MerchantOpenStatusUpdateDTO(
+    val isOpen: Boolean
+)
