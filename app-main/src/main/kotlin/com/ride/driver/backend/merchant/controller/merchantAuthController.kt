@@ -22,11 +22,7 @@ import com.ride.driver.backend.merchant.model.MerchantProfile
 class MerchantAuthController(
     private val merchantAuthService: MerchantAuthService,
     private val jwtTokenService: JwtTokenService,
-) {
-    private fun isPasswordValid(inputPassword: String, storedPasswordHash: String): Boolean {
-        return inputPassword.hashCode().toString() == storedPasswordHash        
-    } 
-    
+) {    
     @PostMapping("/auth/signup")
     fun merchantSignup(@RequestBody @Valid req: MerchantSignInDTO): ResponseEntity<JwtTokensDTO> {
         val savedMerchant: MerchantProfile = merchantAuthService.registerNewMerchant(
