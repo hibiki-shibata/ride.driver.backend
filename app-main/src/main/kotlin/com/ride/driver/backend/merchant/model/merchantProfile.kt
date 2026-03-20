@@ -62,5 +62,5 @@ data class MerchantProfile(
         AttributeOverride(name = "latitude", column = Column(name = "latitude")),
         AttributeOverride(name = "longitude", column = Column(name = "longitude"))
     )
-    val merchantAddressCoordiate: Coordinate,
+    val merchantAddressCoordinate: Coordinate
 )

@@ -29,7 +29,7 @@ class MerchantAuthService(
                 name = name,
                 phoneNumber = phoneNumber,
                 merchantAddress = merchantAddress,
-                merchantAddressCoordiate = merchantAddressCoordinate,
+                merchantAddressCoordinate = merchantAddressCoordinate,
                 passwordHash = passwordService.hashPassword(password),
                 merchantStatus = MerchantStatus.CLOSED
             )
