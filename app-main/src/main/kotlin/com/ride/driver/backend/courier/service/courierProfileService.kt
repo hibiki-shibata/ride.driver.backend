@@ -20,8 +20,8 @@ class CourierProfileService(
     private val taskRepository: TaskRepository
 ){
     fun getCourierProfile(courierId: UUID): CourierProfile{
-        val courier: CourierProfile = courierProfileRepository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
-        return courier
+        return courierProfileRepository.findById(courierId) ?: throw Exception("Courier not found with ID: $courierId")
+        
     }
 
     fun updateCourierLocation(

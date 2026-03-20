@@ -31,7 +31,7 @@ class MerchantAuthService(
                 merchantAddress = merchantAddress,
                 merchantAddressCoordinate = merchantAddressCoordinate,
                 passwordHash = passwordService.hashPassword(password),
-                merchantStatus = MerchantStatus.CLOSED
+                merchantStatus = MerchantStatus.ADMINS_ONLY
             )
         )
         return savedMerchant
