@@ -1,34 +1,64 @@
 package com.ride.driver.backend.merchant.controller
 
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
-import com.ride.driver.backend.courier.model.CourierStatus
-import com.ride.driver.backend.courier.repository.CourierProfileRepository
-import com.ride.driver.backend.logistic.model.Task
-import com.ride.driver.backend.logistic.model.TaskStatus
-import com.ride.driver.backend.logistic.repository.TaskRepository
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+import com.ride.driver.backend.merchant.service.MerchantProfileService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
-import com.ride.driver.backend.shared.model.Coordinate
-import java.util.UUID
+import com.ride.driver.backend.merchant.dto.MerchantProfileDTO
 import jakarta.validation.Valid
 
 @RestController
 @RequestMapping("/api/v1/merchants")
 class MerchantProfileController (
-    private val taskRepository: TaskRepository
+    private val merchantProfileService: MerchantProfileService
 ){
     @GetMapping("/me")
-    fun findmerchantProfile(
+    fun findMerchantProfile(
         @RequestBody @Valid string: String,
         @AuthenticationPrincipal merchantDetails: AccessTokenData
-    ): ResponseEntity<String> {
-        // merchant profile update location logic goes here. For now, just return a success message.
-        return ResponseEntity.ok("merchant location updated successfully")
+    ): ResponseEntity<MerchantProfileDTO> {
+        val merchantProfile = merchantProfileService.getMerchantProfile(merchantDetails.accountID)
+        return ResponseEntity.ok(
+            MerchantProfileDTO(
+                id = merchantProfile?.id,
+                name = merchantProfile?.name ?: "",
+                phoneNumber = merchantProfile?.phoneNumber ?: "",
+                merchantAddress = merchantProfile?.merchantAddress ?: "",
+                merchantComments = merchantProfile?.merchantComments,
+                merchantStatus = merchantProfile?.merchantStatus.toString(),
+                location = merchantProfile?.merchantAddressCoordinate ?: com.ride.driver.backend.shared.model.Coordinate(0.0, 0.0)
+            )         
+        )
+    }
+
+    @PutMapping("/me")
+    fun updateMerchantProfile(
+        @RequestBody @Valid merchantProfileDTO: MerchantProfileDTO,
+        @AuthenticationPrincipal merchantDetails: AccessTokenData
+    ): ResponseEntity<MerchantProfileDTO> {
+        val updatedProfile = merchantProfileService.updateMerchantProfile(
+            merchantId = merchantDetails.accountID,
+            newName = merchantProfileDTO.name,
+            newPhoneNumber = merchantProfileDTO.phoneNumber,
+            newMerchantAddress = merchantProfileDTO.merchantAddress,
+            newMerchantComments = merchantProfileDTO.merchantComments,
+            newMerchantAddressCoordinate = merchantProfileDTO.location
+        )
+        return ResponseEntity.ok(
+            MerchantProfileDTO(
+                id = updatedProfile.id,
+                name = updatedProfile.name,
+                phoneNumber = updatedProfile.phoneNumber,
+                merchantAddress = updatedProfile.merchantAddress,
+                merchantComments = updatedProfile.merchantComments,
+                merchantStatus = updatedProfile.merchantStatus.toString(),
+                location = updatedProfile.merchantAddressCoordinate
+            )         
+        )
     }
 }
