@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.exceptions.AuthenticationException
+import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 
 @Service
 open class JwtTokenService(
@@ -20,6 +21,14 @@ open class JwtTokenService(
     private val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!",
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
 ) {    
+    fun generateAccessTokenAndRefreshToken(
+        accountTokenData: AccessTokenData
+    ): JwtTokensDTO {
+        val accessToken = generateAccessToken(accountTokenData)
+        val refreshToken = generateRefreshToken(accountTokenData.accountID)
+        return JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken)
+    }
+
     fun generateAccessToken(
         accountTokenData: AccessTokenData
     ): String {

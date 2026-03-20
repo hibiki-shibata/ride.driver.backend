@@ -28,16 +28,16 @@ class ConsumerAuthController(
             password = req.password,
             consumerAddress = req.consumerAddress,
             consumerAddressCoordinate = req.consumerAddressCoordinate
-        )   
-        val accessToken: String = jwtTokenService.generateAccessToken(
-            AccessTokenData(
-                accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
-                accountName = savedConsumer.name,
-                accountRoles = listOf(AccountRoles.BASE_ROLE)
+        )
+        return ResponseEntity.ok(
+            jwtTokenService.generateAccessTokenAndRefreshToken(
+                AccessTokenData(
+                    accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
+                    accountName = savedConsumer.name,
+                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                )
             )
         )
-        val refreshToken = jwtTokenService.generateRefreshToken(savedConsumer.id)
-        return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 
     @PostMapping("/auth/login")
@@ -46,14 +46,14 @@ class ConsumerAuthController(
             emailAddress = req.emailAddress,
             password = req.password
         )
-        val accessToken: String = jwtTokenService.generateAccessToken(
-            AccessTokenData(
-                accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
-                accountName = savedConsumer.name,
-                accountRoles = listOf(AccountRoles.BASE_ROLE)
+        return ResponseEntity.ok(
+            jwtTokenService.generateAccessTokenAndRefreshToken(
+                AccessTokenData(
+                    accountID = savedConsumer.id ?: throw Exception("Consumer ID is null"),
+                    accountName = savedConsumer.name,
+                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                )
             )
         )
-        val refreshToken: String = jwtTokenService.generateRefreshToken(savedConsumer.id)
-        return ResponseEntity.ok(JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken))
     }
 }
