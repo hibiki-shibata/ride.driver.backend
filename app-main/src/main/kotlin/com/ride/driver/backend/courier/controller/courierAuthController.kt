@@ -3,7 +3,10 @@ package com.ride.driver.backend.courier.controller
 import java.net.URI
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
@@ -12,7 +15,6 @@ import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 
 @RestController

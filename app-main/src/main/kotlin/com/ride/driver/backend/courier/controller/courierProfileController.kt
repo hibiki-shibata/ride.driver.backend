@@ -8,14 +8,12 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import jakarta.validation.Valid
-import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.service.CourierProfileService
 import com.ride.driver.backend.courier.dto.CourierProfileDTO
 import com.ride.driver.backend.courier.dto.CourierTaskHistoryDTO
 import com.ride.driver.backend.courier.dto.CourierStatusUpdateDTO
 import com.ride.driver.backend.logistic.model.Task
-import com.ride.driver.backend.logistic.repository.TaskRepository
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.model.Coordinate
 

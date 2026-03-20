@@ -2,8 +2,6 @@
 package com.ride.driver.backend.courier.repository
 
 import org.springframework.data.repository.CrudRepository
-import org.springframework.data.domain.Page
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.OperationArea

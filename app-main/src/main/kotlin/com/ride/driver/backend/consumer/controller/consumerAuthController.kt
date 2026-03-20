@@ -2,7 +2,9 @@ package com.ride.driver.backend.consumer.controller
 
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import java.net.URI
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
