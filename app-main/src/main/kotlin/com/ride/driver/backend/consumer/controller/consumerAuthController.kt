@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
@@ -31,9 +32,7 @@ class ConsumerAuthController(
             consumerAddress = req.consumerAddress,
             consumerAddressCoordinate = req.consumerAddressCoordinate
         )
-        return ResponseEntity.created(
-            URI("/api/v1/consumers/${savedConsumer.id}")
-        ).body(
+        return ResponseEntity.created(URI("/api/v1/consumers/${savedConsumer.id}")).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
                     accountID = savedConsumer.id ?: throw AccountNotFoundException("Consumer ID is null"),

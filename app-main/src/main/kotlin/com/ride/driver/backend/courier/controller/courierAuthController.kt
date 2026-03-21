@@ -32,9 +32,7 @@ class CourierAuthController (
             name = req.name,
             vehicleType = req.vehicleType
         )
-        return ResponseEntity.created(
-            URI("/api/v1/couriers/${savedCourier.id}")
-        ).body(
+        return ResponseEntity.created(URI("/api/v1/couriers/${savedCourier.id}")).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
                     accountID = savedCourier.id ?: throw AccountNotFoundException("Courier ID is null"),

@@ -3,6 +3,7 @@ package com.ride.driver.backend.config
 import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Profile
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.courier.repository.OperationAreaRepository
 import com.ride.driver.backend.courier.model.CourierProfile
@@ -24,7 +25,8 @@ import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import java.util.UUID
 
 @Configuration
-class DbDemoDataInitializerConfig {
+@Profile("demo", "test", "local", "staging", "development", "dev")
+class DbDemoDataInitializerConfig{
 	@Bean
 	fun databaseInitializer(
             courierProfileRepository: CourierProfileRepository, 

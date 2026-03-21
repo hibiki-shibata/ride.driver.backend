@@ -27,7 +27,6 @@ docker run -p 5432:5432 -d \
 ./gradrew bootRun
 ```
 
-
 Tips💡
 You can use command `make help` to learn simplified CLI ops.
 
@@ -40,7 +39,6 @@ You can use command `make help` to learn simplified CLI ops.
 - <file_name>.plane.jar is complied file without mainClass
 - <file_name>.jar is complied file with mainClass
 
-
 ### Initiate Postgers Container:
 ```
 docker run -p 5432:5432 -d \
@@ -50,7 +48,6 @@ docker run -p 5432:5432 -d \
     -e POSTGRES_DB=postgres \
     postgres
 ```
-
 
 ### Flyway control
 - Flyway is responsible only for DB migration - Create tables or stuffs.

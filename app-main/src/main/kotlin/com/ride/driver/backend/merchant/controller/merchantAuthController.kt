@@ -33,9 +33,7 @@ class MerchantAuthController(
             merchantAddress = req.merchantAddress,
             merchantAddressCoordinate = req.merchantAddressCoordinate
         )   
-        return ResponseEntity.created(
-            URI("/api/v1/merchants/${savedMerchant.id}")
-        ).body(
+        return ResponseEntity.created(URI("/api/v1/merchants/${savedMerchant.id}")).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenData(
                     accountID = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
