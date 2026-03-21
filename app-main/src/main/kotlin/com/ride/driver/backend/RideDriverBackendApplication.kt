@@ -18,7 +18,6 @@ class RideDriverBackendApplication(
     }
 }
 
-
 fun main(args: Array<String>) {
         runApplication<RideDriverBackendApplication>(*args)
     }

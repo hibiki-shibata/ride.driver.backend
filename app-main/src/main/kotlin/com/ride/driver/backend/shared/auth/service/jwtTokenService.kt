@@ -66,8 +66,13 @@ open class JwtTokenService(
         return extractAllClaims(token).expiration.before(Date())
     }
 
-    fun extractAccountDetails(token: String): Claims {
-        return extractAllClaims(token) ?: throw InvalidJwtTokenException("Failed to extract claims from token")
+    fun extractAccessTokenData(token: String): AccessTokenData {
+        val claims = extractAllClaims(token)
+        return AccessTokenData(
+            accountID = UUID.fromString(claims["accountID"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
+            accountName = claims.subject ?: throw InvalidJwtTokenException("Account name not found in token"),
+            accountRoles = (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
+        )
     }
 
     fun extractAccountName(token: String): String {
@@ -79,7 +84,7 @@ open class JwtTokenService(
         return UUID.fromString(claims["accountID"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token"))
     }
 
-    fun extractRoles(token: String): List<AccountRoles> {
+    fun extractAccountRoles(token: String): List<AccountRoles> {
         val claims = extractAllClaims(token)
         return (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
     }

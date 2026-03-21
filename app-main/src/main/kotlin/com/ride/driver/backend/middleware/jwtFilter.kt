@@ -6,12 +6,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.web.filter.OncePerRequestFilter
+import org.springframework.http.MediaType
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.FilterChain
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
+import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 import java.util.UUID
 
 @Component 
@@ -23,29 +25,32 @@ class JwtFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-    try{
-        SecurityContextHolder.getContext().authentication == null
+       if (SecurityContextHolder.getContext().authentication != null) {
+            filterChain.doFilter(request, response) // Just let it pass through when it's already authenticated
+            return
+        }        
+        val jwtToken: String? = getJwtTokenFromRequest(request)
+        if (jwtToken.isNullOrBlank() || !jwtTokenService.isTokenValid(jwtToken)) {
+            filterChain.doFilter(request, response) // Let it pass through and eventually be caught by Spring Security's exception handling for unauthenticated access
+            return
+        }        
+        val accessTokenData: AccessTokenData = jwtTokenService.extractAccessTokenData(jwtToken)
+        val authorities = UsernamePasswordAuthenticationToken(
+            accessTokenData, // principal
+            null, // No credentials, I use JWT auth instead
+            accessTokenData.accountRoles.map { SimpleGrantedAuthority(it.name) }
+        ).apply {
+            details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details(e.g. IP, session info)
+        }
+        SecurityContextHolder.getContext().authentication = authorities // Set the authentication in the security context
+        filterChain.doFilter(request, response)
+    }
+
+    private fun getJwtTokenFromRequest(request: HttpServletRequest): String? {
         val authHeader: String? = request.getHeader("Authorization")
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            val jwtToken: String = authHeader.substringAfter("Bearer ")
-            if (!jwtTokenService.isTokenValid(jwtToken)) throw Exception("Invalid or Expired JWT token")
-            val accountDetails = AccessTokenData(                            
-                    accountID = jwtTokenService.extractAccountId(jwtToken),
-                    accountName = jwtTokenService.extractAccountName(jwtToken),
-                    accountRoles = jwtTokenService.extractRoles(jwtToken)
-            )
-            val authenticationToken = UsernamePasswordAuthenticationToken(
-                accountDetails, // principal
-                null, // credentials
-                accountDetails.accountRoles.map { SimpleGrantedAuthority(it.name) } // authorities
-            )
-            authenticationToken.details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details like IP, session info in the context
-            SecurityContextHolder.getContext().authentication = authenticationToken // It pass data so that business logic can use it
+        if (authHeader.isNullOrBlank() || !authHeader.startsWith("Bearer ")) {
+            return null
         }
-        filterChain.doFilter(request, response) // Continue with the next filter in the chain
-    } catch (ex: Exception) {
-        response.status = HttpServletResponse.SC_UNAUTHORIZED
-        response.writer.write("{\"error\": \"jwtFilter error\", \"message\": \"${ex.message}\"}")
-        }
+        return authHeader.substringAfter("Bearer ").trim()
     }
 }
