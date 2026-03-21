@@ -6,20 +6,24 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.web.filter.OncePerRequestFilter
-import org.springframework.http.MediaType
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.FilterChain
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
-import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
-import java.util.UUID
 
 @Component 
 class JwtFilter(
     private val jwtTokenService: JwtTokenService,
 ) : OncePerRequestFilter() {
+    override fun shouldNotFilter(request: HttpServletRequest): Boolean {
+        val path = request.servletPath
+        return path.startsWith("/api/v1/merchants/auth") || 
+               path.startsWith("/api/v1/consumers/auth") || 
+               path.startsWith("/api/v1/couriers/auth")
+    }
+    
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -33,16 +37,16 @@ class JwtFilter(
         if (jwtToken.isNullOrBlank() || !jwtTokenService.isTokenValid(jwtToken)) {
             filterChain.doFilter(request, response) // Let it pass through and eventually be caught by Spring Security's exception handling for unauthenticated access
             return
-        }        
+        }
         val accessTokenData: AccessTokenData = jwtTokenService.extractAccessTokenData(jwtToken)
-        val authorities = UsernamePasswordAuthenticationToken(
+        val authentication = UsernamePasswordAuthenticationToken(
             accessTokenData, // principal
             null, // No credentials, I use JWT auth instead
             accessTokenData.accountRoles.map { SimpleGrantedAuthority(it.name) }
         ).apply {
             details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details(e.g. IP, session info)
         }
-        SecurityContextHolder.getContext().authentication = authorities // Set the authentication in the security context
+        SecurityContextHolder.getContext().authentication = authentication // Set the authentication in the security context
         filterChain.doFilter(request, response)
     }
 
