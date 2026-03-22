@@ -4,47 +4,66 @@ import org.springframework.stereotype.Service
 import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
+import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
+import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
-
+import com.ride.driver.backend.shared.auth.service.JwtTokenService
+import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccountRoles
+import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 @Service
 class ConsumerAuthService(
     private val consumerProfileRepository: ConsumerProfileRepository,
-    private val passwordService: PasswordService
+    private val passwordService: PasswordService,
+    private val jwtTokenService: JwtTokenService
 ) {
-    fun registerNewConsumer(
-        name: String,
-        emailAddress: String,
-        password: String,
-        consumerAddress: String,
-        consumerAddressCoordinate: Coordinate
-    ): ConsumerProfile {
-        val isConsumerExists: Boolean = consumerProfileRepository.existsByEmailAddress(emailAddress)
-        if (isConsumerExists) throw AccountConflictException("Consumer with email address ${emailAddress} already exists")
+
+    private val logger: Logger = LoggerFactory.getLogger(ConsumerAuthService::class.java)
+
+    fun signupNewConsumer(req: ConsumerSignupDTO): JwtTokensDTO {
+        logger.info("Attempting to register new consumer")
+        if (consumerProfileRepository.existsByEmailAddress(req.emailAddress)){
+             throw AccountConflictException("Consumer with email address ${req.emailAddress} already exists.")
+        }
         val savedConsumer: ConsumerProfile = consumerProfileRepository.save(
-            ConsumerProfile(
-                name = name,
-                emailAddress = emailAddress,
-                consumerAddress = consumerAddress,
-                consumerAddressCoordinate = consumerAddressCoordinate,
-                passwordHash = passwordService.hashPassword(password)
-        ))
-        return savedConsumer
+                ConsumerProfile(
+                    name = req.name,
+                    emailAddress = req.emailAddress,
+                    consumerAddress = req.consumerAddress,
+                    consumerAddressCoordinate = req.consumerAddressCoordinate,
+                    passwordHash = passwordService.hashPassword(req.password)
+            ))        
+
+        return issueJwtTokensForConsumer(savedConsumer)
     }
 
-    fun getConsumerProfileByEmailAdderessAndValidatePassword(
-        emailAddress: String,
-        password: String
-    ): ConsumerProfile {
-        val savedConsumer: ConsumerProfile = consumerProfileRepository.findByEmailAddress(emailAddress) ?: 
-            throw AccountNotFoundException("Consumer with email address ${emailAddress} does not exist. Please sign up first.")
-        if (!passwordService.isPasswordValid(
-            inputPassword = password,
+    fun loginConsumer(req: ConsumerLoginDTO): JwtTokensDTO {
+        logger.info("Attempting to authenticate consumer")
+        val savedConsumer: ConsumerProfile = consumerProfileRepository.findByEmailAddress(req.emailAddress)
+            ?: throw AccountNotFoundException("Consumer with email address ${req.emailAddress} not found.")
+        val isPasswordValid: Boolean = passwordService.isPasswordValid(
+            inputPassword = req.password,
             storedHashedPassword = savedConsumer.passwordHash
-        )) throw IncorrectPasswordException("Incorrect password for email address ${emailAddress}")
-        return savedConsumer
+        )
+        if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password for email address ${req.emailAddress}")
+        return issueJwtTokensForConsumer(savedConsumer)
+    }
+
+    private fun issueJwtTokensForConsumer(
+        consumerProfile: ConsumerProfile
+    ): JwtTokensDTO {
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
+            AccessTokenData(
+                accountID = consumerProfile.id ?: throw AccountNotFoundException("Consumer ID is null"),
+                accountName = consumerProfile.name,
+                accountRoles = listOf(AccountRoles.BASE_ROLE)
+            )
+        )
     }
 }

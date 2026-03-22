@@ -14,16 +14,21 @@ import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.consumer.dto.ConsumerProfileDTO
 import com.ride.driver.backend.consumer.dto.ConsumerOrderHistoryDTO
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 @RestController
 @RequestMapping("api/v1/consumers")
 class ConsumerProfileController ( 
     private val consumerProfileService: ConsumerProfileService
 ){
+    private val logger = LoggerFactory.getLogger(ConsumerProfileController::class.java)
+
     @GetMapping("/me")
     fun findConsumerProfile(
         @AuthenticationPrincipal consumerDetails: AccessTokenData        
-    ): ResponseEntity<ConsumerProfileDTO> {        
+    ): ResponseEntity<ConsumerProfileDTO> { 
+        logger.info("Received request to get consumer profile for account ID: ${consumerDetails.accountID}")       
         // val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val myConsumerProfile: ConsumerProfile = consumerProfileService.getConsumerProfile(
                 consumerId = consumerDetails.accountID
@@ -41,7 +46,7 @@ class ConsumerProfileController (
         @RequestBody @Valid  consumerProfileDTO: ConsumerProfileDTO,
         @AuthenticationPrincipal consumerDetails: AccessTokenData
     ): ResponseEntity<ConsumerProfileDTO> {
-        
+        logger.info("Received request to update consumer profile for account ID: ${consumerDetails.accountID}")        
         val updatedConsumerProfile: ConsumerProfile = consumerProfileService.updateConsumerProfile(
                 consumerId = consumerDetails.accountID,
                 newEmailAddress = consumerProfileDTO.emailAddress,
