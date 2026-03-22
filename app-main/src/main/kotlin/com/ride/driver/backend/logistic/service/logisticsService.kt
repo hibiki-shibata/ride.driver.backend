@@ -1,7 +1,5 @@
 package com.ride.driver.backend.logistic.service
 
-
-
 import org.springframework.stereotype.Service
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus
@@ -19,7 +17,6 @@ import com.ride.driver.backend.merchant.repository.MerchantItemRepository
 import com.ride.driver.backend.merchant.model.MerchantItem
 import com.ride.driver.backend.merchant.model.MerchantProfile
 import java.util.UUID
-
 
 @Service
 class LogisticsService(
@@ -40,7 +37,7 @@ class LogisticsService(
         if (orderedItemsDataRaw.size != orderedItemIDs.size) throw Exception("One or more ordered items are invalid for the given merchant")
         val createdTask: Task = taskRepository.save(
             Task(
-                consumerProfile = consumerProfileRepository.findById(consumerId) ?: return throw Exception("Consumer not found with ID: $consumerId"),
+                consumerProfile = consumerProfileRepository.findById(consumerId).orElseThrow { Exception("Consumer not found with ID: ${consumerId}") },
                 merchantProfile = merchantProfileRepository.findById(merchantId) ?: return throw Exception("Merchant not found with ID: ${merchantId}"),
                 taskStatus = TaskStatus.CREATED,
                 orderedItems = orderedItemsDataRaw.map { item ->

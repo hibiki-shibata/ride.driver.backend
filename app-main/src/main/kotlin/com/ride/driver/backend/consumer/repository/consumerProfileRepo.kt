@@ -17,6 +17,7 @@
 //    fun findAll(pageable: Pageable): Page<ConsumerProfile>
 // }
 
+
 package com.ride.driver.backend.consumer.repository
 
 import com.ride.driver.backend.consumer.model.ConsumerProfile

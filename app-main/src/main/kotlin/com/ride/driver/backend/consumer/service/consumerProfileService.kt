@@ -13,6 +13,8 @@ import com.ride.driver.backend.logistic.repository.TaskRepository
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
+import com.ride.driver.backend.shared.exception.AccountSaveFailedException
+
 
 @Service
 class ConsumerProfileService(
@@ -20,9 +22,10 @@ class ConsumerProfileService(
     private val taskRepository: TaskRepository
 ) {
     fun getConsumerProfile(consumerDataInToken: AccessTokenData): ConsumerProfileDTO {
-        val savedConsumer: ConsumerProfile = consumerProfileRepository.findById(consumerDataInToken.accountID)
-            ?: throw AccountNotFoundException("Consumer not found with ID: ${consumerDataInToken.accountID}")
-        return savedConsumer.toConsumerProfileDTO()
+        val savedConsumer: ConsumerProfile = consumerProfileRepository.findById(consumerDataInToken.accountID).orElseThrow { 
+            AccountNotFoundException("Consumer not found with ID: ${consumerDataInToken.accountID}") 
+        }
+        return savedConsumer.toConsumerProfileDTO() 
     }
     
     //Fix: Consider differentiating DTO for update req and get res to avoid confusion and potential issues with validation
@@ -31,18 +34,19 @@ class ConsumerProfileService(
         consumerDataInToken: AccessTokenData, 
         newConsumerProfileData: ConsumerProfileDTO
     ): ConsumerProfileDTO {    
-       val consumerDetailsInDb: ConsumerProfile = consumerProfileRepository.findById(consumerDataInToken.accountID) 
-           ?: throw AccountNotFoundException("Consumer not found with ID: ${consumerDataInToken.accountID}")
-       val emailChanged: Boolean = newConsumerProfileData.emailAddress != consumerDetailsInDb.emailAddress
+       val savedConsumerProfile: ConsumerProfile = consumerProfileRepository.findById(consumerDataInToken.accountID).orElseThrow { 
+            AccountNotFoundException("Consumer not found with ID: ${consumerDataInToken.accountID}") 
+        }
+       val emailChanged: Boolean = newConsumerProfileData.emailAddress != savedConsumerProfile.emailAddress
        if (consumerProfileRepository.existsByEmailAddress(newConsumerProfileData.emailAddress) && emailChanged)
-            throw AccountConflictException("Consumer with email address ${newConsumerProfileData.emailAddress} already exists")                    
+            throw AccountConflictException("Consumer with email address ${newConsumerProfileData.emailAddress} already exists")
        val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(
-                consumerDetailsInDb.copy(
-                    emailAddress = newConsumerProfileData.emailAddress,
-                    name = newConsumerProfileData.name
-                )
-        )
-        return updatedConsumerProfile.toConsumerProfileDTO()
+            savedConsumerProfile.copy(
+                name = newConsumerProfileData.name,
+                emailAddress = newConsumerProfileData.emailAddress
+            )
+       )
+       return updatedConsumerProfile.toConsumerProfileDTO()
     }
 
     fun getConsumerOrderHistory(consumerDataInToken: AccessTokenData): List<ConsumerOrderHistoryDTO> {
