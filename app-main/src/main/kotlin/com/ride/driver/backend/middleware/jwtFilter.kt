@@ -12,11 +12,15 @@ import jakarta.servlet.FilterChain
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 @Component 
 class JwtFilter(
     private val jwtTokenService: JwtTokenService,
 ) : OncePerRequestFilter() {
+    private val logger = LoggerFactory.getLogger(JwtFilter::class.java)
+
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.servletPath
         return path.startsWith("/api/v1/merchants/auth") || 
@@ -47,6 +51,7 @@ class JwtFilter(
             details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details(e.g. IP, session info)
         }
         SecurityContextHolder.getContext().authentication = authentication // Set the authentication in the security context
+        logger.debug("Authenticated request for account ID ${accessTokenData.accountID}, Request URI: ${request.requestURI}")
         filterChain.doFilter(request, response)
     }
 

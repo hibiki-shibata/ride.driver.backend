@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.context.annotation.Configuration
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 data class ApiErrorResponseDTO(
     val error: String,
@@ -14,8 +16,11 @@ data class ApiErrorResponseDTO(
 @Configuration
 @ControllerAdvice
 class GlobalExceptionHandler {
+    private val logger: Logger = LoggerFactory.getLogger(GlobalExceptionHandler::class.java)
+
     @ExceptionHandler(HttpBaseException::class)
     fun handleHttpBaseException(e: HttpBaseException): ResponseEntity<ApiErrorResponseDTO> {
+        logger.warn("HttpBaseException occured", e)
         return ResponseEntity
             .status(e.status)
             .body(ApiErrorResponseDTO(
@@ -27,6 +32,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleGeneralException(e: Exception): ResponseEntity<ApiErrorResponseDTO> {
+        logger.error("An unexpected error occurred", e)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ApiErrorResponseDTO(
