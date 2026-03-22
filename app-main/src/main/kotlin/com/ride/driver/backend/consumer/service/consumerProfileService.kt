@@ -1,7 +1,7 @@
 package com.ride.driver.backend.consumer.service
 
 import org.springframework.stereotype.Service
-import java.util.UUID
+import org.springframework.transaction.annotation.Transactional
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.dto.ConsumerProfileDTO
@@ -26,6 +26,7 @@ class ConsumerProfileService(
     }
     
     //Fix: Consider differentiating DTO for update req and get res to avoid confusion and potential issues with validation
+    @Transactional
     fun updateConsumerProfile(
         consumerDataInToken: AccessTokenData, 
         newConsumerProfileData: ConsumerProfileDTO
@@ -46,8 +47,6 @@ class ConsumerProfileService(
 
     fun getConsumerOrderHistory(consumerDataInToken: AccessTokenData): List<ConsumerOrderHistoryDTO> {
         val taskHistories: List<Task> = taskRepository.findByConsumerProfile_Id(consumerDataInToken.accountID)
-        return taskHistories.map { task ->
-            task.toConsumerOrderHistoryDto()
-        }
+        return taskHistories.map { it.toConsumerOrderHistoryDto()}
     }
 }
