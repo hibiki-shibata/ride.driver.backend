@@ -29,7 +29,7 @@ class CourierProfileController (
     ): ResponseEntity<CourierProfileDTO> {        
         val courierProfile: CourierProfile = courierProfileService.getCourierProfile(
             courierId = courierDetails.accountID
-        )
+        ) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(
             CourierProfileDTO(
                 id = courierProfile.id,

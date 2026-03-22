@@ -27,7 +27,7 @@ class ConsumerProfileController (
         // val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val myConsumerProfile: ConsumerProfile = consumerProfileService.getConsumerProfile(
                 consumerId = consumerDetails.accountID
-        )
+        ) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(
             ConsumerProfileDTO(
             name = myConsumerProfile.name,
