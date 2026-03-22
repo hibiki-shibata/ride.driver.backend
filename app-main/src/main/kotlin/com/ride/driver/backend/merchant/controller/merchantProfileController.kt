@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.merchant.service.MerchantProfileService
 import com.ride.driver.backend.merchant.dto.MerchantProfileDTO
@@ -22,10 +23,9 @@ class MerchantProfileController (
 ){
     @GetMapping("/me")
     fun findMerchantProfile(
-        @RequestBody @Valid string: String,
         @AuthenticationPrincipal merchantDetails: AccessTokenData
     ): ResponseEntity<MerchantProfileDTO> {
-        val merchantProfile = merchantProfileService.getMerchantProfile(merchantDetails.accountID)
+        val merchantProfile = merchantProfileService.getMerchantProfile(merchantDetails.accountID) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(
             MerchantProfileDTO(
                 id = merchantProfile?.id,
@@ -33,8 +33,8 @@ class MerchantProfileController (
                 phoneNumber = merchantProfile?.phoneNumber ?: "",
                 merchantAddress = merchantProfile?.merchantAddress ?: "",
                 merchantComments = merchantProfile?.merchantComments,
-                merchantStatus = merchantProfile?.merchantStatus.toString(),
-                location = merchantProfile?.merchantAddressCoordinate ?: com.ride.driver.backend.shared.model.Coordinate(0.0, 0.0)
+                merchantStatus = merchantProfile?.merchantStatus?.toString() ?: "Unknown Status",
+                location = merchantProfile?.merchantAddressCoordinate ?: Coordinate(0.0, 0.0)
             )         
         )
     }
@@ -90,17 +90,17 @@ class MerchantProfileController (
     @GetMapping("/orders/history")
     fun findMerchantOrderHistory(
         @AuthenticationPrincipal merchantDetails: AccessTokenData
-    ): ResponseEntity<List<MerchantOrderHistoryDTO?>> {
-        val merchantOrderHistory: List<Task?> = merchantProfileService.getMerchantOrderHistory(
+    ): ResponseEntity<List<MerchantOrderHistoryDTO>> {
+        val merchantOrderHistory: List<Task> = merchantProfileService.getMerchantOrderHistory(
                 merchantId = merchantDetails.accountID
-        )
+        ) 
         return ResponseEntity.ok(
             merchantOrderHistory.map { task ->
                 MerchantOrderHistoryDTO(
-                    orderId = task?.id, 
-                    consumerName = task?.consumerProfile?.name ?: "Unknown Consumer",
-                    orderTime = task?.orderTime?.toString() ?: "Unknown Date",
-                    orderStatus = task?.taskStatus?.toString() ?: "Unknown Status"
+                    orderId = task.id, 
+                    consumerName = task.consumerProfile?.name ?: "Unknown Consumer",
+                    orderTime = task.orderTime?.toString() ?: "Unknown Date",
+                    orderStatus = task.taskStatus?.toString() ?: "Unknown Status"
                 )
             }          
         )
