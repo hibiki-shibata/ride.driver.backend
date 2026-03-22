@@ -7,10 +7,12 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import com.ride.driver.backend.merchant.service.MerchantProfileService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.logistic.model.Task
+import com.ride.driver.backend.merchant.service.MerchantProfileService
 import com.ride.driver.backend.merchant.dto.MerchantProfileDTO
 import com.ride.driver.backend.merchant.dto.MerchantOpenStatusUpdateDTO
+import com.ride.driver.backend.merchant.dto.MerchantOrderHistoryDTO
 import jakarta.validation.Valid
 
 @RestController
@@ -84,4 +86,23 @@ class MerchantProfileController (
             )         
         )
     }
-}
+
+    @GetMapping("/orders/history")
+    fun findMerchantOrderHistory(
+        @AuthenticationPrincipal merchantDetails: AccessTokenData
+    ): ResponseEntity<List<MerchantOrderHistoryDTO?>> {
+        val merchantOrderHistory: List<Task?> = merchantProfileService.getMerchantOrderHistory(
+                merchantId = merchantDetails.accountID
+        )
+        return ResponseEntity.ok(
+            merchantOrderHistory.map { task ->
+                MerchantOrderHistoryDTO(
+                    orderId = task?.id, 
+                    consumerName = task?.consumerProfile?.name ?: "Unknown Consumer",
+                    orderTime = task?.orderTime?.toString() ?: "Unknown Date",
+                    orderStatus = task?.taskStatus?.toString() ?: "Unknown Status"
+                )
+            }          
+        )
+    } 
+ } 

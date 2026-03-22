@@ -22,7 +22,7 @@ class ConsumerProfileController (
 ){
     @GetMapping("/me")
     fun findConsumerProfile(
-        @AuthenticationPrincipal consumerDetails: AccessTokenData
+        @AuthenticationPrincipal consumerDetails: AccessTokenData        
     ): ResponseEntity<ConsumerProfileDTO> {        
         // val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
         val myConsumerProfile: ConsumerProfile = consumerProfileService.getConsumerProfile(
