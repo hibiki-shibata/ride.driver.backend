@@ -9,8 +9,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import jakarta.validation.Valid
 import com.ride.driver.backend.consumer.service.ConsumerProfileService
-import com.ride.driver.backend.consumer.model.ConsumerProfile
-import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
 import com.ride.driver.backend.consumer.dto.ConsumerProfileDTO
 import com.ride.driver.backend.consumer.dto.ConsumerOrderHistoryDTO
@@ -25,57 +23,34 @@ class ConsumerProfileController (
     private val logger = LoggerFactory.getLogger(ConsumerProfileController::class.java)
 
     @GetMapping("/me")
-    fun findConsumerProfile(
-        @AuthenticationPrincipal consumerDetails: AccessTokenData        
+    fun getConsumerProfile(
+        @AuthenticationPrincipal consumerDataInToken: AccessTokenData        
     ): ResponseEntity<ConsumerProfileDTO> { 
-        logger.info("Received request to get consumer profile for account ID: ${consumerDetails.accountID}")       
-        // val consumerDetails: AccessTokenData = SecurityContextHolder.getContext().authentication?.principal as AccessTokenData ?: return ResponseEntity.status(401).build()
-        val myConsumerProfile: ConsumerProfile = consumerProfileService.getConsumerProfile(
-                consumerId = consumerDetails.accountID
-        ) ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(
-            ConsumerProfileDTO(
-            name = myConsumerProfile.name,
-            emailAddress = myConsumerProfile.emailAddress
-         )
-      )
+        logger.info("Received request to get consumer profile for consumer ID: ${consumerDataInToken.accountID}")
+        val fetchedConsumerProfile: ConsumerProfileDTO = consumerProfileService.getConsumerProfile(consumerDataInToken)
+        return ResponseEntity.ok(fetchedConsumerProfile)
     }
 
     @PutMapping("/me")
     fun updateConsumerProfile(
-        @RequestBody @Valid  consumerProfileDTO: ConsumerProfileDTO,
-        @AuthenticationPrincipal consumerDetails: AccessTokenData
+        @RequestBody @Valid newConsumerProfileData: ConsumerProfileDTO, ////Fix: Differenciate DTO for req and Res?
+        @AuthenticationPrincipal consumerDataInToken: AccessTokenData
     ): ResponseEntity<ConsumerProfileDTO> {
-        logger.info("Received request to update consumer profile for account ID: ${consumerDetails.accountID}")        
-        val updatedConsumerProfile: ConsumerProfile = consumerProfileService.updateConsumerProfile(
-                consumerId = consumerDetails.accountID,
-                newEmailAddress = consumerProfileDTO.emailAddress,
-                newName = consumerProfileDTO.name
-        )
-        return ResponseEntity.ok(
-            ConsumerProfileDTO(
-                name = updatedConsumerProfile.name,
-                emailAddress = updatedConsumerProfile.emailAddress
-             )
+        logger.info("Received request to update consumer profile for consumer ID: ${consumerDataInToken.accountID}")        
+        val updatedConsumerProfile: ConsumerProfileDTO = consumerProfileService.updateConsumerProfile(
+            consumerDataInToken = consumerDataInToken,
+            newConsumerProfileData = newConsumerProfileData
          )
+         return ResponseEntity.ok(updatedConsumerProfile)
+     }
 
     @GetMapping("/order/history")
-    fun findConsumerOrderHistory(
-        @AuthenticationPrincipal consumerDetails: AccessTokenData
-    ): ResponseEntity<List<ConsumerOrderHistoryDTO?>> {        
-        val consumerOrderHistory: List<Task?> = consumerProfileService.getConsumerOrderHistory(
-                consumerId = consumerDetails.accountID
-        )
-        return ResponseEntity.ok(
-            consumerOrderHistory.map { task ->
-                ConsumerOrderHistoryDTO(
-                    merchantName = task?.merchantProfile?.name ?: "Unknown Merchant",
-                    orderTime = task?.orderTime?.toString() ?: "Unknown Date",
-                    orderStatus = task?.taskStatus?.toString() ?: "Unknown Status"
-                )
-            }
-        )        
+    fun getConsumerOrderHistory(
+        @AuthenticationPrincipal consumerDataInToken: AccessTokenData
+    ): ResponseEntity<List<ConsumerOrderHistoryDTO>> {      
+        logger.info("Received request to get consumer order history for consumer ID: ${consumerDataInToken.accountID}")  
+        val consumerOrderHistory: List<ConsumerOrderHistoryDTO> = consumerProfileService.getConsumerOrderHistory(consumerDataInToken)
+        return ResponseEntity.ok(consumerOrderHistory)
     }         
-  }
 }
         

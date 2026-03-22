@@ -12,15 +12,3 @@ data class ConsumerProfileDTO(
     @field:Email
     val emailAddress: String,
 )
-
-data class ConsumerOrderHistoryDTO(
-    @field:NotBlank
-    val merchantName: String,
-
-    @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @field:NotBlank 
-    val orderTime: String,
-
-    @field:NotBlank
-    val orderStatus: String,
-)

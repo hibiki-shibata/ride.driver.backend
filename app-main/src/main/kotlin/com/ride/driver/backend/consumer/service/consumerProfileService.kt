@@ -4,47 +4,50 @@ import org.springframework.stereotype.Service
 import java.util.UUID
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.consumer.model.ConsumerProfile
+import com.ride.driver.backend.consumer.dto.ConsumerProfileDTO
+import com.ride.driver.backend.consumer.dto.ConsumerOrderHistoryDTO
+import com.ride.driver.backend.consumer.mapper.toConsumerProfileDTO
+import com.ride.driver.backend.consumer.mapper.toConsumerOrderHistoryDto
 import com.ride.driver.backend.logistic.model.Task
-import com.ride.driver.backend.logistic.model.TaskStatus
 import com.ride.driver.backend.logistic.repository.TaskRepository
-import com.ride.driver.backend.merchant.model.MerchantProfile
-import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.shared.auth.domain.AccessTokenData
-import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 
 @Service
 class ConsumerProfileService(
     private val consumerProfileRepository: ConsumerProfileRepository,
-    private val taskRepository: TaskRepository,
-    private val merchantProfileRepository: MerchantProfileRepository
+    private val taskRepository: TaskRepository
 ) {
-    fun getConsumerProfile(consumerId: UUID): ConsumerProfile {
-        val consumer: ConsumerProfile = consumerProfileRepository.findById(consumerId) 
-                ?: throw AccountNotFoundException("Consumer not found with ID: $consumerId")
-        return consumer
+    fun getConsumerProfile(consumerDataInToken: AccessTokenData): ConsumerProfileDTO {
+        val savedConsumer: ConsumerProfile = consumerProfileRepository.findById(consumerDataInToken.accountID)
+            ?: throw AccountNotFoundException("Consumer not found with ID: ${consumerDataInToken.accountID}")
+        return savedConsumer.toConsumerProfileDTO()
     }
-
-    fun updateConsumerProfile(consumerId: UUID, newEmailAddress: String, newName: String): ConsumerProfile {
-       val consumerDetailsInDb: ConsumerProfile = consumerProfileRepository.findById(consumerId) 
-            ?:  throw AccountNotFoundException("Consumer not found with ID: $consumerId")
-        if (newEmailAddress == consumerDetailsInDb.emailAddress)
-            throw AccountConflictException("New email address is the same as the current email address")
-        if (consumerProfileRepository.existsByEmailAddress(newEmailAddress)) 
-            throw AccountConflictException("Consumer with email address ${newEmailAddress} already exists")
-        
-        val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(
+    
+    //Fix: Consider differentiating DTO for update req and get res to avoid confusion and potential issues with validation
+    fun updateConsumerProfile(
+        consumerDataInToken: AccessTokenData, 
+        newConsumerProfileData: ConsumerProfileDTO
+    ): ConsumerProfileDTO {    
+       val consumerDetailsInDb: ConsumerProfile = consumerProfileRepository.findById(consumerDataInToken.accountID) 
+           ?: throw AccountNotFoundException("Consumer not found with ID: ${consumerDataInToken.accountID}")
+       val emailChanged: Boolean = newConsumerProfileData.emailAddress != consumerDetailsInDb.emailAddress
+       if (consumerProfileRepository.existsByEmailAddress(newConsumerProfileData.emailAddress) && emailChanged)
+            throw AccountConflictException("Consumer with email address ${newConsumerProfileData.emailAddress} already exists")                    
+       val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(
                 consumerDetailsInDb.copy(
-                    emailAddress = newEmailAddress,
-                    name = newName
+                    emailAddress = newConsumerProfileData.emailAddress,
+                    name = newConsumerProfileData.name
                 )
         )
-        return updatedConsumerProfile
+        return updatedConsumerProfile.toConsumerProfileDTO()
     }
 
-    fun getConsumerOrderHistory(consumerId: UUID): List<Task?> {
-        val taskHistories: List<Task?> = taskRepository.findByConsumerProfile_Id(consumerId)  
-        return taskHistories ?: emptyList()
+    fun getConsumerOrderHistory(consumerDataInToken: AccessTokenData): List<ConsumerOrderHistoryDTO> {
+        val taskHistories: List<Task> = taskRepository.findByConsumerProfile_Id(consumerDataInToken.accountID)
+        return taskHistories.map { task ->
+            task.toConsumerOrderHistoryDto()
+        }
     }
 }
