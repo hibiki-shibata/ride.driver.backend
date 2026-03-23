@@ -39,7 +39,7 @@ class ConsumerAuthService(
                     passwordHash = passwordService.hashPassword(req.password)
             ))   
         
-        logger.info("event=consumer_signup_successful consumerId={}", savedConsumer.id)
+        logger.info("event=consumer_signup_completed consumerId={}", savedConsumer.id)
         return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toAccessTokenClaim())
     }
 
@@ -51,7 +51,7 @@ class ConsumerAuthService(
             storedHashedPassword = savedConsumer.passwordHash
         )
         if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password for login consumer")
-        logger.info("event=consumer_login_successful consumerId={}", savedConsumer.id)
+        logger.info("event=consumer_login_completed consumerId={}", savedConsumer.id)
         return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toAccessTokenClaim())
     }
 }
