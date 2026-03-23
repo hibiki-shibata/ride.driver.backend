@@ -41,15 +41,14 @@ class ConsumerProfileService(
        val emailChanged: Boolean = newConsumerProfileData.emailAddress != savedConsumerProfile.emailAddress
        if (consumerProfileRepository.existsByEmailAddress(newConsumerProfileData.emailAddress) && emailChanged)
             throw AccountConflictException("Consumer with request email address already exists")
-       
-       val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(
-        savedConsumerProfile.apply {
+        // Apply changed data to fetched consumer profile and save to DB
+       savedConsumerProfile.apply {
             name = newConsumerProfileData.name
             emailAddress = newConsumerProfileData.emailAddress
             consumerAddress = newConsumerProfileData.consumerAddress
             consumerAddressCoordinate = newConsumerProfileData.consumerAddressCoordinate
-        }
-       )
+       }
+       val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(savedConsumerProfile)
        logger.info("event=consumer_profile_update_completed consumerId={}", consumerDataInToken.accountID)
        return updatedConsumerProfile.toConsumerProfileResDTO()
     }
