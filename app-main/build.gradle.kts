@@ -46,6 +46,10 @@ dependencies {
 
     // JSON serialization (keep if you actually use kotlinx.serialization)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+
+    testImplementation("org.springframework.boot:spring-boot-starter-test:4.0.4")
+
+    
 }
 
 kotlin {

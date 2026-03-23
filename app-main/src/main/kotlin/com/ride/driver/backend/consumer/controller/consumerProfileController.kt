@@ -43,7 +43,7 @@ class ConsumerProfileController (
             newConsumerProfileData = newConsumerProfileData
          )
          return ResponseEntity.ok(updatedConsumerProfile)
-     }
+    }
 
     @GetMapping("/order/history")
     fun getConsumerOrderHistory(
