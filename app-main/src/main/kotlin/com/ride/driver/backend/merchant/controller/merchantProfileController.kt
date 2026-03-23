@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.merchant.service.MerchantProfileService
@@ -23,7 +23,7 @@ class MerchantProfileController (
 ){
     @GetMapping("/me")
     fun findMerchantProfile(
-        @AuthenticationPrincipal merchantDetails: AccessTokenData
+        @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<MerchantProfileDTO> {
         val merchantProfile = merchantProfileService.getMerchantProfile(merchantDetails.accountID) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(
@@ -42,7 +42,7 @@ class MerchantProfileController (
     @PutMapping("/me")
     fun updateMerchantProfile(
         @RequestBody @Valid merchantProfileDTO: MerchantProfileDTO,
-        @AuthenticationPrincipal merchantDetails: AccessTokenData
+        @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<MerchantProfileDTO> {
         val updatedProfile = merchantProfileService.updateMerchantProfile(
             merchantId = merchantDetails.accountID,
@@ -68,7 +68,7 @@ class MerchantProfileController (
     @PutMapping("/me/status")
     fun updateMerchantOpenStatus(
         @RequestBody @Valid isMerchantOpen: MerchantOpenStatusUpdateDTO,
-        @AuthenticationPrincipal merchantDetails: AccessTokenData
+        @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<MerchantProfileDTO> {
         val updatedProfile = merchantProfileService.updateMerchantOpenStatus(
             merchantId = merchantDetails.accountID,
@@ -89,7 +89,7 @@ class MerchantProfileController (
 
     @GetMapping("/orders/history")
     fun findMerchantOrderHistory(
-        @AuthenticationPrincipal merchantDetails: AccessTokenData
+        @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<List<MerchantOrderHistoryDTO>> {
         val merchantOrderHistory: List<Task> = merchantProfileService.getMerchantOrderHistory(
                 merchantId = merchantDetails.accountID

@@ -26,10 +26,10 @@ class SecurityConfig {
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .authorizeHttpRequests {
                 it.requestMatchers("/api/v1/*/auth/**").permitAll()
-                it.requestMatchers("/api/v1/logistics/**").hasAnyAuthority(AccountRoles.BASE_ROLE.name, AccountRoles.ADMIN_ROLE.name)
-                it.requestMatchers("/api/v1/couriers/**").hasAnyAuthority(AccountRoles.BASE_ROLE.name, AccountRoles.ADMIN_ROLE.name)
-                it.requestMatchers("/api/v1/consumers/**").hasAnyAuthority(AccountRoles.BASE_ROLE.name, AccountRoles.ADMIN_ROLE.name)
-                it.requestMatchers("/api/v1/merchants/**").hasAnyAuthority(AccountRoles.BASE_ROLE.name, AccountRoles.ADMIN_ROLE.name)
+                it.requestMatchers("/api/v1/logistics/**").hasAnyAuthority(AccountRoles.BASE_COURIER_ROLE.name, AccountRoles.ADMIN_ROLE.name)
+                it.requestMatchers("/api/v1/couriers/**").hasAnyAuthority(AccountRoles.BASE_COURIER_ROLE.name, AccountRoles.ADMIN_ROLE.name)
+                it.requestMatchers("/api/v1/consumers/**").hasAnyAuthority(AccountRoles.BASE_CONSUMER_ROLE.name, AccountRoles.ADMIN_ROLE.name)
+                it.requestMatchers("/api/v1/merchants/**").hasAnyAuthority(AccountRoles.BASE_MERCHANT_ROLE.name, AccountRoles.ADMIN_ROLE.name)
                 it.anyRequest().authenticated()
             }
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter::class.java)

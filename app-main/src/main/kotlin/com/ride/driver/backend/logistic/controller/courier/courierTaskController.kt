@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import jakarta.validation.Valid
 import com.ride.driver.backend.logistic.model.Task
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
 import com.ride.driver.backend.logistic.service.LogisticsService
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
@@ -21,7 +21,7 @@ class CourierTaskController (
 ){
     @GetMapping("/task/poll")
     fun cpPollForTask(
-        @AuthenticationPrincipal courierDetails: AccessTokenData
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         val assignedTask: Task? = logisticsService.pollForTask(
             courierId = courierDetails.accountID
@@ -46,7 +46,7 @@ class CourierTaskController (
    @PutMapping("/task/accept")
     fun cpAcceptTask(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
-        @AuthenticationPrincipal courierDetails: AccessTokenData
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         val updatedTask: Task = logisticsService.markTaskAsAccepted(
             courierId = courierDetails.accountID,
@@ -72,7 +72,7 @@ class CourierTaskController (
    @PutMapping("/task/complete/pickup")
     fun cpCompletePickup(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
-        @AuthenticationPrincipal courierDetails: AccessTokenData
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         val updatedTask: Task = logisticsService.markTaskAsPickedUp(
             courierId = courierDetails.accountID,
@@ -98,7 +98,7 @@ class CourierTaskController (
     @PutMapping("/task/complete/dropoff")
     fun cpCompleteDropoff(
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
-        @AuthenticationPrincipal courierDetails: AccessTokenData        
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim        
     ): ResponseEntity<TaskDataDTO> {
         val updatedTask: Task = logisticsService.markTaskAsDroppedOff(
             courierId = courierDetails.accountID,

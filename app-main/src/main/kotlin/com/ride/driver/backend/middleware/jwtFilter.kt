@@ -10,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.servlet.FilterChain
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -42,16 +42,16 @@ class JwtFilter(
             filterChain.doFilter(request, response) // Let it pass through and eventually be caught by Spring Security's exception handling for unauthenticated access
             return
         }
-        val accessTokenData: AccessTokenData = jwtTokenService.extractAccessTokenData(jwtToken)
+        val AccessTokenClaim: AccessTokenClaim = jwtTokenService.extractAccessTokenClaim(jwtToken)
         val authentication = UsernamePasswordAuthenticationToken(
-            accessTokenData, // principal
+            AccessTokenClaim, // principal
             null, // No credentials, I use JWT auth instead
-            accessTokenData.accountRoles.map { SimpleGrantedAuthority(it.name) }
+            AccessTokenClaim.accountRoles.map { SimpleGrantedAuthority(it.name) }
         ).apply {
             details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details(e.g. IP, session info)
         }
         SecurityContextHolder.getContext().authentication = authentication // Set the authentication in the security context
-        logger.debug("Authenticated request for account ID ${accessTokenData.accountID}, Request URI: ${request.requestURI}")
+        logger.debug("Authenticated request for account ID ${AccessTokenClaim.accountID}, Request URI: ${request.requestURI}")
         filterChain.doFilter(request, response)
     }
 

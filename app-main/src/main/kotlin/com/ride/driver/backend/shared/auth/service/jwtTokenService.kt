@@ -10,7 +10,7 @@ import io.jsonwebtoken.security.Keys
 import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 
@@ -22,7 +22,7 @@ open class JwtTokenService(
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
 ) {    
     fun generateAccessTokenAndRefreshToken(
-        accountTokenData: AccessTokenData
+        accountTokenData: AccessTokenClaim
     ): JwtTokensDTO {
         val accessToken = generateAccessToken(accountTokenData)
         val refreshToken = generateRefreshToken(accountTokenData.accountID)
@@ -30,7 +30,7 @@ open class JwtTokenService(
     }
 
     fun generateAccessToken(
-        accountTokenData: AccessTokenData
+        accountTokenData: AccessTokenClaim
     ): String {
         val now = System.currentTimeMillis()
         val additionalClaims =  mapOf(
@@ -66,9 +66,9 @@ open class JwtTokenService(
         return extractAllClaims(token).expiration.before(Date())
     }
 
-    fun extractAccessTokenData(token: String): AccessTokenData {
+    fun extractAccessTokenClaim(token: String): AccessTokenClaim {
         val claims = extractAllClaims(token)
-        return AccessTokenData(
+        return AccessTokenClaim(
             accountID = UUID.fromString(claims["accountID"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
             accountName = claims.subject ?: throw InvalidJwtTokenException("Account name not found in token"),
             accountRoles = (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }

@@ -13,7 +13,7 @@ import com.ride.driver.backend.consumer.mapper.toConsumerProfileDTO
 import com.ride.driver.backend.consumer.mapper.toConsumerOrderHistoryDto
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.logistic.repository.TaskRepository
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.AccountSaveFailedException
@@ -25,7 +25,7 @@ class ConsumerProfileService(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(ConsumerProfileService::class.java)
 
-    fun getConsumerProfile(consumerDataInToken: AccessTokenData): ConsumerProfileDTO {
+    fun getConsumerProfile(consumerDataInToken: AccessTokenClaim): ConsumerProfileDTO {
         val savedConsumerProfile: ConsumerProfile = getConsumerProfileById(consumerDataInToken.accountID)
         logger.info("event=consumer_profile_fetched consumerId={}", consumerDataInToken.accountID)
         return savedConsumerProfile.toConsumerProfileDTO() 
@@ -34,7 +34,7 @@ class ConsumerProfileService(
     //Fix: Consider differentiating DTO for update req and get res to avoid confusion and potential issues with validation
     @Transactional
     fun updateConsumerProfile(
-        consumerDataInToken: AccessTokenData, 
+        consumerDataInToken: AccessTokenClaim, 
         newConsumerProfileData: ConsumerProfileDTO
     ): ConsumerProfileDTO {    
        val savedConsumerProfile: ConsumerProfile = getConsumerProfileById(consumerDataInToken.accountID)
@@ -57,7 +57,7 @@ class ConsumerProfileService(
         }
     }
 
-    fun getConsumerOrderHistory(consumerDataInToken: AccessTokenData): List<ConsumerOrderHistoryDTO> {
+    fun getConsumerOrderHistory(consumerDataInToken: AccessTokenClaim): List<ConsumerOrderHistoryDTO> {
         val taskHistories: List<Task> = taskRepository.findByConsumerProfile_Id(consumerDataInToken.accountID)
         logger.info(
             "event=consumer_order_history_fetched consumerId={} totalOrders={}", consumerDataInToken.accountID, taskHistories.size

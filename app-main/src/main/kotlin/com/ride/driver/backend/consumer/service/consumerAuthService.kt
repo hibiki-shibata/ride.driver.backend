@@ -1,17 +1,17 @@
 package com.ride.driver.backend.consumer.service
 
 import org.springframework.stereotype.Service
-import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
+import com.ride.driver.backend.consumer.mapper.toAccessTokenClaim
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import org.slf4j.Logger
@@ -26,8 +26,8 @@ class ConsumerAuthService(
 
     private val logger: Logger = LoggerFactory.getLogger(ConsumerAuthService::class.java)
 
-    fun signupNewConsumer(req: ConsumerSignupDTO): JwtTokensDTO {
-        if (consumerProfileRepository.existsByEmailAddress(req.emailAddress)):
+    fun signupConsumer(req: ConsumerSignupDTO): JwtTokensDTO {
+        if (consumerProfileRepository.existsByEmailAddress(req.emailAddress))
              throw AccountConflictException("Consumer with request email address already exists")
         
         val savedConsumer: ConsumerProfile = consumerProfileRepository.save(
@@ -40,7 +40,7 @@ class ConsumerAuthService(
             ))   
         
         logger.info("event=consumer_signup_successful consumerId={}", savedConsumer.id)
-        return issueJwtTokensForConsumer(savedConsumer)
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toAccessTokenClaim())
     }
 
     fun loginConsumer(req: ConsumerLoginDTO): JwtTokensDTO {
@@ -52,18 +52,6 @@ class ConsumerAuthService(
         )
         if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password for login consumer")
         logger.info("event=consumer_login_successful consumerId={}", savedConsumer.id)
-        return issueJwtTokensForConsumer(savedConsumer)
-    }
-
-    private fun issueJwtTokensForConsumer(
-        consumerProfile: ConsumerProfile
-    ): JwtTokensDTO {
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-                    AccessTokenData(
-                        accountID = consumerProfile.id ?: throw AccountNotFoundException("Consumer ID is null"),
-                        accountName = consumerProfile.name,
-                        accountRoles = listOf(AccountRoles.BASE_ROLE)
-                    )
-                )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toAccessTokenClaim())
     }
 }

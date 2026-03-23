@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import jakarta.validation.Valid
 import com.ride.driver.backend.consumer.service.ConsumerProfileService
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.consumer.dto.ConsumerProfileDTO
 import com.ride.driver.backend.consumer.dto.ConsumerOrderHistoryDTO
 import org.slf4j.Logger
@@ -24,7 +24,7 @@ class ConsumerProfileController (
 
     @GetMapping("/me")
     fun getConsumerProfile(
-        @AuthenticationPrincipal consumerDataInToken: AccessTokenData        
+        @AuthenticationPrincipal consumerDataInToken: AccessTokenClaim        
     ): ResponseEntity<ConsumerProfileDTO> { 
         logger.info("event=consumer_profile_request_received consumerId={}", consumerDataInToken.accountID)
         val fetchedConsumerProfile: ConsumerProfileDTO = consumerProfileService.getConsumerProfile(consumerDataInToken)
@@ -34,7 +34,7 @@ class ConsumerProfileController (
     @PutMapping("/me")
     fun updateConsumerProfile(
         @RequestBody @Valid newConsumerProfileData: ConsumerProfileDTO, ////Fix: Differenciate DTO for req and Res?
-        @AuthenticationPrincipal consumerDataInToken: AccessTokenData
+        @AuthenticationPrincipal consumerDataInToken: AccessTokenClaim
     ): ResponseEntity<ConsumerProfileDTO> {
         logger.info("event=consumer_profile_update_request_received consumerId={}", consumerDataInToken.accountID)
         val updatedConsumerProfile: ConsumerProfileDTO = consumerProfileService.updateConsumerProfile(
@@ -46,7 +46,7 @@ class ConsumerProfileController (
 
     @GetMapping("/order/history")
     fun getConsumerOrderHistory(
-        @AuthenticationPrincipal consumerDataInToken: AccessTokenData
+        @AuthenticationPrincipal consumerDataInToken: AccessTokenClaim
     ): ResponseEntity<List<ConsumerOrderHistoryDTO>> {      
         logger.info("event=consumer_order_history_request_received consumerId={}", consumerDataInToken.accountID)
         val consumerOrderHistory: List<ConsumerOrderHistoryDTO> = consumerProfileService.getConsumerOrderHistory(consumerDataInToken)

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.http.ResponseEntity
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
@@ -35,10 +35,10 @@ class MerchantAuthController(
         )   
         return ResponseEntity.created(URI("/api/v1/merchants/${savedMerchant.id}")).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
-                AccessTokenData(
+                AccessTokenClaim(
                     accountID = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
                     accountName = savedMerchant.name,
-                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                    accountRoles = listOf(AccountRoles.BASE_MERCHANT_ROLE)
                 )
             )
         )
@@ -52,10 +52,10 @@ class MerchantAuthController(
         )
         return ResponseEntity.ok(
             jwtTokenService.generateAccessTokenAndRefreshToken(
-                AccessTokenData(
+                AccessTokenClaim(
                     accountID = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
                     accountName = savedMerchant.name,
-                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                    accountRoles = listOf(AccountRoles.BASE_MERCHANT_ROLE)
                 )
             )
         )

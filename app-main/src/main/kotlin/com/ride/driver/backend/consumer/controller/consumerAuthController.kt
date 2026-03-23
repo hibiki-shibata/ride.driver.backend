@@ -24,7 +24,7 @@ class ConsumerAuthController(
     @PostMapping("/auth/signup")
     fun consumerSignup(@RequestBody @Valid req: ConsumerSignupDTO): ResponseEntity<JwtTokensDTO> {
         logger.info("event=consumer_signup_request_received")
-        val jwtTokens: JwtTokensDTO = consumerAuthService.signupNewConsumer(req)
+        val jwtTokens: JwtTokensDTO = consumerAuthService.signupConsumer(req)
         return ResponseEntity.created(URI("/api/v1/consumers/me")).body(jwtTokens)
     }
 

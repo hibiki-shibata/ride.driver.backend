@@ -5,7 +5,7 @@ import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
@@ -23,10 +23,10 @@ class AuthController(
         if (!jwtTokenService.isTokenValid(req.refreshToken)) throw InvalidJwtTokenException("Refresh token is either expired or invalid")
         val accountName: String = jwtTokenService.extractAccountName(req.accessToken)
         val newAccessToken: String = jwtTokenService.generateAccessToken(
-            AccessTokenData(
+            AccessTokenClaim(
                 accountID = accountIdOfRefreshToken,
                 accountName = accountName,
-                accountRoles = listOf(AccountRoles.BASE_ROLE)
+                accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
             )
         )
         val newRefreshToken: String = jwtTokenService.generateRefreshToken(accountIdOfRefreshToken)

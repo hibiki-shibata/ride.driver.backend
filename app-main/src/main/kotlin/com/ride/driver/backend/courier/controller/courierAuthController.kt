@@ -12,7 +12,7 @@ import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
 import com.ride.driver.backend.courier.service.CourierAuthService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
@@ -34,10 +34,10 @@ class CourierAuthController (
         )
         return ResponseEntity.created(URI("/api/v1/couriers/${savedCourier.id}")).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
-                AccessTokenData(
+                AccessTokenClaim(
                     accountID = savedCourier.id ?: throw AccountNotFoundException("Courier ID is null"),
                     accountName = savedCourier.name,
-                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                    accountRoles = listOf(AccountRoles.BASE_COURIER_ROLE)
                 )
             )
         )
@@ -51,10 +51,10 @@ class CourierAuthController (
         )
         return ResponseEntity.ok(
             jwtTokenService.generateAccessTokenAndRefreshToken(
-                AccessTokenData(
+                AccessTokenClaim(
                     accountID = savedCourier.id ?: throw AccountNotFoundException("Courier ID is null"),
                     accountName = savedCourier.name,
-                    accountRoles = listOf(AccountRoles.BASE_ROLE)
+                    accountRoles = listOf(AccountRoles.BASE_COURIER_ROLE)
                 )
             )
         )

@@ -9,7 +9,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
 import com.ride.driver.backend.logistic.service.LogisticsService
 import com.ride.driver.backend.logistic.model.Task
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -32,7 +32,7 @@ class ConsumerTaskController (
     @PostMapping("/task/create")
     fun cxCreateTask(
         @RequestBody createTaskDTO: CreateTaskDTO,
-        @AuthenticationPrincipal consumerDetails: AccessTokenData        
+        @AuthenticationPrincipal consumerDetails: AccessTokenClaim        
     ): ResponseEntity<TaskDataDTO> {
         val createdTask: Task = logisticsService.createTask(
             consumerId = consumerDetails.accountID,

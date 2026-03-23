@@ -14,7 +14,7 @@ import com.ride.driver.backend.courier.dto.CourierProfileDTO
 import com.ride.driver.backend.courier.dto.CourierTaskHistoryDTO
 import com.ride.driver.backend.courier.dto.CourierStatusUpdateDTO
 import com.ride.driver.backend.logistic.model.Task
-import com.ride.driver.backend.shared.auth.domain.AccessTokenData
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.model.Coordinate
 
 
@@ -25,7 +25,7 @@ class CourierProfileController (
 ){
     @GetMapping("/me")
     fun getCourierProfile(
-        @AuthenticationPrincipal courierDetails: AccessTokenData
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<CourierProfileDTO> {        
         val courierProfile: CourierProfile = courierProfileService.getCourierProfile(
             courierId = courierDetails.accountID
@@ -47,7 +47,7 @@ class CourierProfileController (
     @PutMapping("/me")
     fun updateCourierProfile(
         @RequestBody @Valid courierProfileDTO: CourierProfileDTO,
-        @AuthenticationPrincipal courierDetails: AccessTokenData
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<CourierProfileDTO> {
         val updatedProfile: CourierProfile = courierProfileService.updateCourierProfile(
             courierId = courierDetails.accountID,
@@ -74,7 +74,7 @@ class CourierProfileController (
     @PutMapping("/location")
     fun updateLocation(
         @RequestBody @Valid location: Coordinate,
-        @AuthenticationPrincipal courierDetails: AccessTokenData
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<Void> {
         val updatedProfile: CourierProfile = courierProfileService.updateCourierLocation(
             courierId = courierDetails.accountID,
@@ -86,7 +86,7 @@ class CourierProfileController (
     @PutMapping("/online")
     fun updateOnlineStatus(
         @RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO, 
-        @AuthenticationPrincipal courierDetails: AccessTokenData
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<Void> {
         val updatedProfile: CourierProfile = courierProfileService.updateCourierOnlineStatus(
             courierId = courierDetails.accountID,
@@ -97,7 +97,7 @@ class CourierProfileController (
 
     @GetMapping("/history")
     fun getTaskHistory(
-        @AuthenticationPrincipal courierDetails: AccessTokenData
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<List<CourierTaskHistoryDTO>> {
         val taskHistory: List<Task?> = courierProfileService.getCourierOrderHistory(
             courierId = courierDetails.accountID
