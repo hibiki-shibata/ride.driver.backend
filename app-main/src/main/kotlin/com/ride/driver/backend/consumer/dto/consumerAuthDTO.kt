@@ -11,7 +11,6 @@ data class ConsumerSignupDTO(
     @field:NotBlank
     val consumerAddress: String,
 
-    @field:NotBlank
     val consumerAddressCoordinate: Coordinate,
 
     @field:NotBlank

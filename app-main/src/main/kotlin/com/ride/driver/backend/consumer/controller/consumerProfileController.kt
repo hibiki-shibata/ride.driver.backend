@@ -26,7 +26,7 @@ class ConsumerProfileController (
     fun getConsumerProfile(
         @AuthenticationPrincipal consumerDataInToken: AccessTokenData        
     ): ResponseEntity<ConsumerProfileDTO> { 
-        logger.info("Received request to get consumer profile for consumer ID: ${consumerDataInToken.accountID}")
+        logger.info("event=consumer_profile_request_received consumerId={}", consumerDataInToken.accountID)
         val fetchedConsumerProfile: ConsumerProfileDTO = consumerProfileService.getConsumerProfile(consumerDataInToken)
         return ResponseEntity.ok(fetchedConsumerProfile)
     }
@@ -36,7 +36,7 @@ class ConsumerProfileController (
         @RequestBody @Valid newConsumerProfileData: ConsumerProfileDTO, ////Fix: Differenciate DTO for req and Res?
         @AuthenticationPrincipal consumerDataInToken: AccessTokenData
     ): ResponseEntity<ConsumerProfileDTO> {
-        logger.info("Received request to update consumer profile for consumer ID: ${consumerDataInToken.accountID}")        
+        logger.info("event=consumer_profile_update_request_received consumerId={}", consumerDataInToken.accountID)
         val updatedConsumerProfile: ConsumerProfileDTO = consumerProfileService.updateConsumerProfile(
             consumerDataInToken = consumerDataInToken,
             newConsumerProfileData = newConsumerProfileData
@@ -48,7 +48,7 @@ class ConsumerProfileController (
     fun getConsumerOrderHistory(
         @AuthenticationPrincipal consumerDataInToken: AccessTokenData
     ): ResponseEntity<List<ConsumerOrderHistoryDTO>> {      
-        logger.info("Received request to get consumer order history for consumer ID: ${consumerDataInToken.accountID}")  
+        logger.info("event=consumer_order_history_request_received consumerId={}", consumerDataInToken.accountID)
         val consumerOrderHistory: List<ConsumerOrderHistoryDTO> = consumerProfileService.getConsumerOrderHistory(consumerDataInToken)
         return ResponseEntity.ok(consumerOrderHistory)
     }         

@@ -27,10 +27,9 @@ class ConsumerAuthService(
     private val logger: Logger = LoggerFactory.getLogger(ConsumerAuthService::class.java)
 
     fun signupNewConsumer(req: ConsumerSignupDTO): JwtTokensDTO {
-        logger.info("Attempting to register new consumer")
-        if (consumerProfileRepository.existsByEmailAddress(req.emailAddress)){
-             throw AccountConflictException("Consumer with email address ${req.emailAddress} already exists.")
-        }
+        if (consumerProfileRepository.existsByEmailAddress(req.emailAddress)):
+             throw AccountConflictException("Consumer with request email address already exists")
+        
         val savedConsumer: ConsumerProfile = consumerProfileRepository.save(
                 ConsumerProfile(
                     name = req.name,
@@ -38,20 +37,21 @@ class ConsumerAuthService(
                     consumerAddress = req.consumerAddress,
                     consumerAddressCoordinate = req.consumerAddressCoordinate,
                     passwordHash = passwordService.hashPassword(req.password)
-            ))        
-
+            ))   
+        
+        logger.info("event=consumer_signup_successful consumerId={}", savedConsumer.id)
         return issueJwtTokensForConsumer(savedConsumer)
     }
 
     fun loginConsumer(req: ConsumerLoginDTO): JwtTokensDTO {
-        logger.info("Attempting to authenticate consumer")
         val savedConsumer: ConsumerProfile = consumerProfileRepository.findByEmailAddress(req.emailAddress)
-            ?: throw AccountNotFoundException("Consumer with email address ${req.emailAddress} not found.")
+            ?: throw AccountNotFoundException("Consumer not found with request email address")
         val isPasswordValid: Boolean = passwordService.isPasswordValid(
             inputPassword = req.password,
             storedHashedPassword = savedConsumer.passwordHash
         )
-        if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password for email address ${req.emailAddress}")
+        if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password for login consumer")
+        logger.info("event=consumer_login_successful consumerId={}", savedConsumer.id)
         return issueJwtTokensForConsumer(savedConsumer)
     }
 
@@ -59,11 +59,11 @@ class ConsumerAuthService(
         consumerProfile: ConsumerProfile
     ): JwtTokensDTO {
         return jwtTokenService.generateAccessTokenAndRefreshToken(
-            AccessTokenData(
-                accountID = consumerProfile.id ?: throw AccountNotFoundException("Consumer ID is null"),
-                accountName = consumerProfile.name,
-                accountRoles = listOf(AccountRoles.BASE_ROLE)
-            )
-        )
+                    AccessTokenData(
+                        accountID = consumerProfile.id ?: throw AccountNotFoundException("Consumer ID is null"),
+                        accountName = consumerProfile.name,
+                        accountRoles = listOf(AccountRoles.BASE_ROLE)
+                    )
+                )
     }
 }

@@ -20,7 +20,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpBaseException::class)
     fun handleHttpBaseException(e: HttpBaseException): ResponseEntity<ApiErrorResponseDTO> {
-        logger.warn("HttpBaseException occured", e)
+        logger.warn("event=http_exception_occurred, status={}, message={}", e.status, e.message)
         return ResponseEntity
             .status(e.status)
             .body(ApiErrorResponseDTO(
@@ -32,7 +32,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleGeneralException(e: Exception): ResponseEntity<ApiErrorResponseDTO> {
-        logger.error("An unexpected error occurred", e)
+        logger.error("event=unexpected_exception_occurred, message={}", e.message)
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ApiErrorResponseDTO(

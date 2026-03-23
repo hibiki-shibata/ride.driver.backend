@@ -23,14 +23,14 @@ class ConsumerAuthController(
 
     @PostMapping("/auth/signup")
     fun consumerSignup(@RequestBody @Valid req: ConsumerSignupDTO): ResponseEntity<JwtTokensDTO> {
-        logger.info("Received consumer signup request") 
+        logger.info("event=consumer_signup_request_received")
         val jwtTokens: JwtTokensDTO = consumerAuthService.signupNewConsumer(req)
         return ResponseEntity.created(URI("/api/v1/consumers/me")).body(jwtTokens)
     }
 
     @PostMapping("/auth/login")
     fun consumerLogin(@RequestBody @Valid req: ConsumerLoginDTO): ResponseEntity<JwtTokensDTO> {
-        logger.info("Received consumer login request")
+        logger.info("event=consumer_login_request_received")
         val jwtTokens: JwtTokensDTO = consumerAuthService.loginConsumer(req)
         return ResponseEntity.ok(jwtTokens)
     }
