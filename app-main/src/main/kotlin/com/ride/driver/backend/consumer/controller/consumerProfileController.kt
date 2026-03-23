@@ -10,7 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import jakarta.validation.Valid
 import com.ride.driver.backend.consumer.service.ConsumerProfileService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
-import com.ride.driver.backend.consumer.dto.ConsumerProfileDTO
+import com.ride.driver.backend.consumer.dto.ConsumerProfileReqDTO
+import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
 import com.ride.driver.backend.consumer.dto.ConsumerOrderHistoryDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -25,19 +26,19 @@ class ConsumerProfileController (
     @GetMapping("/me")
     fun getConsumerProfile(
         @AuthenticationPrincipal consumerDataInToken: AccessTokenClaim        
-    ): ResponseEntity<ConsumerProfileDTO> { 
+    ): ResponseEntity<ConsumerProfileResDTO> { 
         logger.info("event=consumer_profile_request_received consumerId={}", consumerDataInToken.accountID)
-        val fetchedConsumerProfile: ConsumerProfileDTO = consumerProfileService.getConsumerProfile(consumerDataInToken)
+        val fetchedConsumerProfile: ConsumerProfileResDTO = consumerProfileService.getConsumerProfile(consumerDataInToken)
         return ResponseEntity.ok(fetchedConsumerProfile)
     }
 
     @PutMapping("/me")
     fun updateConsumerProfile(
-        @RequestBody @Valid newConsumerProfileData: ConsumerProfileDTO, ////Fix: Differenciate DTO for req and Res?
+        @RequestBody @Valid newConsumerProfileData: ConsumerProfileReqDTO,
         @AuthenticationPrincipal consumerDataInToken: AccessTokenClaim
-    ): ResponseEntity<ConsumerProfileDTO> {
+    ): ResponseEntity<ConsumerProfileResDTO> {
         logger.info("event=consumer_profile_update_request_received consumerId={}", consumerDataInToken.accountID)
-        val updatedConsumerProfile: ConsumerProfileDTO = consumerProfileService.updateConsumerProfile(
+        val updatedConsumerProfile: ConsumerProfileResDTO = consumerProfileService.updateConsumerProfile(
             consumerDataInToken = consumerDataInToken,
             newConsumerProfileData = newConsumerProfileData
          )
