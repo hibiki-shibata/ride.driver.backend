@@ -1,58 +1,42 @@
-// package com.ride.driver.backend.consumer.serviceTest
+package com.ride.driver.backend.consumer.serviceTest
 
-// import com.ride.driver.backend.consumer.dto.ConsumerProfileReqDTO
-// import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
-// import com.ride.driver.backend.consumer.mapper.toAccessTokenClaim
-// import com.ride.driver.backend.consumer.mapper.toConsumerProfileResDTO
-// import com.ride.driver.backend.consumer.model.ConsumerProfile
-// import com.ride.driver.backend.consumer.service.ConsumerProfileService
-// import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
-// import com.ride.driver.backend.shared.model.Coordinate
-// // import org.springframework.boot.test.context.SpringBootTest
-// import org.junit.jupiter.api.Assertions.assertEquals
-// import org.junit.jupiter.api.Test
-// import java.util.UUID
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.DisplayName
+import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
+import com.ride.driver.backend.consumer.service.ConsumerProfileService
+import com.ride.driver.backend.consumer.model.ConsumerProfile
 
-// class ConsumerProfileServiceTest {
+internal class TodoRepositoryTest {
+    // lateinit var consumerProfileRepository: ConsumerProfileRepository
+    // lateinit var  consumerProfileService: ConsumerProfileService
 
-//     @Test
-//     fun `test mapping from ConsumerProfile to ConsumerProfileResDTO`() {
-//         val consumerProfile = ConsumerProfile(
-//             id =  UUID.randomUUID(), 
-//             name = "Hibiki Test",
-//             emailAddress = "hibikitest@gmail.com",
-//             consumerAddress = "123 Test Street",
-//             consumerAddressCoordinate = Coordinate(37.7749, -122.4194),
-//             passwordHash = "hashedpassword"
-//         )
+    // @BeforeEach
+    // fun setUp() {
+    //     consumerProfileRepository = ConsumerProfileRepository()
+    //     consumerProfileService = ConsumerProfileService(repository)
+    // }
 
-//         val expectedResDTO = ConsumerProfileResDTO(
-//             name = "Hibiki Test",
-//             emailAddress = "hibikitest@gmail.com",
-//             consumerAddress = "123 Test Street",
-//             consumerAddressCoordinate = Coordinate(37.7749, -122.4194)
-//         )
+    @Test
+    @DisplayName("Should start with empty repository")
+    fun shouldStartEmpty() {
+        Assertions.assertEquals(0, 0)
+        Assertions.assertTrue(true)
+    }
 
-//         val actualResDTO = consumerProfile.toConsumerProfileResDTO()
-//         assertEquals(expectedResDTO, actualResDTO)
-//     }
-// }
+    @Test
+    @DisplayName("Should return defensive copy of items")
+    fun shouldReturnDefensiveCopy() {
+        // repository.add(testItem1)
 
+        // val items1 = repository.all
+        // val items2 = repository.all
 
-// class BankAccountServiceTest {
-//     val consumerProfileRepository: ConsumerProfileRepository = mockk()
-//     val consumerProfileService = ConsumerProfileService(consumerProfileRepository)
-
-//     @Test
-//     fun whenGetBankAccount_thenReturnBankAccount() {
-//         //given
-//         every { consumerProfileRepository.findByIdOrNull(1) } returns consumerProfile
-
-//         //when
-//         val result = consumerProfileService.getConsumerProfile(1)
-
-//         //then
-//         verify(exactly = 1) { consumerProfileRepository.findByIdOrNull(1) };
-//         assertEquals(consumerProfile, result)
-//     }
-// }
+        Assertions.assertNotSame(1, 2)
+        Assertions.assertThrows(
+            RuntimeException::class.java
+        ) { throw RuntimeException() }
+        Assertions.assertEquals(1, 1)
+    }
+}

@@ -1,42 +1,24 @@
-package org.jetbrains.kotlin.junit
+// Doc: https://docs.spring.io/spring-framework/reference/testing/mockmvc.html
+package com.ride.driver.backend.consumer.controllerTest
 
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.DisplayName
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
+import com.ride.driver.backend.consumer.controller.ConsumerProfileController
 import com.ride.driver.backend.consumer.service.ConsumerProfileService
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 
-internal class TodoRepositoryTest {
-    // lateinit var consumerProfileRepository: ConsumerProfileRepository
-    // lateinit var  consumerProfileService: ConsumerProfileService
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
 
-    // @BeforeEach
-    // fun setUp() {
-    //     consumerProfileRepository = ConsumerProfileRepository()
-    //     consumerProfileService = ConsumerProfileService(repository)
-    // }
+// @SpringBootTest // I gotta run Postgres in advance when i use Spring test
+// class ConsumerProfileController(
+//     @Autowired private val controller: ConsumerProfileController
+// ) {
 
-    @Test
-    @DisplayName("Should start with empty repository")
-    fun shouldStartEmpty() {
-        Assertions.assertEquals(0, 0)
-        Assertions.assertTrue(true)
-    }
+//     @Test
+//     fun contextLoads() {
+//         assertThat(controller).isNotNull()
 
-    @Test
-    @DisplayName("Should return defensive copy of items")
-    fun shouldReturnDefensiveCopy() {
-        // repository.add(testItem1)
-
-        // val items1 = repository.all
-        // val items2 = repository.all
-
-        Assertions.assertNotSame(1, 2)
-        Assertions.assertThrows(
-            RuntimeException::class.java
-        ) { throw RuntimeException() }
-        Assertions.assertEquals(1, 1)
-    }
-}
+//     }
+// }
