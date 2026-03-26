@@ -17,6 +17,9 @@ import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 @RestController
 @RequestMapping("/api/v1/couriers")
 class CourierAuthController (
@@ -24,23 +27,14 @@ class CourierAuthController (
     private val jwtTokenService: JwtTokenService
 
 ){
+private val logger: Logger = LoggerFactory.getLogger(CourierAuthController::class.java)
+
 @PostMapping("/auth/signup")
     fun courierSignup(@RequestBody @Valid req: CourierSignupDTO): ResponseEntity<JwtTokensDTO> {
-        val savedCourier: CourierProfile = courierAuthService.registerNewCourier(
-            phoneNumber = req.phoneNumber,
-            password = req.password,
-            name = req.name,
-            vehicleType = req.vehicleType
-        )
-        return ResponseEntity.created(URI("/api/v1/couriers/${savedCourier.id}")).body(
-            jwtTokenService.generateAccessTokenAndRefreshToken(
-                AccessTokenClaim(
-                    accountID = savedCourier.id ?: throw AccountNotFoundException("Courier ID is null"),
-                    accountName = savedCourier.name,
-                    accountRoles = listOf(AccountRoles.BASE_COURIER_ROLE)
-                )
-            )
-        )
+        val jwtTokens: JwtTokensDTO = courierAuthService.signupCourier(req)
+        return ResponseEntity.created(
+            URI("/api/v1/couriers/me")
+            ).body(jwtTokens)
     }
 
     @PostMapping("/auth/login")

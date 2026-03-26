@@ -7,10 +7,8 @@ import com.ride.driver.backend.courier.model.CourierStatus
 import com.ride.driver.backend.courier.model.OperationArea
 import com.ride.driver.backend.courier.model.VehicleType
 
-data class CourierProfileDTO(
-    @field:NotBlank
-    val id: UUID?,
 
+class CourierProfileReqDTO{
     @field:NotBlank
     val name: String,
 
@@ -20,17 +18,10 @@ data class CourierProfileDTO(
 
     val vehicleType: VehicleType?,
 
-    @field:NotBlank
-    val rate: Double?,
-
     val status: CourierStatus,
 
     val operationArea: OperationArea?,
 
     @field:NotBlank
     val comments: String?
-)
-
-data class CourierStatusUpdateDTO(
-    val isOnline: Boolean,
-)
+}

@@ -7,35 +7,46 @@ import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus
 import com.ride.driver.backend.courier.model.VehicleType
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
+import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 
+import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
+import com.ride.driver.backend.courier.mapper.toCourierProfileResDTO
+import com.ride.driver.backend.courier.mapper.toCourierProfileReqDTO
+import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
+import com.ride.driver.backend.shared.auth.service.JwtTokenService
+import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+
 @Service
 class CourierAuthService(
     private val courierProfileRepository: CourierProfileRepository,
-    private val passwordService: PasswordService
+    private val passwordService: PasswordService,
+    private val jwtTokenService: JwtTokenService
 ) {
-    fun registerNewCourier(
-        phoneNumber: String,
-        password: String,
-        name: String,
-        vehicleType: VehicleType
-    ): CourierProfile {
-        val isCourierExists: Boolean = courierProfileRepository.existsByPhoneNumber(phoneNumber)
-        if (isCourierExists) throw AccountConflictException("Courier with phone number ${phoneNumber} already exists")
-        val savedNewCourier: CourierProfile = courierProfileRepository.save(
+    private val logger: Logger = LoggerFactory.getLogger(CourierAuthService::class.java)
+        
+    fun signupCourier(req: CourierSignupDTO): JwtTokensDTO {
+        if (courierProfileRepository.existsByPhoneNumber(req.phoneNumber))
+            throw AccountConflictException("Courier with request phone number already exists")
+        
+        val savedCourier: CourierProfile = courierProfileRepository.save(
                 CourierProfile(
-                name = name,
-                phoneNumber = phoneNumber,
-                passwordHash = passwordService.hashPassword(password),
-                vehicleType = vehicleType,
+                name = req.name,
+                phoneNumber = req.phoneNumber,
+                passwordHash = passwordService.hashPassword(req.password),
+                vehicleType = req.vehicleType,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0), // Default location for new couriers
                 cpStatus = CourierStatus.ONBOARDING
             )
-        )     
-        return savedNewCourier
+        )
+        logger.info("event=courier_signup_completed courierId={}", savedCourier.id)     
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toAccessTokenClaim())
     }
 
     fun getCourierProfileByPhoneNumberAndValidatePassword(phoneNumber: String, password: String): CourierProfile {
