@@ -8,6 +8,7 @@ import com.ride.driver.backend.courier.model.CourierStatus
 import com.ride.driver.backend.courier.model.VehicleType
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.courier.dto.CourierSignupDTO
+import com.ride.driver.backend.courier.dto.CourierLoginDTO
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
@@ -15,7 +16,6 @@ import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 
 import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
 import com.ride.driver.backend.courier.mapper.toCourierProfileResDTO
-import com.ride.driver.backend.courier.mapper.toCourierProfileReqDTO
 import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
@@ -49,15 +49,15 @@ class CourierAuthService(
         return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toAccessTokenClaim())
     }
 
-    fun loginCourier(req: CourierSignupDTO): JwtTokensDTO {
+    fun loginCourier(req: CourierLoginDTO): JwtTokensDTO {
         val savedCourier: CourierProfile = courierProfileRepository.findByPhoneNumber(req.phoneNumber) ?: 
-            throw AccountNotFoundException("Courier with phone number ${phoneNumber} does not exist. Please sign up first.")
+            throw AccountNotFoundException("Courier with the phone number does not exist. Please sign up first.")
             val isPasswordValid: Boolean = passwordService.isPasswordValid(
-                inputPassword = password,
+                inputPassword = req.password,
                 storedHashedPassword = savedCourier.passwordHash
             )
-        if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password for phone number ${phoneNumber}")
+        if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password provided")
         logger.info("event=courier_login_completed courierId={}", savedCourier.id)     
-        return savedCourier
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toAccessTokenClaim())
     }
 }
