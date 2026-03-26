@@ -36,37 +36,37 @@ class CourierProfile(
     val id: UUID? = null,
 
     @Column(name = "name", nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(name = "phone_number", unique = true, nullable = false)
-    val phoneNumber: String,
+    var phoneNumber: String,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "vehicle_type", nullable = false)
-    val vehicleType: VehicleType,
+    var vehicleType: VehicleType,
 
     @Column(name = "password_hash")
-    val passwordHash: String,
+    var passwordHash: String,
 
     @Column(name = "cp_rate")
-    val cpRate: Double? = null,
+    var cpRate: Double? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "cp_status")
-    val cpStatus: CourierStatus = CourierStatus.ONBOARDING,
+    var cpStatus: CourierStatus = CourierStatus.ONBOARDING,
     
     @Column(name = "cp_comments")
-    val cpComments: String? = "No comments",
+    var cpComments: String? = "No comments",
 
     @Embedded
     @AttributeOverrides(
         AttributeOverride(name = "latitude", column = Column(name = "current_latitude")),
         AttributeOverride(name = "longitude", column = Column(name = "current_longitude"))
     )
-    val currentLocation: Coordinate,
+    var currentLocation: Coordinate?,
 
     // @JoinColumn(name = "area_id")
     @ManyToOne
     @JoinColumn(name = "operation_area_id")
-    val operationArea: OperationArea? = null
+    var operationArea: OperationArea? = null
 )

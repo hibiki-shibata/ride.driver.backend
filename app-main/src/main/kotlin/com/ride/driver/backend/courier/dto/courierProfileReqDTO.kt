@@ -16,7 +16,7 @@ data class CourierProfileReqDTO(
     @field:Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     val phoneNumber: String,
 
-    val vehicleType: VehicleType?,
+    val vehicleType: VehicleType,
 
     val cpStatus: CourierStatus,
 

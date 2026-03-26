@@ -46,24 +46,24 @@ class CourierProfileController (
 
     @PutMapping("/location")
     fun updateLocation(
-        @RequestBody @Valid location: Coordinate,
+        @RequestBody @Valid currentLocation: Coordinate,
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<Void> {
-        val updatedProfile: CourierProfile = courierProfileService.updateCourierLocation(
-            courierId = courierDetails.accountID,
-            location = location
+        val updatedProfile: CourierProfileResDTO = courierProfileService.updateCourierLocation(
+            courierDetails = courierDetails,
+            newCurrentLocation = currentLocation
         )
         return ResponseEntity.ok().build()
     }    
 
     @PutMapping("/online")
     fun updateOnlineStatus(
-        @RequestBody @Valid courierStatusUpdateDTO: CourierStatusUpdateDTO, 
+        @RequestBody @Valid req: CourierStatusUpdateDTO, 
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<Void> {
-        val updatedProfile: CourierProfile = courierProfileService.updateCourierOnlineStatus(
-            courierId = courierDetails.accountID,
-            isOnline = courierStatusUpdateDTO.isOnline
+        val updatedProfile: CourierProfileResDTO = courierProfileService.updateCourierOnlineStatus(
+            req = req,
+            courierDetails = courierDetails
         )
         return ResponseEntity.ok().build()
     }
@@ -72,19 +72,7 @@ class CourierProfileController (
     fun getTaskHistory(
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<List<CourierTaskHistoryDTO>> {
-        val taskHistory: List<Task?> = courierProfileService.getCourierOrderHistory(
-            courierId = courierDetails.accountID
-        )
-        return ResponseEntity.ok(
-            taskHistory.map { task ->
-                CourierTaskHistoryDTO(
-                    taskId = task?.id.toString(),
-                    courierEarning = task?.courierEarning ?: 0.0,
-                    orderTime = task?.orderTime.toString(),
-                    consumerName = task?.consumerProfile?.name ?: "Unknown Consumer",
-                    merchantName = task?.merchantProfile?.name ?: "Unknown Merchant"
-                )
-            }
-        )
+        val courierTaskHistory: List<CourierTaskHistoryDTO> = courierProfileService.getCourierOrderHistory(courierDetails = courierDetails)
+        return ResponseEntity.ok(courierTaskHistory)
     }
 }

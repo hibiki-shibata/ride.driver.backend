@@ -9,5 +9,6 @@ fun Task.toCourierTaskHistoryDto(): CourierTaskHistoryDTO {
         courierEarning = this.courierEarning, 
         orderTime = this.orderTime.toString(),
         consumerName = this.consumerProfile?.name ?: "Unknown consumer",
+        merchantName = this.merchantProfile?.name ?: "Unknown merchant"
     )
 }

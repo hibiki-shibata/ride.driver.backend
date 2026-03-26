@@ -17,12 +17,12 @@ import jakarta.persistence.Column
     ]
 )
 
-data class OperationArea (
+class OperationArea (
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: Long? = null,
 
     @Column(name = "name", unique = true, nullable = false)
-    val name: String,
+    var name: String,
 )
