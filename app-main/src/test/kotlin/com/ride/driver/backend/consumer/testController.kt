@@ -52,7 +52,7 @@ class ConsumerProfileControllerUnitTest {
         val consumerId = UUID.randomUUID()
 
         val claim = AccessTokenClaim(
-            accountID = consumerId,
+            accountId = consumerId,
             accountName = "hibiki",
             accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
         )

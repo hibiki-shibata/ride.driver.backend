@@ -24,7 +24,7 @@ class MerchantTaskController (
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         val updatedTask: Task = logisticsService.markTaskAsReadyForAssignment(
-            merchantId = merchantDetails.accountID,
+            merchantId = merchantDetails.accountId,
             taskId = taskStatusActionDTO.taskId
         )
         return ResponseEntity.ok(

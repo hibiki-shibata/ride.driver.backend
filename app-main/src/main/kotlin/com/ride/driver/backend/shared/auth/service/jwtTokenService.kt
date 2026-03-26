@@ -25,7 +25,7 @@ open class JwtTokenService(
         accountTokenData: AccessTokenClaim
     ): JwtTokensDTO {
         val accessToken = generateAccessToken(accountTokenData)
-        val refreshToken = generateRefreshToken(accountTokenData.accountID)
+        val refreshToken = generateRefreshToken(accountTokenData.accountId)
         return JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken)
     }
 
@@ -34,7 +34,7 @@ open class JwtTokenService(
     ): String {
         val now = System.currentTimeMillis()
         val additionalClaims =  mapOf(
-            "accountID" to accountTokenData.accountID.toString(),
+            "accountID" to accountTokenData.accountId.toString(),
             "accountRoles" to accountTokenData.accountRoles.map { it.name }
         )
         return Jwts.builder()
@@ -69,7 +69,7 @@ open class JwtTokenService(
     fun extractAccessTokenClaim(token: String): AccessTokenClaim {
         val claims = extractAllClaims(token)
         return AccessTokenClaim(
-            accountID = UUID.fromString(claims["accountID"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
+            accountId = UUID.fromString(claims["accountID"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
             accountName = claims.subject ?: throw InvalidJwtTokenException("Account name not found in token"),
             accountRoles = (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
         )

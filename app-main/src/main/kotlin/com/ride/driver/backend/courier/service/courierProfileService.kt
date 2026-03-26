@@ -32,8 +32,8 @@ class CourierProfileService(
     private val logger: Logger = LoggerFactory.getLogger(CourierProfileService::class.java)
 
     fun getCourierProfile(courierDetails: AccessTokenClaim): CourierProfileResDTO {
-        val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountID)
-        logger.info("event=courier_orderHistory_fetched_courierId={}", courierDetails.accountID)
+        val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountId)
+        logger.info("event=courier_orderHistory_fetched_courierId={}", courierDetails.accountId)
         return savedCourierProfile.toCourierProfileResDTO()
     }
 
@@ -42,13 +42,13 @@ class CourierProfileService(
         courierDetails: AccessTokenClaim,
         newCurrentLocation: Coordinate
     ): CourierProfileResDTO {
-        val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountID)
+        val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountId)
         savedCourierProfile.apply {
             currentLocation = newCurrentLocation
         }
         val newSavedCourierProfile: CourierProfile = courierProfileRepository.save(savedCourierProfile)
-             ?: throw AccountNotFoundException("Courier not found with ID: $courierDetails.accountID")
-        logger.info("event=courier_location_update_completed courierId={}", courierDetails.accountID)
+             ?: throw AccountNotFoundException("Courier not found with ID: $courierDetails.accountId")
+        logger.info("event=courier_location_update_completed courierId={}", courierDetails.accountId)
         return newSavedCourierProfile.toCourierProfileResDTO()
     }
     
@@ -57,7 +57,7 @@ class CourierProfileService(
         req: CourierProfileReqDTO,
         courierDetails: AccessTokenClaim
     ): CourierProfileResDTO {
-        val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountID)
+        val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountId)
         savedCourierProfile.apply {
             name = req.name;
             phoneNumber = req.phoneNumber;
@@ -66,7 +66,7 @@ class CourierProfileService(
             cpComments = req.cpComments;
          }
         val updatedProfile: CourierProfile = courierProfileRepository.save(savedCourierProfile)
-        logger.info("event=courier_profile_update_completed courierId={}", courierDetails.accountID)        
+        logger.info("event=courier_profile_update_completed courierId={}", courierDetails.accountId)        
         return updatedProfile.toCourierProfileResDTO()
     }
     
@@ -75,20 +75,20 @@ class CourierProfileService(
         req: CourierStatusUpdateDTO,
         courierDetails: AccessTokenClaim
     ): CourierProfileResDTO {
-        val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountID)
+        val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountId)
         savedCourierProfile.apply {
             cpStatus = if (req.isOnline) CourierStatus.ONLINE else CourierStatus.OFFLINE
         }
         val updatedProfile: CourierProfile = courierProfileRepository.save(savedCourierProfile)
-        logger.info("event=courier_onlineStatus_update_completed courierId={}", courierDetails.accountID)
+        logger.info("event=courier_onlineStatus_update_completed courierId={}", courierDetails.accountId)
         return updatedProfile.toCourierProfileResDTO()
     }
 
     fun getCourierOrderHistory(
         courierDetails: AccessTokenClaim
     ): List<CourierTaskHistoryDTO> {
-        val taskHistories: List<Task> = taskRepository.findByCourierProfile_Id(courierDetails.accountID)
-        logger.info("event=courier_orderHistory_fetched_courierId={}", courierDetails.accountID)
+        val taskHistories: List<Task> = taskRepository.findByCourierProfile_Id(courierDetails.accountId)
+        logger.info("event=courier_orderHistory_fetched_courierId={}", courierDetails.accountId)
         return taskHistories.map { it.toCourierTaskHistoryDto() }
     }
 

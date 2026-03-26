@@ -24,7 +24,7 @@ class CourierTaskController (
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         val assignedTask: Task? = logisticsService.pollForTask(
-            courierId = courierDetails.accountID
+            courierId = courierDetails.accountId
         )
         return ResponseEntity.ok(
             TaskDataDTO(
@@ -49,7 +49,7 @@ class CourierTaskController (
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         val updatedTask: Task = logisticsService.markTaskAsAccepted(
-            courierId = courierDetails.accountID,
+            courierId = courierDetails.accountId,
             taskId = taskStatusActionDTO.taskId
         )
         return ResponseEntity.ok(
@@ -75,7 +75,7 @@ class CourierTaskController (
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         val updatedTask: Task = logisticsService.markTaskAsPickedUp(
-            courierId = courierDetails.accountID,
+            courierId = courierDetails.accountId,
             taskId = taskStatusActionDTO.taskId
         )
         return ResponseEntity.ok(
@@ -101,7 +101,7 @@ class CourierTaskController (
         @AuthenticationPrincipal courierDetails: AccessTokenClaim        
     ): ResponseEntity<TaskDataDTO> {
         val updatedTask: Task = logisticsService.markTaskAsDroppedOff(
-            courierId = courierDetails.accountID,
+            courierId = courierDetails.accountId,
             taskId = taskStatusActionDTO.taskId
         )
         return ResponseEntity.ok(

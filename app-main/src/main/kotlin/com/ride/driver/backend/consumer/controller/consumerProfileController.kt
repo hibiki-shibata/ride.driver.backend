@@ -27,7 +27,7 @@ class ConsumerProfileController (
     fun getConsumerProfile(
         @AuthenticationPrincipal consumerDetails: AccessTokenClaim        
     ): ResponseEntity<ConsumerProfileResDTO> { 
-        logger.info("event=consumer_profile_request_received consumerId={}", consumerDetails.accountID)
+        logger.info("event=consumer_profile_request_received consumerId={}", consumerDetails.accountId)
         val fetchedConsumerProfile: ConsumerProfileResDTO = consumerProfileService.getConsumerProfile(consumerDetails)
         return ResponseEntity.ok(fetchedConsumerProfile)
     }
@@ -37,7 +37,7 @@ class ConsumerProfileController (
         @RequestBody @Valid newConsumerProfileData: ConsumerProfileReqDTO,
         @AuthenticationPrincipal consumerDetails: AccessTokenClaim
     ): ResponseEntity<ConsumerProfileResDTO> {
-        logger.info("event=consumer_profile_update_request_received consumerId={}", consumerDetails.accountID)
+        logger.info("event=consumer_profile_update_request_received consumerId={}", consumerDetails.accountId)
         val updatedConsumerProfile: ConsumerProfileResDTO = consumerProfileService.updateConsumerProfile(
             consumerDetails = consumerDetails,
             newConsumerProfileData = newConsumerProfileData
@@ -49,7 +49,7 @@ class ConsumerProfileController (
     fun getConsumerOrderHistory(
         @AuthenticationPrincipal consumerDetails: AccessTokenClaim
     ): ResponseEntity<List<ConsumerOrderHistoryDTO>> {      
-        logger.info("event=consumer_order_history_request_received consumerId={}", consumerDetails.accountID)
+        logger.info("event=consumer_order_history_request_received consumerId={}", consumerDetails.accountId)
         val consumerOrderHistory: List<ConsumerOrderHistoryDTO> = consumerProfileService.getConsumerOrderHistory(consumerDetails)
         return ResponseEntity.ok(consumerOrderHistory)
     }         

@@ -41,7 +41,7 @@ class ConsumerProfileServiceTest {
         val consumerId = UUID.randomUUID()
 
         val accessTokenClaim = AccessTokenClaim(
-            accountID = consumerId,
+            accountId = consumerId,
             accountName = "test_consumer",
             accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
         )
@@ -75,7 +75,7 @@ class ConsumerProfileServiceTest {
         val consumerId = UUID.randomUUID()
 
         val accessTokenClaim = AccessTokenClaim(
-            accountID = consumerId,
+            accountId = consumerId,
             accountName = "test_consumer",
             accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
             

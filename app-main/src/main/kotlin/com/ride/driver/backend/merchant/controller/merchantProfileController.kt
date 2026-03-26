@@ -25,7 +25,7 @@ class MerchantProfileController (
     fun findMerchantProfile(
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<MerchantProfileDTO> {
-        val merchantProfile = merchantProfileService.getMerchantProfile(merchantDetails.accountID) ?: return ResponseEntity.notFound().build()
+        val merchantProfile = merchantProfileService.getMerchantProfile(merchantDetails.accountId) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(
             MerchantProfileDTO(
                 id = merchantProfile?.id,
@@ -45,7 +45,7 @@ class MerchantProfileController (
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<MerchantProfileDTO> {
         val updatedProfile = merchantProfileService.updateMerchantProfile(
-            merchantId = merchantDetails.accountID,
+            merchantId = merchantDetails.accountId,
             newName = merchantProfileDTO.name,
             newPhoneNumber = merchantProfileDTO.phoneNumber,
             newMerchantAddress = merchantProfileDTO.merchantAddress,
@@ -71,7 +71,7 @@ class MerchantProfileController (
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<MerchantProfileDTO> {
         val updatedProfile = merchantProfileService.updateMerchantOpenStatus(
-            merchantId = merchantDetails.accountID,
+            merchantId = merchantDetails.accountId,
             isOpen = isMerchantOpen.isOpen
         )
         return ResponseEntity.ok(
@@ -92,7 +92,7 @@ class MerchantProfileController (
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<List<MerchantOrderHistoryDTO>> {
         val merchantOrderHistory: List<Task> = merchantProfileService.getMerchantOrderHistory(
-                merchantId = merchantDetails.accountID
+                merchantId = merchantDetails.accountId
         ) 
         return ResponseEntity.ok(
             merchantOrderHistory.map { task ->

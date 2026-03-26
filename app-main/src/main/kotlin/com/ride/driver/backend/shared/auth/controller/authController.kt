@@ -24,7 +24,7 @@ class AuthController(
         val accountName: String = jwtTokenService.extractAccountName(req.accessToken)
         val newAccessToken: String = jwtTokenService.generateAccessToken(
             AccessTokenClaim(
-                accountID = accountIdOfRefreshToken,
+                accountId = accountIdOfRefreshToken,
                 accountName = accountName,
                 accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
             )

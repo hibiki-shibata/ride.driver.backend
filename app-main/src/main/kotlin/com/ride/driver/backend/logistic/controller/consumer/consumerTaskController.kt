@@ -35,7 +35,7 @@ class ConsumerTaskController (
         @AuthenticationPrincipal consumerDetails: AccessTokenClaim        
     ): ResponseEntity<TaskDataDTO> {
         val createdTask: Task = logisticsService.createTask(
-            consumerId = consumerDetails.accountID,
+            consumerId = consumerDetails.accountId,
             merchantId = createTaskDTO.merchantID,
             orderedItemIDs = createTaskDTO.orderedItemIDs
         )

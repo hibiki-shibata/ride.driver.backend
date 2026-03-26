@@ -36,7 +36,7 @@ class MerchantAuthController(
         return ResponseEntity.created(URI("/api/v1/merchants/${savedMerchant.id}")).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenClaim(
-                    accountID = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
+                    accountId = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
                     accountName = savedMerchant.name,
                     accountRoles = listOf(AccountRoles.BASE_MERCHANT_ROLE)
                 )
@@ -53,7 +53,7 @@ class MerchantAuthController(
         return ResponseEntity.ok(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenClaim(
-                    accountID = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
+                    accountId = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
                     accountName = savedMerchant.name,
                     accountRoles = listOf(AccountRoles.BASE_MERCHANT_ROLE)
                 )

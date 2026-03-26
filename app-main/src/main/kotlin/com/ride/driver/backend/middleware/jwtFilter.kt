@@ -51,7 +51,7 @@ class JwtFilter(
             details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details(e.g. IP, session info)
         }
         SecurityContextHolder.getContext().authentication = authentication // Set the authentication in the security context
-        logger.debug("Authenticated request for account ID ${AccessTokenClaim.accountID}, Request URI: ${request.requestURI}")
+        logger.debug("Authenticated request for account ID ${AccessTokenClaim.accountId}, Request URI: ${request.requestURI}")
         filterChain.doFilter(request, response)
     }
 
