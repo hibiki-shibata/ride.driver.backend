@@ -12,16 +12,16 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 @Repository
-open interface CourierProfileRepository : JpaRepository<CourierProfile, UUID> {   
+interface CourierProfileRepository : JpaRepository<CourierProfile, UUID> {   
    fun existsByPhoneNumber(phoneNumber: String): Boolean   
-   fun findByCpStatus(cpStatus: CourierStatus): List<CourierProfile>
-   fun findByPhoneNumber(phoneNumber: String): CourierProfile
+   fun findByCpStatus(cpStatus: CourierStatus): List<CourierProfile?>
+   fun findByPhoneNumber(phoneNumber: String): CourierProfile?
 //    fun findAll(pageable: Pageable): Page<CourierProfile>
    // next method is for paginated and sorted fetch all courier data but certain page
 }
 
 @Repository
-open interface OperationAreaRepository : JpaRepository<OperationArea, Long> {
-    fun findByName(name: String): List<OperationArea>?
+interface OperationAreaRepository : JpaRepository<OperationArea, Long> {
+    fun findByName(name: String): List<OperationArea?>
     override fun findAll(pageable: Pageable): Page<OperationArea>
 }
