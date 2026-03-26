@@ -2,6 +2,8 @@ package com.ride.driver.backend.courier.controller
 
 import java.net.URI
 import jakarta.validation.Valid
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -11,9 +13,6 @@ import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
 import com.ride.driver.backend.courier.service.CourierAuthService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @RestController
 @RequestMapping("/api/v1/couriers")

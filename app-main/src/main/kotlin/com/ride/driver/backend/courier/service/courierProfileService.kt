@@ -1,6 +1,9 @@
 package com.ride.driver.backend.courier.service
 
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import java.util.UUID
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus 
@@ -9,19 +12,15 @@ import com.ride.driver.backend.courier.model.VehicleType
 import com.ride.driver.backend.courier.mapper.toCourierProfileResDto
 import com.ride.driver.backend.courier.mapper.toCourierTaskHistoryDto
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
-import com.ride.driver.backend.shared.model.Coordinate
-import com.ride.driver.backend.logistic.model.Task
-import com.ride.driver.backend.logistic.model.TaskStatus
-import com.ride.driver.backend.logistic.repository.TaskRepository
-import com.ride.driver.backend.shared.exception.AccountNotFoundException
-import org.springframework.transaction.annotation.Transactional
-
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import com.ride.driver.backend.courier.dto.CourierProfileResDTO
 import com.ride.driver.backend.courier.dto.CourierProfileReqDTO
 import com.ride.driver.backend.courier.dto.CourierStatusUpdateDTO
 import com.ride.driver.backend.courier.dto.CourierTaskHistoryDTO
+import com.ride.driver.backend.logistic.model.Task
+import com.ride.driver.backend.logistic.model.TaskStatus
+import com.ride.driver.backend.logistic.repository.TaskRepository
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
+import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 
 @Service

@@ -7,14 +7,14 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import jakarta.validation.Valid
 import com.ride.driver.backend.consumer.service.ConsumerProfileService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.consumer.dto.ConsumerProfileReqDTO
 import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
 import com.ride.driver.backend.consumer.dto.ConsumerOrderHistoryDTO
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @RestController
 @RequestMapping("api/v1/consumers")

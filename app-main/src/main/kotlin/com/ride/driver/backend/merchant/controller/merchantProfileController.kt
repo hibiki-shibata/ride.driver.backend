@@ -7,15 +7,13 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import jakarta.validation.Valid
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
-import com.ride.driver.backend.shared.model.Coordinate
-import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.merchant.service.MerchantProfileService
 import com.ride.driver.backend.merchant.dto.MerchantProfileResDTO
 import com.ride.driver.backend.merchant.dto.MerchantProfileReqDTO
 import com.ride.driver.backend.merchant.dto.MerchantOpenStatusUpdateDTO
 import com.ride.driver.backend.merchant.dto.MerchantOrderHistoryDTO
-import jakarta.validation.Valid
 
 @RestController
 @RequestMapping("/api/v1/merchants")

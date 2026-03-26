@@ -1,7 +1,9 @@
 package com.ride.driver.backend.merchant.service
 
 import org.springframework.stereotype.Service
-import com.ride.driver.backend.shared.model.Coordinate
+import org.springframework.transaction.annotation.Transactional
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
@@ -12,14 +14,10 @@ import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.merchant.mapper.toAccessTokenClaim
 import com.ride.driver.backend.shared.auth.service.PasswordService
-
-import org.springframework.transaction.annotation.Transactional
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
-import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
+import com.ride.driver.backend.shared.model.Coordinate
 
 @Service
 class MerchantAuthService(

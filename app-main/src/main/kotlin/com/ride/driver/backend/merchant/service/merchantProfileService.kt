@@ -1,6 +1,8 @@
 package com.ride.driver.backend.merchant.service
 
+import java.util.UUID
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import com.ride.driver.backend.merchant.model.MerchantProfile
 import com.ride.driver.backend.merchant.model.MerchantStatus
 import com.ride.driver.backend.merchant.dto.MerchantProfileResDTO
@@ -17,10 +19,6 @@ import com.ride.driver.backend.shared.exception.AccountInvalidInputException
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.logistic.model.TaskStatus
 import com.ride.driver.backend.logistic.repository.TaskRepository
-import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
-
-
 
 @Service
 class MerchantProfileService (

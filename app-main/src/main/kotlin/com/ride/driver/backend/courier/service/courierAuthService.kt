@@ -1,27 +1,26 @@
 package com.ride.driver.backend.courier.service
 
 import org.springframework.stereotype.Service
-import com.ride.driver.backend.shared.model.Coordinate
-
+import org.springframework.transaction.annotation.Transactional
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus
 import com.ride.driver.backend.courier.model.VehicleType
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
-import com.ride.driver.backend.shared.auth.service.PasswordService
-import com.ride.driver.backend.shared.exception.AccountConflictException
-import com.ride.driver.backend.shared.exception.AccountNotFoundException
-import com.ride.driver.backend.shared.exception.IncorrectPasswordException
-
 import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
 import com.ride.driver.backend.courier.mapper.toCourierProfileResDto
 import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
+import com.ride.driver.backend.shared.model.Coordinate
+import com.ride.driver.backend.shared.exception.AccountConflictException
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
+import com.ride.driver.backend.shared.exception.IncorrectPasswordException
+import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import org.springframework.transaction.annotation.Transactional
+
 
 @Service
 class CourierAuthService(

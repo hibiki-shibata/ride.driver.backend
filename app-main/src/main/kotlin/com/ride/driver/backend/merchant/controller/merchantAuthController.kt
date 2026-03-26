@@ -3,23 +3,17 @@ package com.ride.driver.backend.merchant.controller
 import java.net.URI
 import java.util.UUID
 import jakarta.validation.Valid
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.http.ResponseEntity
-import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
-import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.merchant.service.MerchantAuthService
 import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
-import com.ride.driver.backend.merchant.model.MerchantProfile
-
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @RestController
 @RequestMapping("/api/v1/merchants")

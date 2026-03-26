@@ -17,7 +17,6 @@ import com.ride.driver.backend.logistic.repository.TaskRepository
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
-import com.ride.driver.backend.shared.exception.AccountSaveFailedException
 
 @Service
 class ConsumerProfileService(

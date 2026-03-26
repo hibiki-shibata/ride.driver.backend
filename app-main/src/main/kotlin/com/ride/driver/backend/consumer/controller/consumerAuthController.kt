@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.slf4j.LoggerFactory
+import org.slf4j.Logger
 import java.net.URI
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-import org.slf4j.LoggerFactory
-import org.slf4j.Logger
  
 @RestController
 @RequestMapping("/api/v1/consumers")
