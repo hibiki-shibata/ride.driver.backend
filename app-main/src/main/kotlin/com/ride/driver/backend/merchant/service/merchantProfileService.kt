@@ -3,6 +3,8 @@ package com.ride.driver.backend.merchant.service
 import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import com.ride.driver.backend.merchant.model.MerchantProfile
 import com.ride.driver.backend.merchant.model.MerchantStatus
 import com.ride.driver.backend.merchant.dto.MerchantProfileResDTO
@@ -26,8 +28,11 @@ class MerchantProfileService (
     val passwordService: PasswordService,
     val taskRepository: TaskRepository
 ) {
+    private val logger: Logger = LoggerFactory.getLogger(MerchantProfileService::class.java)
+
     fun getMerchantProfile(merchantDetails: AccessTokenClaim): MerchantProfileResDTO {
         val savedMerchant: MerchantProfile = getMerchantProfileById(merchantDetails.accountId)
+        logger.info("event=merchant_profile_fetched merchantId={}", savedMerchant.id)
         return savedMerchant.toMerchantProfileResDto()
     }
 
@@ -45,6 +50,7 @@ class MerchantProfileService (
             merchantAddressCoordinate = req.merchantAddressCoordinate
         }
         val updatedProfile: MerchantProfile = merchantProfileRepository.save(savedMerchant)
+        logger.info("event=merchant_profile_updated merchantId={}", savedMerchant.id)
         return updatedProfile.toMerchantProfileResDto()
     }
 
@@ -59,6 +65,7 @@ class MerchantProfileService (
             merchantStatus = if (req.isOpen) MerchantStatus.OPEN else MerchantStatus.CLOSED
         }
         val updatedProfile: MerchantProfile = merchantProfileRepository.save(savedMerchant)
+        logger.info("event=merchant_online_status_updated merchantId={}", savedMerchant.id)
         return updatedProfile.toMerchantProfileResDto()
     }
 
@@ -66,6 +73,7 @@ class MerchantProfileService (
         merchantDetails: AccessTokenClaim
     ): List<MerchantOrderHistoryDTO> {
         val taskHistory: List<Task> = taskRepository.findByMerchantProfile_Id(merchantDetails.accountId).sortedByDescending { it.orderTime }
+        logger.info("event=merchant_orderHistory_fetched merchantId={}", merchantDetails.accountId)
         return taskHistory.map {it.toMerchantOrderHistoryDto()}
     }
 

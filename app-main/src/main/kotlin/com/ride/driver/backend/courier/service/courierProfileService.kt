@@ -32,7 +32,7 @@ class CourierProfileService(
 
     fun getCourierProfile(courierDetails: AccessTokenClaim): CourierProfileResDTO {
         val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountId)
-        logger.info("event=courier_orderHistory_fetched_courierId={}", courierDetails.accountId)
+        logger.info("event=courier_orderHistory_fetched courierId={}", courierDetails.accountId)
         return savedCourierProfile.toCourierProfileResDto()
     }
 

@@ -29,6 +29,7 @@ class CourierAuthService(
     private val jwtTokenService: JwtTokenService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(CourierAuthService::class.java)
+    
     @Transactional
     fun signupCourier(req: CourierSignupDTO): JwtTokensDTO {
         if (courierProfileRepository.existsByPhoneNumber(req.phoneNumber))
