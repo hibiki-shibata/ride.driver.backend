@@ -49,13 +49,15 @@ class CourierAuthService(
         return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toAccessTokenClaim())
     }
 
-    fun getCourierProfileByPhoneNumberAndValidatePassword(phoneNumber: String, password: String): CourierProfile {
-        val savedCourier: CourierProfile = courierProfileRepository.findByPhoneNumber(phoneNumber) ?: 
+    fun loginCourier(req: CourierSignupDTO): JwtTokensDTO {
+        val savedCourier: CourierProfile = courierProfileRepository.findByPhoneNumber(req.phoneNumber) ?: 
             throw AccountNotFoundException("Courier with phone number ${phoneNumber} does not exist. Please sign up first.")
-        if (!passwordService.isPasswordValid(
-            inputPassword = password,
-            storedHashedPassword = savedCourier.passwordHash
-        )) throw IncorrectPasswordException("Incorrect password for phone number ${phoneNumber}")
+            val isPasswordValid: Boolean = passwordService.isPasswordValid(
+                inputPassword = password,
+                storedHashedPassword = savedCourier.passwordHash
+            )
+        if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password for phone number ${phoneNumber}")
+        logger.info("event=courier_login_completed courierId={}", savedCourier.id)     
         return savedCourier
     }
 }
