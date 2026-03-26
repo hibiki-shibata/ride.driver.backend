@@ -26,18 +26,18 @@ class ConsumerProfileService(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(ConsumerProfileService::class.java)
 
-    fun getConsumerProfile(consumerDataInToken: AccessTokenClaim): ConsumerProfileResDTO {
-        val savedConsumerProfile: ConsumerProfile = getConsumerProfileById(consumerDataInToken.accountID)
-        logger.info("event=consumer_profile_fetched consumerId={}", consumerDataInToken.accountID)
+    fun getConsumerProfile(consumerDetails: AccessTokenClaim): ConsumerProfileResDTO {
+        val savedConsumerProfile: ConsumerProfile = getConsumerProfileById(consumerDetails.accountID)
+        logger.info("event=consumer_profile_fetched consumerId={}", consumerDetails.accountID)
         return savedConsumerProfile.toConsumerProfileResDTO() 
     }
     
     @Transactional
     fun updateConsumerProfile(
-        consumerDataInToken: AccessTokenClaim, 
+        consumerDetails: AccessTokenClaim, 
         newConsumerProfileData: ConsumerProfileReqDTO
     ): ConsumerProfileResDTO {    
-       val savedConsumerProfile: ConsumerProfile = getConsumerProfileById(consumerDataInToken.accountID)
+       val savedConsumerProfile: ConsumerProfile = getConsumerProfileById(consumerDetails.accountID)
        val emailChanged: Boolean = newConsumerProfileData.emailAddress != savedConsumerProfile.emailAddress
        if (consumerProfileRepository.existsByEmailAddress(newConsumerProfileData.emailAddress) && emailChanged)
             throw AccountConflictException("Consumer with request email address already exists")
@@ -49,7 +49,7 @@ class ConsumerProfileService(
             consumerAddressCoordinate = newConsumerProfileData.consumerAddressCoordinate
        }
        val updatedConsumerProfile: ConsumerProfile = consumerProfileRepository.save(savedConsumerProfile)
-       logger.info("event=consumer_profile_update_completed consumerId={}", consumerDataInToken.accountID)
+       logger.info("event=consumer_profile_update_completed consumerId={}", consumerDetails.accountID)
        return updatedConsumerProfile.toConsumerProfileResDTO()
     }
 
@@ -59,10 +59,10 @@ class ConsumerProfileService(
         }
     }
 
-    fun getConsumerOrderHistory(consumerDataInToken: AccessTokenClaim): List<ConsumerOrderHistoryDTO> {
-        val taskHistories: List<Task> = taskRepository.findByConsumerProfile_Id(consumerDataInToken.accountID)
+    fun getConsumerOrderHistory(consumerDetails: AccessTokenClaim): List<ConsumerOrderHistoryDTO> {
+        val taskHistories: List<Task> = taskRepository.findByConsumerProfile_Id(consumerDetails.accountID)
         logger.info(
-            "event=consumer_order_history_fetched consumerId={} totalOrders={}", consumerDataInToken.accountID, taskHistories.size
+            "event=consumer_order_history_fetched consumerId={} totalOrders={}", consumerDetails.accountID, taskHistories.size
         )
         return taskHistories.map { it.toConsumerOrderHistoryDto()}
     }
