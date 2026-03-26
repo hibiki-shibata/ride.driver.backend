@@ -4,7 +4,7 @@ import com.ride.driver.backend.courier.dto.CourierProfileResDTO
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.logistic.model.Task
 
-fun CourierProfile.toCourierProfileResDTO(): CourierProfileResDTO {
+fun CourierProfile.toCourierProfileResDto(): CourierProfileResDTO {
     return CourierProfileResDTO(
         id = this.id,
         name = this.name,

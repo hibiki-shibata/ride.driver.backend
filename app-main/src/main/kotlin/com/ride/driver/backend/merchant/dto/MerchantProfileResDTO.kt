@@ -11,19 +11,19 @@ data class MerchantProfileResDTO(
     val id: String,
 
     @field:NotBlank
-    @field:Size(xmax = 50, message = "Name must not exceed 100 characters")
+    @field:Size(max = 50, message = "Name must not exceed 100 characters")
     val name: String,
 
     @field:NotBlank
-    @field:Size(xmax = 50, message = "Name must not exceed 100 characters")
+    @field:Size(max = 50, message = "Name must not exceed 100 characters")
     @field:Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     val phoneNumber: String,
 
     @field:NotBlank
-    @field:Size(xmax = 50, message = "Name must not exceed 100 characters")
+    @field:Size(max = 50, message = "Name must not exceed 100 characters")
     val merchantAddress: String,
 
-    @field:Size(xmax = 50, message = "Name must not exceed 100 characters")
+    @field:Size(max = 50, message = "Name must not exceed 100 characters")
     val merchantComments: String? = null,
 
     @field:NotBlank

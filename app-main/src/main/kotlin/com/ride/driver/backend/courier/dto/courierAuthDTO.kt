@@ -3,7 +3,6 @@ package com.ride.driver.backend.courier.dto
 import com.ride.driver.backend.courier.model.VehicleType
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Pattern
-import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
 
 data class CourierSignupDTO(

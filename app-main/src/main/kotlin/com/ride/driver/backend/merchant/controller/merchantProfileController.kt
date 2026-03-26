@@ -11,7 +11,8 @@ import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.merchant.service.MerchantProfileService
-import com.ride.driver.backend.merchant.dto.MerchantProfileDTO
+import com.ride.driver.backend.merchant.dto.MerchantProfileResDTO
+import com.ride.driver.backend.merchant.dto.MerchantProfileReqDTO
 import com.ride.driver.backend.merchant.dto.MerchantOpenStatusUpdateDTO
 import com.ride.driver.backend.merchant.dto.MerchantOrderHistoryDTO
 import jakarta.validation.Valid
@@ -22,87 +23,42 @@ class MerchantProfileController (
     private val merchantProfileService: MerchantProfileService
 ){
     @GetMapping("/me")
-    fun findMerchantProfile(
+    fun getMerchantProfile(
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
-    ): ResponseEntity<MerchantProfileDTO> {
-        val merchantProfile = merchantProfileService.getMerchantProfile(merchantDetails.accountId) ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(
-            MerchantProfileDTO(
-                id = merchantProfile?.id,
-                name = merchantProfile?.name ?: "",
-                phoneNumber = merchantProfile?.phoneNumber ?: "",
-                merchantAddress = merchantProfile?.merchantAddress ?: "",
-                merchantComments = merchantProfile?.merchantComments,
-                merchantStatus = merchantProfile?.merchantStatus?.toString() ?: "Unknown Status",
-                location = merchantProfile?.merchantAddressCoordinate ?: Coordinate(0.0, 0.0)
-            )         
-        )
+    ): ResponseEntity<MerchantProfileResDTO> {
+        val merchantProfile: MerchantProfileResDTO = merchantProfileService.getMerchantProfile(merchantDetails)
+        return ResponseEntity.ok(merchantProfile)
     }
 
     @PutMapping("/me")
     fun updateMerchantProfile(
-        @RequestBody @Valid merchantProfileDTO: MerchantProfileDTO,
+        @RequestBody @Valid req: MerchantProfileReqDTO,
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
-    ): ResponseEntity<MerchantProfileDTO> {
-        val updatedProfile = merchantProfileService.updateMerchantProfile(
-            merchantId = merchantDetails.accountId,
-            newName = merchantProfileDTO.name,
-            newPhoneNumber = merchantProfileDTO.phoneNumber,
-            newMerchantAddress = merchantProfileDTO.merchantAddress,
-            newMerchantComments = merchantProfileDTO.merchantComments,
-            newMerchantAddressCoordinate = merchantProfileDTO.location
+    ): ResponseEntity<MerchantProfileResDTO> {
+        val updatedProfile: MerchantProfileResDTO = merchantProfileService.updateMerchantProfile(
+            merchantDetails = merchantDetails,
+            req = req
         )
-        return ResponseEntity.ok(
-            MerchantProfileDTO(
-                id = updatedProfile.id,
-                name = updatedProfile.name,
-                phoneNumber = updatedProfile.phoneNumber,
-                merchantAddress = updatedProfile.merchantAddress,
-                merchantComments = updatedProfile.merchantComments,
-                merchantStatus = updatedProfile.merchantStatus.toString(),
-                location = updatedProfile.merchantAddressCoordinate
-            )         
-        )
+        return ResponseEntity.ok(updatedProfile)
     }
 
     @PutMapping("/me/status")
     fun updateMerchantOpenStatus(
-        @RequestBody @Valid isMerchantOpen: MerchantOpenStatusUpdateDTO,
+        @RequestBody @Valid req: MerchantProfileReqDTO,
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
-    ): ResponseEntity<MerchantProfileDTO> {
-        val updatedProfile = merchantProfileService.updateMerchantOpenStatus(
-            merchantId = merchantDetails.accountId,
-            isOpen = isMerchantOpen.isOpen
+    ): ResponseEntity<MerchantProfileResDTO> {
+        val updatedProfile: MerchantProfileResDTO = merchantProfileService.updateMerchantOpenStatus(
+            merchantDetails = merchantDetails,
+            req = req
         )
-        return ResponseEntity.ok(
-            MerchantProfileDTO(
-                id = updatedProfile.id,
-                name = updatedProfile.name,
-                phoneNumber = updatedProfile.phoneNumber,
-                merchantAddress = updatedProfile.merchantAddress,
-                merchantComments = updatedProfile.merchantComments,
-                merchantStatus = updatedProfile.merchantStatus.toString(),
-                location = updatedProfile.merchantAddressCoordinate
-            )         
-        )
+        return ResponseEntity.ok(updatedProfile)
     }
 
     @GetMapping("/orders/history")
-    fun findMerchantOrderHistory(
+    fun getMerchantOrderHistory(
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<List<MerchantOrderHistoryDTO>> {
-        val merchantOrderHistory: List<Task> = merchantProfileService.getMerchantOrderHistory(
-                merchantId = merchantDetails.accountId
-        ) 
-        return ResponseEntity.ok(
-            merchantOrderHistory.map { task ->
-                MerchantOrderHistoryDTO(
-                    orderId = task.id, 
-                    consumerName = task.consumerProfile?.name ?: "Unknown Consumer",
-                    orderTime = task.orderTime?.toString() ?: "Unknown Date",
-                    orderStatus = task.taskStatus?.toString() ?: "Unknown Status"
-                )
-            }          
-        )
+        val merchantOrderHistory: List<MerchantOrderHistoryDTO> = merchantProfileService.getMerchantOrderHistory(merchantDetails) 
+        return ResponseEntity.ok(merchantOrderHistory)
     } 
  } 

@@ -7,10 +7,10 @@ import org.springframework.format.annotation.DateTimeFormat
 
 data class MerchantOrderHistoryDTO(
     @field:NotBlank
-    @field:Size(xmax = 50, message = "Name must not exceed 100 characters")
+    @field:Size(max = 50, message = "Name must not exceed 100 characters")
     val id: String,
 
-    @field:Size(xmax = 50, message = "Name must not exceed 100 characters")
+    @field:Size(max = 50, message = "Name must not exceed 100 characters")
     @field:NotBlank
     val consumerName: String,
 

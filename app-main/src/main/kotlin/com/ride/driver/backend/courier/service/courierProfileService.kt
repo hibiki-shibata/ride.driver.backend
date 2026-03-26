@@ -6,7 +6,7 @@ import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus 
 import com.ride.driver.backend.courier.model.OperationArea
 import com.ride.driver.backend.courier.model.VehicleType
-import com.ride.driver.backend.courier.mapper.toCourierProfileResDTO
+import com.ride.driver.backend.courier.mapper.toCourierProfileResDto
 import com.ride.driver.backend.courier.mapper.toCourierTaskHistoryDto
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.shared.model.Coordinate
@@ -34,7 +34,7 @@ class CourierProfileService(
     fun getCourierProfile(courierDetails: AccessTokenClaim): CourierProfileResDTO {
         val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountId)
         logger.info("event=courier_orderHistory_fetched_courierId={}", courierDetails.accountId)
-        return savedCourierProfile.toCourierProfileResDTO()
+        return savedCourierProfile.toCourierProfileResDto()
     }
 
     @Transactional
@@ -49,7 +49,7 @@ class CourierProfileService(
         val newSavedCourierProfile: CourierProfile = courierProfileRepository.save(savedCourierProfile)
              ?: throw AccountNotFoundException("Courier not found with ID: $courierDetails.accountId")
         logger.info("event=courier_location_update_completed courierId={}", courierDetails.accountId)
-        return newSavedCourierProfile.toCourierProfileResDTO()
+        return newSavedCourierProfile.toCourierProfileResDto()
     }
     
     @Transactional
@@ -67,7 +67,7 @@ class CourierProfileService(
          }
         val updatedProfile: CourierProfile = courierProfileRepository.save(savedCourierProfile)
         logger.info("event=courier_profile_update_completed courierId={}", courierDetails.accountId)        
-        return updatedProfile.toCourierProfileResDTO()
+        return updatedProfile.toCourierProfileResDto()
     }
     
     @Transactional
@@ -81,7 +81,7 @@ class CourierProfileService(
         }
         val updatedProfile: CourierProfile = courierProfileRepository.save(savedCourierProfile)
         logger.info("event=courier_onlineStatus_update_completed courierId={}", courierDetails.accountId)
-        return updatedProfile.toCourierProfileResDTO()
+        return updatedProfile.toCourierProfileResDto()
     }
 
     fun getCourierOrderHistory(

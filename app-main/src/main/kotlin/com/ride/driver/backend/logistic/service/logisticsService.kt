@@ -32,13 +32,13 @@ class LogisticsService(
 
     fun createTask(consumerId: UUID, merchantId: UUID, orderedItemIDs: List<String>): Task {
         // validate if the item data
-        val merchantMenuItemsAll: List<MerchantItem> = merchantMenuItemRepository.findByMerchantProfile_Id(merchantId)
-        val orderedItemsDataRaw: List<MerchantItem> = merchantMenuItemsAll.filter { orderedItemIDs.contains(it.id.toString()) }
+        val merchantMenuItemsAll: List<MerchantItem?> = merchantMenuItemRepository.findByMerchantProfile_Id(merchantId)
+        val orderedItemsDataRaw: List<MerchantItem?> = merchantMenuItemsAll.filter { orderedItemIDs.contains(it.id.toString()) }
         if (orderedItemsDataRaw.size != orderedItemIDs.size) throw Exception("One or more ordered items are invalid for the given merchant")
         val createdTask: Task = taskRepository.save(
             Task(
                 consumerProfile = consumerProfileRepository.findById(consumerId).orElseThrow { Exception("Consumer not found with ID: ${consumerId}") },
-                merchantProfile = merchantProfileRepository.findById(merchantId) ?: return throw Exception("Merchant not found with ID: ${merchantId}"),
+                merchantProfile = merchantProfileRepository.findById(merchantId).orElseThrow { Exception("Merchant not found with ID: ${merchantId}"),}
                 taskStatus = TaskStatus.CREATED,
                 orderedItems = orderedItemsDataRaw.map { item ->
                     OrderedItem(

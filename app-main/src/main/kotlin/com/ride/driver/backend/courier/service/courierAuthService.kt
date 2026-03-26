@@ -15,13 +15,13 @@ import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 
 import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
-import com.ride.driver.backend.courier.mapper.toCourierProfileResDTO
+import com.ride.driver.backend.courier.mapper.toCourierProfileResDto
 import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class CourierAuthService(
@@ -30,7 +30,7 @@ class CourierAuthService(
     private val jwtTokenService: JwtTokenService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(CourierAuthService::class.java)
-        
+    @Transactional
     fun signupCourier(req: CourierSignupDTO): JwtTokensDTO {
         if (courierProfileRepository.existsByPhoneNumber(req.phoneNumber))
             throw AccountConflictException("Courier with request phone number already exists")

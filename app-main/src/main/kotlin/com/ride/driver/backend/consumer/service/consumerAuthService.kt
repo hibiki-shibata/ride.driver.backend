@@ -16,6 +16,7 @@ import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ConsumerAuthService(
@@ -26,6 +27,7 @@ class ConsumerAuthService(
 
     private val logger: Logger = LoggerFactory.getLogger(ConsumerAuthService::class.java)
 
+   @Transactional
     fun signupConsumer(req: ConsumerSignupDTO): JwtTokensDTO {
         if (consumerProfileRepository.existsByEmailAddress(req.emailAddress))
              throw AccountConflictException("Consumer with request email address already exists")

@@ -8,16 +8,16 @@ import com.ride.driver.backend.shared.model.Coordinate
 
 data class MerchantProfileReqDTO(
     @field:NotBlank
-    @field:Size(xmax = 50, message = "Name must not exceed 100 characters")
+    @field:Size(max = 50, message = "Name must not exceed 100 characters")
     val name: String,
 
     @field:NotBlank
-    @field:Size(xmax = 50, message = "Name must not exceed 100 characters")
+    @field:Size(max = 50, message = "Name must not exceed 100 characters")
     @field:Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Invalid phone number format")
     val phoneNumber: String,
 
     @field:NotBlank
-    @field:Size(xmax = 50, message = "Name must not exceed 100 characters")
+    @field:Size(max = 50, message = "Name must not exceed 100 characters")
     val merchantAddress: String,
 
     val merchantComments: String? = null,
@@ -25,9 +25,11 @@ data class MerchantProfileReqDTO(
     @field:NotBlank
     val merchantStatus: String,
 
+    val isOpen: Boolean,
+
     val merchantAddressCoordinate: Coordinate
 )
 
-data class MerchantOpenStatusUpdateDTO(
-    val isOpen: Boolean
-)
+// data class MerchantOpenStatusUpdateDTO(
+//     val isOpen: Boolean
+// )

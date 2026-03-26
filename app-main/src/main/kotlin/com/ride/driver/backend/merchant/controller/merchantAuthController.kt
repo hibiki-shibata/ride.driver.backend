@@ -24,39 +24,23 @@ import org.slf4j.LoggerFactory
 @RestController
 @RequestMapping("/api/v1/merchants")
 class MerchantAuthController(
-    private val merchantAuthService: MerchantAuthService,
-    private val jwtTokenService: JwtTokenService,
+    private val merchantAuthService: MerchantAuthService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MerchantAuthController::class.java)
 
     @PostMapping("/auth/signup")
     fun merchantSignup(@RequestBody @Valid req: MerchantSignupDTO): ResponseEntity<JwtTokensDTO> {
-        val jwtTokens: JwtTokensDTO = merchantAuthService.registerNewMerchant(req)   
-        return ResponseEntity.created(URI("/api/v1/merchants/${savedMerchant.id}")).body(
-            jwtTokenService.generateAccessTokenAndRefreshToken(
-                AccessTokenClaim(
-                    accountId = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
-                    accountName = savedMerchant.name,
-                    accountRoles = listOf(AccountRoles.BASE_MERCHANT_ROLE)
-                )
-            )
-        )
+        logger.info("event=merchant_signup_request_received")
+        val jwtTokens: JwtTokensDTO = merchantAuthService.signupMerchant(req)   
+        return ResponseEntity.created(
+            URI("/api/v1/merchants/me")
+            ).body(jwtTokens)
     }
 
     @PostMapping("/auth/login")
     fun merchantLogin(@RequestBody @Valid req: MerchantLoginDTO): ResponseEntity<JwtTokensDTO> {
-        val savedMerchant: MerchantProfile = merchantAuthService.getMerchantProfileByPhoneNumberAndValidatePassword(
-            phoneNumber = req.phoneNumber,
-            password = req.password
-        )
-        return ResponseEntity.ok(
-            jwtTokenService.generateAccessTokenAndRefreshToken(
-                AccessTokenClaim(
-                    accountId = savedMerchant.id ?: throw AccountNotFoundException("Merchant ID is null"),
-                    accountName = savedMerchant.name,
-                    accountRoles = listOf(AccountRoles.BASE_MERCHANT_ROLE)
-                )
-            )
-        )
+        logger.info("event=merchant_login_request_received")
+        val jwtTokens: JwtTokensDTO = merchantAuthService.loginMerchant(req)
+        return ResponseEntity.ok(jwtTokens)
     }
 }
