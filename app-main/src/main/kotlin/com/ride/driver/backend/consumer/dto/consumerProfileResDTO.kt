@@ -5,8 +5,13 @@ import jakarta.validation.constraints.NotBlank
 import org.springframework.format.annotation.DateTimeFormat
 import com.ride.driver.backend.shared.model.Coordinate
 import jakarta.validation.constraints.Size
+import java.util.UUID
 
 data class ConsumerProfileResDTO(
+    @field:NotBlank
+    val id: UUID,
+
+
     @field:NotBlank
     @field:Size(max = 100, message = "Name must not exceed 100 characters")
     val name: String,
