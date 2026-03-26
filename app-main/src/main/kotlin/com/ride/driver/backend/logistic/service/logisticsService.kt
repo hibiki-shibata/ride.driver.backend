@@ -1,12 +1,12 @@
 package com.ride.driver.backend.logistic.service
 
+import java.util.UUID
 import org.springframework.stereotype.Service
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus
 import com.ride.driver.backend.courier.model.OperationArea
 import com.ride.driver.backend.courier.model.VehicleType
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
-import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.logistic.model.TaskStatus
 import com.ride.driver.backend.logistic.model.OrderedItem
@@ -16,7 +16,7 @@ import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.merchant.repository.MerchantItemRepository
 import com.ride.driver.backend.merchant.model.MerchantItem
 import com.ride.driver.backend.merchant.model.MerchantProfile
-import java.util.UUID
+import com.ride.driver.backend.shared.model.Coordinate
 
 @Service
 class LogisticsService(
@@ -33,20 +33,20 @@ class LogisticsService(
     fun createTask(consumerId: UUID, merchantId: UUID, orderedItemIDs: List<String>): Task {
         // validate if the item data
         val merchantMenuItemsAll: List<MerchantItem?> = merchantMenuItemRepository.findByMerchantProfile_Id(merchantId)
-        val orderedItemsDataRaw: List<MerchantItem?> = merchantMenuItemsAll.filter { orderedItemIDs.contains(it.id.toString()) }
+        val orderedItemsDataRaw: List<MerchantItem?> = merchantMenuItemsAll.filter { orderedItemIDs.contains(it?.id.toString()) }
         if (orderedItemsDataRaw.size != orderedItemIDs.size) throw Exception("One or more ordered items are invalid for the given merchant")
         val createdTask: Task = taskRepository.save(
             Task(
                 consumerProfile = consumerProfileRepository.findById(consumerId).orElseThrow { Exception("Consumer not found with ID: ${consumerId}") },
-                merchantProfile = merchantProfileRepository.findById(merchantId).orElseThrow { Exception("Merchant not found with ID: ${merchantId}"),}
+                merchantProfile = merchantProfileRepository.findById(merchantId).orElseThrow { Exception("Merchant not found with ID: ${merchantId}")},
                 taskStatus = TaskStatus.CREATED,
                 orderedItems = orderedItemsDataRaw.map { item ->
                     OrderedItem(
-                        itemId = item.id ?: throw Exception("Menu item ID is null"),
-                        name = item.name,
-                        description = item.description,
-                        price = item.price,
-                        merchantId = item.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                        itemId = item?.id ?: throw Exception("Menu item ID is null"),
+                        name = item?.name ?: throw Exception("Item name is null"),
+                        description = item?.description,
+                        price = item?.price ?: throw Exception("Price not registered"),
+                        merchantId = item?.merchantProfile?.id ?: throw Exception("Merchant profile ID is null")
                     )
                 }
              )
