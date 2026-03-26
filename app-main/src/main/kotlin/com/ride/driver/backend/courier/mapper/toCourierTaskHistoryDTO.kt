@@ -1,12 +1,13 @@
 package com.ride.driver.backend.courier.mapper
 
-import com.ride.driver.backend.courier.dto.CourierOrderHistoryDTO
+import com.ride.driver.backend.courier.dto.CourierTaskHistoryDTO
 import com.ride.driver.backend.logistic.model.Task
 
-fun Task.toCourierOrderHistoryDto(): CourierOrderHistoryDTO {
-    return CourierOrderHistoryDTO(
-        merchantName = this.merchantProfile?.name ?: "Unknown Merchant name",
+fun Task.toCourierTaskHistoryDto(): CourierTaskHistoryDTO {
+    return CourierTaskHistoryDTO(
+        id = this.id.toString() ?: "Task ID not found",
+        courierEarning = this.courierEarning, 
         orderTime = this.orderTime.toString(),
-        orderStatus = this.taskStatus.toString()
+        consumerName = this.consumerProfile?.name ?: "Unknown consumer",
     )
 }

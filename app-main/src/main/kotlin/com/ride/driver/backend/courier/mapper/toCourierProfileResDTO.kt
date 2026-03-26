@@ -1,16 +1,18 @@
 package com.ride.driver.backend.courier.mapper
 
 import com.ride.driver.backend.courier.dto.CourierProfileResDTO
+import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.logistic.model.Task
 
-fun CourierProfileResDTO.toCourierProfileResDTO(): CourierProfileResDTO {
+fun CourierProfile.toCourierProfileResDTO(): CourierProfileResDTO {
     return CourierProfileResDTO(
-        id = this.id :? "courier id not found",
+        id = this.id,
         name = this.name,
         phoneNumber = this.phoneNumber,
         vehicleType = this.vehicleType,
-        rate = this.cpRate,
+        cpRate = this.cpRate,
+        cpStatus = this.cpStatus,
         operationArea = this.operationArea,
-        comments = this.cpComments
+        cpComments = this.cpComments
     )
 }

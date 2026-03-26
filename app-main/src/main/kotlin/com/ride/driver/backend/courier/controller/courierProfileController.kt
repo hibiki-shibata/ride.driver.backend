@@ -10,7 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal
 import jakarta.validation.Valid
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.service.CourierProfileService
-import com.ride.driver.backend.courier.dto.CourierProfileDTO
+import com.ride.driver.backend.courier.dto.CourierProfileResDTO
+import com.ride.driver.backend.courier.dto.CourierProfileReqDTO
 import com.ride.driver.backend.courier.dto.CourierTaskHistoryDTO
 import com.ride.driver.backend.courier.dto.CourierStatusUpdateDTO
 import com.ride.driver.backend.logistic.model.Task
@@ -26,49 +27,21 @@ class CourierProfileController (
     @GetMapping("/me")
     fun getCourierProfile(
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
-    ): ResponseEntity<CourierProfileDTO> {        
-        val courierProfile: CourierProfile = courierProfileService.getCourierProfile(
-            courierId = courierDetails.accountID
-        ) ?: return ResponseEntity.notFound().build()
-        return ResponseEntity.ok(
-            CourierProfileDTO(
-                id = courierProfile.id,
-                name = courierProfile.name,
-                phoneNumber = courierProfile.phoneNumber,
-                vehicleType = courierProfile.vehicleType,
-                rate = courierProfile.cpRate,
-                status = courierProfile.cpStatus,
-                operationArea = courierProfile.operationArea,
-                comments = courierProfile.cpComments
-            )
-        )
+    ): ResponseEntity<CourierProfileResDTO> {        
+        val courierProfile: CourierProfileResDTO = courierProfileService.getCourierProfile(courierDetails)
+        return ResponseEntity.ok(courierProfile)
     }
 
     @PutMapping("/me")
     fun updateCourierProfile(
-        @RequestBody @Valid courierProfileDTO: CourierProfileDTO,
+        @RequestBody @Valid req: CourierProfileReqDTO,
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
-    ): ResponseEntity<CourierProfileDTO> {
-        val updatedProfile: CourierProfile = courierProfileService.updateCourierProfile(
-            courierId = courierDetails.accountID,
-            newName = courierProfileDTO.name,
-            newPhoneNumber = courierProfileDTO.phoneNumber,
-            newVehicleType = courierProfileDTO.vehicleType,
-            newOperationArea = courierProfileDTO.operationArea,
-            newComments = courierProfileDTO.comments
+    ): ResponseEntity<CourierProfileResDTO> {
+        val updatedProfile: CourierProfileResDTO = courierProfileService.updateCourierProfile(
+            req = req,
+            courierDetails = courierDetails
         )
-        return ResponseEntity.ok(
-            CourierProfileDTO(
-                id = updatedProfile.id,
-                name = updatedProfile.name,
-                phoneNumber = updatedProfile.phoneNumber,
-                vehicleType = updatedProfile.vehicleType,
-                rate = updatedProfile.cpRate,
-                status = updatedProfile.cpStatus,
-                operationArea = updatedProfile.operationArea,
-                comments = updatedProfile.cpComments
-            )
-        )
+        return ResponseEntity.ok(updatedProfile)
     }
 
     @PutMapping("/location")

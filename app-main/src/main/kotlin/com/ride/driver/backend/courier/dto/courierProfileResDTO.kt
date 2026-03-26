@@ -21,12 +21,12 @@ data class CourierProfileResDTO(
     val vehicleType: VehicleType?,
 
     @field:NotBlank
-    val rate: Double?,
+    val cpRate: Double?,
 
-    val status: CourierStatus,
+    val cpStatus: CourierStatus,
 
     val operationArea: OperationArea?,
 
     @field:NotBlank
-    val comments: String?
+    val cpComments: String?
 )

@@ -8,7 +8,7 @@ import com.ride.driver.backend.courier.model.OperationArea
 import com.ride.driver.backend.courier.model.VehicleType
 
 
-class CourierProfileReqDTO{
+data class CourierProfileReqDTO(
     @field:NotBlank
     val name: String,
 
@@ -18,10 +18,10 @@ class CourierProfileReqDTO{
 
     val vehicleType: VehicleType?,
 
-    val status: CourierStatus,
+    val cpStatus: CourierStatus,
 
     val operationArea: OperationArea?,
 
     @field:NotBlank
-    val comments: String?
-}
+    val cpComments: String?
+)

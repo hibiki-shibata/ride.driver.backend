@@ -29,7 +29,7 @@ import com.ride.driver.backend.shared.model.Coordinate
     ]
 )
 
-data class CourierProfile(    
+class CourierProfile(    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
