@@ -11,13 +11,9 @@ import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
 import com.ride.driver.backend.courier.service.CourierAuthService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-import com.ride.driver.backend.shared.exception.AccountNotFoundException
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import com.ride.driver.backend.shared.auth.domain.AccountRoles
-import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
-import com.ride.driver.backend.shared.auth.service.JwtTokenService
 
 @RestController
 @RequestMapping("/api/v1/couriers")

@@ -30,23 +30,23 @@ import com.ride.driver.backend.shared.model.Coordinate
     ]
 )
 
-data class MerchantItem(
+class MerchantItem(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
-    val id: UUID? = null,
+    var id: UUID? = null,
 
     @Column(name = "name", nullable = false)
-    val name: String,    
+    var name: String,    
 
     @Column(name = "description", nullable = true)
-    val description: String? = null,
+    var description: String? = null,
 
     @Column(name = "price", nullable = false)
-    val price: Double,
+    var price: Double,
 
     @Column(name = "enabled", nullable = false)
-    val enabled: Boolean = false,
+    var enabled: Boolean = false,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "merchant_profile", referencedColumnName = "id", nullable = false)

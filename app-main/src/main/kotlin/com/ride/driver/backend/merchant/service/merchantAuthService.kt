@@ -10,34 +10,39 @@ import com.ride.driver.backend.merchant.model.MerchantStatus
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.shared.auth.service.PasswordService
 
+import com.ride.driver.backend.shared.auth.service.JwtTokenService
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
+import com.ride.driver.backend.shared.auth.domain.AccountRoles
+import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 @Service
 class MerchantAuthService(
     private val merchantProfileRepository: MerchantProfileRepository,
     private val passwordService: PasswordService
 ) {
-    fun registerNewMerchant(
-        name: String,
-        phoneNumber: String,
-        password: String,
-        merchantAddress: String,
-        merchantAddressCoordinate: Coordinate        
+    private val logger: Logger = LoggerFactory.getLogger(MerchantAuthService::class.java)
+    
+    fun signupMerchant(
+        req: MerchantSignupDTO         
     ): MerchantProfile {
-        val isMerchantExists: Boolean = merchantProfileRepository.existsByPhoneNumber(phoneNumber)
-        if (isMerchantExists) throw AccountConflictException("Merchant with phone number ${phoneNumber} already exists")
+        if (merchantProfileRepository.existsByPhoneNumber(req.phoneNumber))
+             throw AccountConflictException("Merchant with phone number already exists")
         val savedMerchant: MerchantProfile = merchantProfileRepository.save(
             MerchantProfile(
                 name = name,
-                phoneNumber = phoneNumber,
-                merchantAddress = merchantAddress,
-                merchantAddressCoordinate = merchantAddressCoordinate,
-                passwordHash = passwordService.hashPassword(password),
+                phoneNumber = req.phoneNumber,
+                merchantAddress = req.merchantAddress,
+                merchantAddressCoordinate = req.merchantAddressCoordinate,
+                passwordHash = passwordService.hashPassword(req.password),
                 merchantStatus = MerchantStatus.ADMINS_ONLY
             )
         )
-        return savedMerchant
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedMerchant.toAccessTokenClaim())
     }
 
-    fun getMerchantProfileByPhoneNumberAndValidatePassword(phoneNumber: String, password: String): MerchantProfile {
+    fun loginMerchant(phoneNumber: String, password: String): MerchantProfile {
         val savedMerchant: MerchantProfile = merchantProfileRepository.findByPhoneNumber(phoneNumber) ?: 
             throw AccountNotFoundException("Merchant with phone number ${phoneNumber} does not exist. Please sign up first.")
         if (!passwordService.isPasswordValid(

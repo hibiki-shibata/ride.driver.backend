@@ -18,21 +18,20 @@ import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
 import com.ride.driver.backend.merchant.model.MerchantProfile
 
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
 @RestController
 @RequestMapping("/api/v1/merchants")
 class MerchantAuthController(
     private val merchantAuthService: MerchantAuthService,
     private val jwtTokenService: JwtTokenService,
-) {    
+) {
+    private val logger: Logger = LoggerFactory.getLogger(MerchantAuthController::class.java)
+
     @PostMapping("/auth/signup")
     fun merchantSignup(@RequestBody @Valid req: MerchantSignupDTO): ResponseEntity<JwtTokensDTO> {
-        val savedMerchant: MerchantProfile = merchantAuthService.registerNewMerchant(
-            name = req.name,
-            phoneNumber = req.phoneNumber,
-            password = req.password,
-            merchantAddress = req.merchantAddress,
-            merchantAddressCoordinate = req.merchantAddressCoordinate
-        )   
+        val jwtTokens: JwtTokensDTO = merchantAuthService.registerNewMerchant(req)   
         return ResponseEntity.created(URI("/api/v1/merchants/${savedMerchant.id}")).body(
             jwtTokenService.generateAccessTokenAndRefreshToken(
                 AccessTokenClaim(

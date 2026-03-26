@@ -32,35 +32,35 @@ import com.ride.driver.backend.shared.model.Coordinate
     ]
 )
 
-data class MerchantProfile(
+class MerchantProfile(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: UUID? = null,
 
     @Column(name = "name", nullable = false)
-    val name: String,
+    var name: String,
 
     @Column(name = "phone_number", unique = true, nullable = false)
-    val phoneNumber: String,
+    var phoneNumber: String,
 
     @Column(name = "password_hash")
-    val passwordHash: String,
+    var passwordHash: String,
 
     @Column(name = "mx_address", nullable = false)
-    val merchantAddress: String,
+    var merchantAddress: String,
 
     @Column(name = "mx_comments", nullable = true)
-    val merchantComments: String? = null,
+    var merchantComments: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "mx_status", nullable = false)
-    val merchantStatus: MerchantStatus = MerchantStatus.CLOSED,
+    var merchantStatus: MerchantStatus = MerchantStatus.CLOSED,
 
     @Embedded
     @AttributeOverrides(
         AttributeOverride(name = "latitude", column = Column(name = "latitude")),
         AttributeOverride(name = "longitude", column = Column(name = "longitude"))
     )
-    val merchantAddressCoordinate: Coordinate
+    var merchantAddressCoordinate: Coordinate
 )

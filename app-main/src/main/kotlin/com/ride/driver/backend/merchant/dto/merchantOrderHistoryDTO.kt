@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank
 
 data class MerchantOrderHistoryDTO(
     @field:NotBlank
-    val orderId: UUID?,
+    val id: String,
     @field:NotBlank
     val consumerName: String,
     @field:NotBlank
