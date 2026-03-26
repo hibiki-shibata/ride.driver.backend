@@ -3,7 +3,7 @@ package com.ride.driver.backend.courier.dto
 import java.util.UUID
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Size
-import jakarta.validation.constraints.DateTimeFormat
+import org.springframework.format.annotation.DateTimeFormat
 
 data class CourierTaskHistoryDTO(
     val id: String,

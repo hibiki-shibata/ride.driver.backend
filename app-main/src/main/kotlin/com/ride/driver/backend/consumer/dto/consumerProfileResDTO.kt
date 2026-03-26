@@ -9,7 +9,7 @@ import java.util.UUID
 
 data class ConsumerProfileResDTO(
     @field:NotBlank
-    val id: UUID,
+    val id: String,
 
 
     @field:NotBlank

@@ -58,6 +58,7 @@ class ConsumerProfileControllerUnitTest {
         )
 
         val response = ConsumerProfileResDTO(
+            id = "UUID is expected here",
             name = "Hibiki",
             emailAddress = "hibiki@example.com",
             consumerAddress = "Tokyo",
