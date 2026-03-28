@@ -18,7 +18,6 @@ import com.ride.driver.backend.courier.dto.CourierStatusUpdateDTO
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.model.Coordinate
 
-
 @RestController
 @RequestMapping("api/v1/couriers")
 class CourierProfileController ( 
@@ -57,7 +56,7 @@ class CourierProfileController (
         val updatedProfile: CourierProfileResDTO = courierProfileService.updateCourierLocation(
             courierDetails = courierDetails,
             newCurrentLocation = currentLocation
-        )
+)
         return ResponseEntity.ok().build()
     }    
 

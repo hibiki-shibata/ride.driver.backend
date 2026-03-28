@@ -26,8 +26,8 @@ private val logger: Logger = LoggerFactory.getLogger(CourierAuthController::clas
         logger.info("event=courier_signup_request_received")
         val jwtTokens: JwtTokensDTO = courierAuthService.signupCourier(req)
         return ResponseEntity
-                .created(URI("/api/v1/couriers/me"))
-                .body(jwtTokens)
+            .created(URI("/api/v1/couriers/me"))
+            .body(jwtTokens)
     }
 
     @PostMapping("/auth/login")

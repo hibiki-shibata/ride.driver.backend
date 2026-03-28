@@ -17,7 +17,7 @@ import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
-import com.ride.driver.backend.shared.exception.AccountInvalidInputException
+import com.ride.driver.backend.shared.exception.AccountInvalidValuesException
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.logistic.model.TaskStatus
 import com.ride.driver.backend.logistic.repository.TaskRepository
@@ -60,7 +60,7 @@ class MerchantProfileService (
         req: MerchantProfileReqDTO
     ): MerchantProfileResDTO {
         val savedMerchant: MerchantProfile = getMerchantProfileById(merchantDetails.accountId)
-        if (savedMerchant.merchantStatus == MerchantStatus.ADMINS_ONLY) throw AccountInvalidInputException("Cannot change open status for an admin-only merchant")
+        if (savedMerchant.merchantStatus == MerchantStatus.ADMINS_ONLY) throw AccountInvalidValuesException("Cannot change open status for an admin-only merchant")
         savedMerchant.apply{
             merchantStatus = if (req.isOpen) MerchantStatus.OPEN else MerchantStatus.CLOSED
         }
