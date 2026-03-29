@@ -21,7 +21,9 @@ import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-
+import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
+import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
+import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 
 @Service
 class CourierAuthService(
@@ -65,6 +67,20 @@ class CourierAuthService(
         return jwtTokenService.generateAccessTokenAndRefreshToken(
             accessTokenClaim = savedCourier.toAccessTokenClaim(),
             refreshTokenClaim = savedCourier.toRefreshTokenClaim()
+        )
+    }
+
+    fun refreshToken(
+        req: TokenRefreshDTO,
+    ): JwtTokensDTO{
+        if (!jwtTokenService.isTokenValid(req.refreshToken)) throw InvalidJwtTokenException("Refresh token is either expired or invalid")
+        val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
+        val courierProfile: CourierProfile = courierProfileRepository.findById(accountDetails.accountId).orElseThrow {
+             InvalidJwtTokenException("Courier not found for the given token")
+        }
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
+            accessTokenClaim = courierProfile.toAccessTokenClaim(),
+            refreshTokenClaim = courierProfile.toRefreshTokenClaim()
         )
     }
 }

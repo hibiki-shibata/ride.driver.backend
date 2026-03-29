@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
+import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.courier.service.CourierAuthService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 
@@ -35,5 +36,11 @@ private val logger: Logger = LoggerFactory.getLogger(CourierAuthController::clas
         logger.info("event=courier_signup_request_received")
         val jwtTokens: JwtTokensDTO = courierAuthService.loginCourier(req)
         return ResponseEntity.ok(jwtTokens)        
+    }
+
+    @PostMapping("auth/refresh-token")
+    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokensDTO> {
+        val newJwtTokens: JwtTokensDTO = courierAuthService.refreshToken(req)
+        return ResponseEntity.ok(newJwtTokens)
     }
 }

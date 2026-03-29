@@ -38,7 +38,7 @@ class ConsumerAuthController(
 
     @PostMapping("auth/refresh-token")
     fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokensDTO> {
-        val refreshedJwtTokens: JwtTokensDTO = consumerAuthService.refreshToken(req)
-        return ResponseEntity.ok(refreshedJwtTokens)
+        val newJwtTokens: JwtTokensDTO = consumerAuthService.refreshToken(req)
+        return ResponseEntity.ok(newJwtTokens)
     }
 }
