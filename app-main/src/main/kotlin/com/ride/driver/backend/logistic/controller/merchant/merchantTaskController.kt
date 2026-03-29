@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import jakarta.validation.Valid
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
-import com.ride.driver.backend.logistic.model.Task
-import com.ride.driver.backend.logistic.mapper.toTaskDataDTO
 import com.ride.driver.backend.logistic.service.LogisticsService
 import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
@@ -24,10 +22,10 @@ class MerchantTaskController (
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
-        val updatedTask: Task = logisticsService.markTaskAsReadyForAssignment(
-            merchantId = merchantDetails.accountId,
-            taskId = taskStatusActionDTO.taskId
+        val updatedTask: TaskDataDTO = logisticsService.markTaskAsReadyForAssignment(
+            taskStatusActionDTO = taskStatusActionDTO,
+            merchantDetails = merchantDetails
         )
-        return ResponseEntity.ok(updatedTask.toTaskDataDTO())
+        return ResponseEntity.ok(updatedTask)
     }  
 }    

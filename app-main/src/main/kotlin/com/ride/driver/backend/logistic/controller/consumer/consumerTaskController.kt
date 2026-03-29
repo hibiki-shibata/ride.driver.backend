@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
-import com.ride.driver.backend.logistic.mapper.toTaskDataDTO
 import com.ride.driver.backend.logistic.service.LogisticsService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import jakarta.validation.Valid

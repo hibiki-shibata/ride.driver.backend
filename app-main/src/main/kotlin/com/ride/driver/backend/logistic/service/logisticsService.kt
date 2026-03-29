@@ -26,11 +26,11 @@ class LogisticsService(
     private val merchantMenuItemRepository: MerchantItemRepository,
     private val taskRepository: TaskRepository
 ){
-    fun pollForTask(courierId: UUID): Task? {
+    fun pollForTask(courierId: UUID): TaskDataDTO {
         return taskRepository.findByCourierProfile_IdAndTaskStatus(courierId, TaskStatus.READY_FOR_ASSIGNMENT).firstOrNull()
     }
 
-    fun createTask(consumerId: UUID, merchantId: UUID, orderedItemIDs: List<String>): Task {
+    fun createTask(consumerId: UUID, merchantId: UUID, orderedItemIDs: List<String>): TaskDataDTO {
         // validate if the item data
         val merchantMenuItemsAll: List<MerchantItem?> = merchantMenuItemRepository.findByMerchantProfile_Id(merchantId)
         val orderedItemsDataRaw: List<MerchantItem?> = merchantMenuItemsAll.filter { orderedItemIDs.contains(it?.id.toString()) }
@@ -54,7 +54,7 @@ class LogisticsService(
         return createdTask
     }
 
-    fun markTaskAsReadyForAssignment(merchantId: UUID, taskId: String): Task {
+    fun markTaskAsReadyForAssignment(merchantId: UUID, taskId: String): TaskDataDTO {
         val taskToUpdate: Task = taskRepository.findById(UUID.fromString(taskId)) ?: throw Exception("Task not found with ID: $taskId")
         if (taskToUpdate.merchantProfile.id != merchantId) throw Exception("This task does not belong to the merchant associated with the authenticated account")
         if (taskToUpdate.taskStatus != TaskStatus.CREATED) throw Exception("Only tasks in CREATED status can be marked as READY_FOR_ASSIGNMENT")
@@ -66,7 +66,7 @@ class LogisticsService(
         return updatedTask
     }
 
-    fun markTaskAsReady(merchantId: UUID, taskId: String): Task {
+    fun markTaskAsReady(merchantId: UUID, taskId: String): TaskDataDTO {
         val taskToUpdate: Task = taskRepository.findByIdAndMerchantProfile_Id(UUID.fromString(taskId), merchantId) 
                 ?: throw Exception("Task not found with ID: $taskId for the given merchant")
         if (taskToUpdate.taskStatus != TaskStatus.CREATED) return throw Exception("Only tasks in CREATED status can be marked as READY")
@@ -78,7 +78,7 @@ class LogisticsService(
         return updatedTask
     }
 
-    fun markTaskAsAccepted(courierId: UUID, taskId: String): Task {
+    fun markTaskAsAccepted(courierId: UUID, taskId: String): TaskDataDTO {
         val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull() ?: return throw Exception("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return throw Exception("Task ID does not match the assigned task for this courier")
         if (assignedTask.taskStatus != TaskStatus.READY_FOR_ASSIGNMENT) return throw Exception("Cannot accept task that is not in READY_FOR_ASSIGNMENT status")
@@ -90,7 +90,7 @@ class LogisticsService(
         return updatedTask
     }
 
-    fun markTaskAsPickedUp(courierId: UUID, taskId: String): Task {
+    fun markTaskAsPickedUp(courierId: UUID, taskId: String): TaskDataDTO {
         val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierId).firstOrNull()
              ?: return throw Exception("No task assigned to this courier")
         if (assignedTask.id.toString() != taskId) return throw Exception("Task ID does not match the assigned task for this courier")
@@ -103,7 +103,7 @@ class LogisticsService(
         return updatedTask
     }
 
-    fun markTaskAsDroppedOff(courierId: UUID, taskId: String): Task {
+    fun markTaskAsDroppedOff(courierId: UUID, taskId: String): TaskDataDTO {
         val assignedTask: Task = taskRepository.findByConsumerProfile_IdAndTaskStatus(courierId, TaskStatus.IN_DROPOFF).firstOrNull()
             ?: return throw Exception("This task is not assigned to this courier")
         if (assignedTask.id.toString() != taskId) return throw Exception("Task ID does not match the assigned task for this courier")
