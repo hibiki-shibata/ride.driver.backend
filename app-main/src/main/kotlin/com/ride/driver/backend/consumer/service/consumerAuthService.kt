@@ -16,6 +16,9 @@ import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
+import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
+import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 
 @Service
 class ConsumerAuthService(
@@ -23,11 +26,12 @@ class ConsumerAuthService(
     private val passwordService: PasswordService,
     private val jwtTokenService: JwtTokenService
 ) {
-
     private val logger: Logger = LoggerFactory.getLogger(ConsumerAuthService::class.java)
 
-   @Transactional
-    fun signupConsumer(req: ConsumerSignupDTO): JwtTokensDTO {
+    @Transactional
+    fun signupConsumer(
+        req: ConsumerSignupDTO
+    ): JwtTokensDTO {
         if (consumerProfileRepository.existsByEmailAddress(req.emailAddress))
              throw AccountConflictException("Consumer with request email address already exists")
         
@@ -47,7 +51,9 @@ class ConsumerAuthService(
         )
     }
 
-    fun loginConsumer(req: ConsumerLoginDTO): JwtTokensDTO {
+    fun loginConsumer(
+        req: ConsumerLoginDTO
+    ): JwtTokensDTO {
         val savedConsumer: ConsumerProfile = consumerProfileRepository.findByEmailAddress(req.emailAddress)
             ?: throw AccountNotFoundException("Consumer not found with request email address")
         val isPasswordValid: Boolean = passwordService.isPasswordValid(
@@ -59,6 +65,21 @@ class ConsumerAuthService(
         return jwtTokenService.generateAccessTokenAndRefreshToken(
             accessTokenClaim = savedConsumer.toAccessTokenClaim(),
             refreshTokenClaim = savedConsumer.toRefreshTokenClaim()
+        )
+    }
+
+    @Transactional
+    fun refreshToken(
+        req: TokenRefreshDTO,
+    ): JwtTokensDTO{
+        if (!jwtTokenService.isTokenValid(req.refreshToken)) throw InvalidJwtTokenException("Refresh token is either expired or invalid")
+        val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
+        val consumerProfile: ConsumerProfile = consumerProfileRepository.findById(accountDetails.accountId).orElseThrow {
+             InvalidJwtTokenException("Consumer not found for the given token")
+        }
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
+            accessTokenClaim = consumerProfile.toAccessTokenClaim(),
+            refreshTokenClaim = consumerProfile.toRefreshTokenClaim()
         )
     }
 }

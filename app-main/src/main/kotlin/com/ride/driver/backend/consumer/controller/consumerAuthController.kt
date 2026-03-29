@@ -12,6 +12,7 @@ import java.net.URI
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
+import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
  
 @RestController
@@ -33,5 +34,11 @@ class ConsumerAuthController(
         logger.info("event=consumer_login_request_received")
         val jwtTokens: JwtTokensDTO = consumerAuthService.loginConsumer(req)
         return ResponseEntity.ok(jwtTokens)
+    }
+
+    @PostMapping("auth/refresh-token")
+    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokensDTO> {
+        val refreshedJwtTokens: JwtTokensDTO = consumerAuthService.refreshToken(req)
+        return ResponseEntity.ok(refreshedJwtTokens)
     }
 }
