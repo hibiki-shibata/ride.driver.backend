@@ -9,8 +9,7 @@ import com.ride.driver.backend.merchant.model.MerchantProfile
 import com.ride.driver.backend.merchant.model.MerchantStatus
 import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
-import com.ride.driver.backend.merchant.mapper.toAccessTokenClaim
-import com.ride.driver.backend.merchant.mapper.toRefreshTokenClaim
+import com.ride.driver.backend.merchant.mapper.toTokenClaims
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
@@ -48,10 +47,7 @@ class MerchantAuthService(
             )
         )
         logger.info("event=merchant_signup_completed consumerId={}", savedMerchant.id)
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-            accessTokenClaim = savedMerchant.toAccessTokenClaim(),
-            refreshTokenClaim = savedMerchant.toRefreshTokenClaim()
-         )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedMerchant.toTokenClaims())
     }
 
     fun loginMerchant(
@@ -65,10 +61,7 @@ class MerchantAuthService(
         )        
         if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password")
         logger.info("event=merchant_login_completed consumerId={}", savedMerchant.id)
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-            accessTokenClaim = savedMerchant.toAccessTokenClaim(),
-            refreshTokenClaim = savedMerchant.toRefreshTokenClaim()
-         )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedMerchant.toTokenClaims())
     }
 
     fun refreshToken(
@@ -76,12 +69,9 @@ class MerchantAuthService(
     ): JwtTokensDTO{
         if (!jwtTokenService.isTokenValid(req.refreshToken)) throw InvalidJwtTokenException("Refresh token is either expired or invalid")
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
-        val merchantProfile: MerchantProfile = merchantProfileRepository.findById(accountDetails.accountId).orElseThrow {
+        val savedMerchant: MerchantProfile = merchantProfileRepository.findById(accountDetails.accountId).orElseThrow {
              InvalidJwtTokenException("Merchant not found for the given token")
         }
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-            accessTokenClaim = merchantProfile.toAccessTokenClaim(),
-            refreshTokenClaim = merchantProfile.toRefreshTokenClaim()
-        )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedMerchant.toTokenClaims())
     }
 }

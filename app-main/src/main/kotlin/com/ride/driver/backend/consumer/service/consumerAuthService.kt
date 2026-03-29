@@ -8,8 +8,7 @@ import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
-import com.ride.driver.backend.consumer.mapper.toAccessTokenClaim
-import com.ride.driver.backend.consumer.mapper.toRefreshTokenClaim
+import com.ride.driver.backend.consumer.mapper.toTokenClaims
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
@@ -45,10 +44,7 @@ class ConsumerAuthService(
             ))   
         
         logger.info("event=consumer_signup_completed consumerId={}", savedConsumer.id)
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-            accessTokenClaim = savedConsumer.toAccessTokenClaim(),
-            refreshTokenClaim = savedConsumer.toRefreshTokenClaim()
-        )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toTokenClaims())
     }
 
     fun loginConsumer(
@@ -62,10 +58,7 @@ class ConsumerAuthService(
         )
         if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password for login consumer")
         logger.info("event=consumer_login_completed consumerId={}", savedConsumer.id)
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-            accessTokenClaim = savedConsumer.toAccessTokenClaim(),
-            refreshTokenClaim = savedConsumer.toRefreshTokenClaim()
-        )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toTokenClaims())
     }
 
     @Transactional
@@ -74,12 +67,9 @@ class ConsumerAuthService(
     ): JwtTokensDTO{
         if (!jwtTokenService.isTokenValid(req.refreshToken)) throw InvalidJwtTokenException("Refresh token is either expired or invalid")
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
-        val consumerProfile: ConsumerProfile = consumerProfileRepository.findById(accountDetails.accountId).orElseThrow {
+        val savedConsumer: ConsumerProfile = consumerProfileRepository.findById(accountDetails.accountId).orElseThrow {
              InvalidJwtTokenException("Consumer not found for the given token")
         }
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-            accessTokenClaim = consumerProfile.toAccessTokenClaim(),
-            refreshTokenClaim = consumerProfile.toRefreshTokenClaim()
-        )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toTokenClaims())
     }
 }

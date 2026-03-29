@@ -10,10 +10,8 @@ import com.ride.driver.backend.courier.model.VehicleType
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
-import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
-import com.ride.driver.backend.courier.mapper.toRefreshTokenClaim
 import com.ride.driver.backend.courier.mapper.toCourierProfileResDto
-import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
+import com.ride.driver.backend.courier.mapper.toTokenClaims
 import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
@@ -49,10 +47,7 @@ class CourierAuthService(
             )
         )
         logger.info("event=courier_signup_completed courierId={}", savedCourier.id)     
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-            accessTokenClaim = savedCourier.toAccessTokenClaim(),
-            refreshTokenClaim = savedCourier.toRefreshTokenClaim()
-        )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toTokenClaims())
     }
 
     fun loginCourier(req: CourierLoginDTO): JwtTokensDTO {
@@ -64,10 +59,7 @@ class CourierAuthService(
             )
         if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password provided")
         logger.info("event=courier_login_completed courierId={}", savedCourier.id)     
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-            accessTokenClaim = savedCourier.toAccessTokenClaim(),
-            refreshTokenClaim = savedCourier.toRefreshTokenClaim()
-        )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toTokenClaims())
     }
 
     fun refreshToken(
@@ -75,12 +67,9 @@ class CourierAuthService(
     ): JwtTokensDTO{
         if (!jwtTokenService.isTokenValid(req.refreshToken)) throw InvalidJwtTokenException("Refresh token is either expired or invalid")
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
-        val courierProfile: CourierProfile = courierProfileRepository.findById(accountDetails.accountId).orElseThrow {
+        val savedCourier: CourierProfile = courierProfileRepository.findById(accountDetails.accountId).orElseThrow {
              InvalidJwtTokenException("Courier not found for the given token")
         }
-        return jwtTokenService.generateAccessTokenAndRefreshToken(
-            accessTokenClaim = courierProfile.toAccessTokenClaim(),
-            refreshTokenClaim = courierProfile.toRefreshTokenClaim()
-        )
+        return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toTokenClaims())
     }
 }

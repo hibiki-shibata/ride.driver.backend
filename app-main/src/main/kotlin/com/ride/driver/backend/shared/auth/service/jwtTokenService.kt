@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
+import com.ride.driver.backend.shared.auth.domain.TokenClaims
 import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
@@ -24,11 +25,10 @@ open class JwtTokenService(
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
 ) {    
     fun generateAccessTokenAndRefreshToken(
-        accessTokenClaim: AccessTokenClaim,
-        refreshTokenClaim: RefreshTokenClaim
+        tokenClaims: TokenClaims
     ): JwtTokensDTO {
-        val accessToken = generateAccessToken(accessTokenClaim)
-        val refreshToken = generateRefreshToken(refreshTokenClaim)
+        val accessToken = generateAccessToken(tokenClaims.accessTokenClaim)
+        val refreshToken = generateRefreshToken(tokenClaims.refreshTokenClaim)
         return JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken)
     }
 
