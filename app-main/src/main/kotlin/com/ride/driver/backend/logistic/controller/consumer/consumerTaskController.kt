@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
-import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
 import com.ride.driver.backend.logistic.mapper.toTaskDataDTO
 import com.ride.driver.backend.logistic.service.LogisticsService
-import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotBlank
@@ -35,11 +33,7 @@ class ConsumerTaskController (
         @RequestBody createTaskDTO: CreateTaskDTO,
         @AuthenticationPrincipal consumerDetails: AccessTokenClaim        
     ): ResponseEntity<TaskDataDTO> {
-        val createdTask: Task = logisticsService.createTask(
-            consumerId = consumerDetails.accountId,
-            merchantId = createTaskDTO.merchantID,
-            orderedItemIDs = createTaskDTO.orderedItemIDs
-        )
-        return ResponseEntity.ok(createdTask.toTaskDataDTO())
+        val createdTask: TaskDataDTO = logisticsService.createTask(createTaskDTO)
+        return ResponseEntity.ok(createdTask)
     }
 }
