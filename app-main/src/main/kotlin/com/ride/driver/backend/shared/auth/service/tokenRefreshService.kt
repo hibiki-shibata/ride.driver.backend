@@ -5,24 +5,41 @@ import java.util.UUID
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
+import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 
 @Service
 class TokenRefreshService(
-    private val jwtTokenService: JwtTokenService,
+    private val jwtTokenService: JwtTokenService
 ){
-    fun refreshToken(req: JwtTokensDTO): JwtTokensDTO{
-        val accountIdOfRefreshToken: UUID = jwtTokenService.extractAccountId(req.refreshToken)
+    fun refreshToken(
+        req: TokenRefreshDTO,
+    ): JwtTokensDTO{
         if (!jwtTokenService.isTokenValid(req.refreshToken)) throw InvalidJwtTokenException("Refresh token is either expired or invalid")
-        val accountName: String = jwtTokenService.extractAccountName(req.accessToken)
-        val newAccessToken: String = jwtTokenService.generateAccessToken(
+        val accountDetails: AccessTokenClaim = jwtTokenService.extractRefreshTokenClaims(req.refreshToken)
+        when(accountDetails.accountRoles.firstOrNull()) {
+            AccountRoles.BASE_CONSUMER_ROLE -> {
+                return generateNewTokens(accountDetails)
+            }
+            AccountRoles.BASE_COURIER_ROLE -> {
+                return generateNewTokens(accountDetails)
+            }
+            AccountRoles.BASE_MERCHANT_ROLE -> {
+                return generateNewTokens(accountDetails)            
+            }
+            else -> throw InvalidJwtTokenException("Invalid account role in token")
+        }
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
             AccessTokenClaim(
-                accountId = accountIdOfRefreshToken,
-                accountName = accountName,
+                accountId = accountDetails.accountId,
+                accountName = accountDetails.accountName,
                 accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
+            ),
+            RefreshTokenClaim(
+                accountId = accountDetails.accountId
             )
         )
-        val newRefreshToken: String = jwtTokenService.generateRefreshToken(accountIdOfRefreshToken)
         return JwtTokensDTO( newAccessToken, newRefreshToken)
     }
 }

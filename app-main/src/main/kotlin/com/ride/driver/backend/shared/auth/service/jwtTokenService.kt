@@ -31,7 +31,7 @@ open class JwtTokenService(
         return JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken)
     }
 
-    fun generateAccessToken(
+    private fun generateAccessToken(
         accessTokenClaim: AccessTokenClaim
     ): String {
         val now = System.currentTimeMillis()
@@ -48,7 +48,7 @@ open class JwtTokenService(
             .compact()
     }
 
-    fun generateRefreshToken(
+    private fun generateRefreshToken(
         refreshTokenClaim: RefreshTokenClaim
     ): String {
         val now = System.currentTimeMillis()
@@ -64,7 +64,7 @@ open class JwtTokenService(
         return !isTokenExpired(token)
     }
 
-    fun isTokenExpired(token: String): Boolean {
+    private fun isTokenExpired(token: String): Boolean {
         return extractAllClaims(token).expiration.before(Date())
     }
 
@@ -89,6 +89,14 @@ open class JwtTokenService(
     fun extractAccountRoles(token: String): List<AccountRoles> {
         val claims = extractAllClaims(token)
         return (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
+    }
+
+    fun extractRefreshTokenClaim(token: String): RefreshTokenClaim {
+        val claims = extractAllClaims(token)
+        return RefreshTokenClaim(
+            accountId = UUID.fromString(claims["accountId"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
+            serviceType = claims["serviceType"]?.toString() ?: throw InvalidJwtTokenException("Service type not found in token")
+        )
     }
 
     private fun extractAllClaims(token: String): Claims {
