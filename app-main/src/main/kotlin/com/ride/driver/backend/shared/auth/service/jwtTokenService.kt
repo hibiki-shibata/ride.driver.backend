@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import org.springframework.beans.factory.annotation.Value
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
+import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 
@@ -22,24 +23,25 @@ open class JwtTokenService(
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
 ) {    
     fun generateAccessTokenAndRefreshToken(
-        accountTokenData: AccessTokenClaim
+        accessTokenClaim: AccessTokenClaim,
+        refreshTokenClaim: RefreshTokenClaim
     ): JwtTokensDTO {
-        val accessToken = generateAccessToken(accountTokenData)
-        val refreshToken = generateRefreshToken(accountTokenData.accountId)
+        val accessToken = generateAccessToken(accessTokenClaim)
+        val refreshToken = generateRefreshToken(refreshTokenClaim)
         return JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken)
     }
 
     fun generateAccessToken(
-        accountTokenData: AccessTokenClaim
+        accessTokenClaim: AccessTokenClaim
     ): String {
         val now = System.currentTimeMillis()
         val additionalClaims =  mapOf(
-            "accountID" to accountTokenData.accountId.toString(),
-            "accountRoles" to accountTokenData.accountRoles.map { it.name }
+            "accountId" to accessTokenClaim.accountId.toString(),
+            "accountRoles" to accessTokenClaim.accountRoles.map { it.name }
         )
         return Jwts.builder()
             .setClaims(additionalClaims)
-            .setSubject(accountTokenData.accountName)
+            .setSubject(accessTokenClaim.accountName)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + accessTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -47,11 +49,11 @@ open class JwtTokenService(
     }
 
     fun generateRefreshToken(
-        accountID: UUID
+        refreshTokenClaim: RefreshTokenClaim
     ): String {
         val now = System.currentTimeMillis()
         return Jwts.builder()
-            .setClaims(mapOf("accountID" to accountID.toString()))
+            .setClaims(mapOf("accountId" to refreshTokenClaim.accountId.toString()))
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + refreshTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -69,7 +71,7 @@ open class JwtTokenService(
     fun extractAccessTokenClaim(token: String): AccessTokenClaim {
         val claims = extractAllClaims(token)
         return AccessTokenClaim(
-            accountId = UUID.fromString(claims["accountID"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
+            accountId = UUID.fromString(claims["accountId"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
             accountName = claims.subject ?: throw InvalidJwtTokenException("Account name not found in token"),
             accountRoles = (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
         )
@@ -81,7 +83,7 @@ open class JwtTokenService(
 
     fun extractAccountId(token: String): UUID {
         val claims = extractAllClaims(token)
-        return UUID.fromString(claims["accountID"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token"))
+        return UUID.fromString(claims["accountId"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token"))
     }
 
     fun extractAccountRoles(token: String): List<AccountRoles> {

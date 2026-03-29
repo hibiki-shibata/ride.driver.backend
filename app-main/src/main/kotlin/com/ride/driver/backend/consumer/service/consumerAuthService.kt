@@ -9,6 +9,7 @@ import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
 import com.ride.driver.backend.consumer.mapper.toAccessTokenClaim
+import com.ride.driver.backend.consumer.mapper.toRefreshTokenClaim
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
@@ -40,7 +41,10 @@ class ConsumerAuthService(
             ))   
         
         logger.info("event=consumer_signup_completed consumerId={}", savedConsumer.id)
-        return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toAccessTokenClaim())
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
+            accessTokenClaim = savedConsumer.toAccessTokenClaim(),
+            refreshTokenClaim = savedConsumer.toRefreshTokenClaim()
+        )
     }
 
     fun loginConsumer(req: ConsumerLoginDTO): JwtTokensDTO {
@@ -52,6 +56,9 @@ class ConsumerAuthService(
         )
         if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password for login consumer")
         logger.info("event=consumer_login_completed consumerId={}", savedConsumer.id)
-        return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toAccessTokenClaim())
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
+            accessTokenClaim = savedConsumer.toAccessTokenClaim(),
+            refreshTokenClaim = savedConsumer.toRefreshTokenClaim()
+        )
     }
 }

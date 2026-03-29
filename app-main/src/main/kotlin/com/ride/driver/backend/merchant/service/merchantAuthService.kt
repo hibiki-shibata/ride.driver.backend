@@ -13,6 +13,7 @@ import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.merchant.mapper.toAccessTokenClaim
+import com.ride.driver.backend.merchant.mapper.toRefreshTokenClaim
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
@@ -44,7 +45,10 @@ class MerchantAuthService(
             )
         )
         logger.info("event=merchant_signup_completed consumerId={}", savedMerchant.id)
-        return jwtTokenService.generateAccessTokenAndRefreshToken(savedMerchant.toAccessTokenClaim())
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
+            accessTokenClaim = savedMerchant.toAccessTokenClaim(),
+            refreshTokenClaim = savedMerchant.toRefreshTokenClaim()
+         )
     }
 
     fun loginMerchant(
@@ -58,6 +62,9 @@ class MerchantAuthService(
         )        
         if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password")
         logger.info("event=merchant_login_completed consumerId={}", savedMerchant.id)
-        return jwtTokenService.generateAccessTokenAndRefreshToken(savedMerchant.toAccessTokenClaim())
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
+            accessTokenClaim = savedMerchant.toAccessTokenClaim(),
+            refreshTokenClaim = savedMerchant.toRefreshTokenClaim()
+         )
     }
 }

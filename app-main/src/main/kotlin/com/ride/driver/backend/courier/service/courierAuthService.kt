@@ -11,6 +11,7 @@ import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
 import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
+import com.ride.driver.backend.courier.mapper.toRefreshTokenClaim
 import com.ride.driver.backend.courier.mapper.toCourierProfileResDto
 import com.ride.driver.backend.courier.mapper.toAccessTokenClaim
 import com.ride.driver.backend.shared.model.Coordinate
@@ -46,7 +47,10 @@ class CourierAuthService(
             )
         )
         logger.info("event=courier_signup_completed courierId={}", savedCourier.id)     
-        return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toAccessTokenClaim())
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
+            accessTokenClaim = savedCourier.toAccessTokenClaim(),
+            refreshTokenClaim = savedCourier.toRefreshTokenClaim()
+        )
     }
 
     fun loginCourier(req: CourierLoginDTO): JwtTokensDTO {
@@ -58,6 +62,9 @@ class CourierAuthService(
             )
         if (!isPasswordValid) throw IncorrectPasswordException("Incorrect password provided")
         logger.info("event=courier_login_completed courierId={}", savedCourier.id)     
-        return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toAccessTokenClaim())
+        return jwtTokenService.generateAccessTokenAndRefreshToken(
+            accessTokenClaim = savedCourier.toAccessTokenClaim(),
+            refreshTokenClaim = savedCourier.toRefreshTokenClaim()
+        )
     }
 }
