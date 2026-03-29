@@ -12,8 +12,9 @@ import org.springframework.beans.factory.annotation.Value
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
-import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
+import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 
 @Service
 open class JwtTokenService(
@@ -73,7 +74,7 @@ open class JwtTokenService(
         return AccessTokenClaim(
             accountId = UUID.fromString(claims["accountId"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
             accountName = claims.subject ?: throw InvalidJwtTokenException("Account name not found in token"),
-            accountRoles = (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
+            accountRoles = (claims["accountRoles"] as List<AccountRoles>).map { AccountRoles.valueOf(it.toString()) }
         )
     }
 
@@ -95,7 +96,8 @@ open class JwtTokenService(
         val claims = extractAllClaims(token)
         return RefreshTokenClaim(
             accountId = UUID.fromString(claims["accountId"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
-            serviceType = claims["serviceType"]?.toString() ?: throw InvalidJwtTokenException("Service type not found in token")
+            serviceType = claims["serviceType"] as ServiceType ?: throw InvalidJwtTokenException("Service type is not found in token")
+            // type enum service
         )
     }
 
