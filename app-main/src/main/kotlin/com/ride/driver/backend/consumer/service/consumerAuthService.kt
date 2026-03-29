@@ -61,7 +61,6 @@ class ConsumerAuthService(
         return jwtTokenService.generateAccessTokenAndRefreshToken(savedConsumer.toTokenClaims())
     }
 
-    @Transactional
     fun refreshToken(
         req: TokenRefreshDTO,
     ): JwtTokensDTO{

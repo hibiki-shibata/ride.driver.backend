@@ -7,8 +7,9 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import jakarta.validation.Valid
-import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
+import com.ride.driver.backend.logistic.model.Task
+import com.ride.driver.backend.logistic.mapper.toTaskDataDTO
 import com.ride.driver.backend.logistic.service.LogisticsService
 import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
@@ -27,20 +28,6 @@ class MerchantTaskController (
             merchantId = merchantDetails.accountId,
             taskId = taskStatusActionDTO.taskId
         )
-        return ResponseEntity.ok(
-            TaskDataDTO(
-                taskId = updatedTask.id.toString(),
-                consumerName = updatedTask.consumerProfile?.name ?: "Unknown Consumer",
-                consumerEmailaddress = updatedTask.consumerProfile?.emailAddress ?: "Unknown Phone Number",
-                pickupAddress = updatedTask.merchantProfile?.merchantAddress ?: "Unknown Pickup Address",
-                pickupLatitude = updatedTask.merchantProfile?.merchantAddressCoordinate?.latitude ?: 0.0,
-                pickupLongitude = updatedTask.merchantProfile?.merchantAddressCoordinate?.longitude ?: 0.0,
-                dropoffAddress = updatedTask.consumerProfile?.consumerAddress ?: "Unknown Dropoff Address",
-                dropoffLatitude = updatedTask.consumerProfile?.consumerAddressCoordinate?.latitude ?: 0.0,
-                dropoffLongitude = updatedTask.consumerProfile?.consumerAddressCoordinate?.longitude ?: 0.0,
-                itemNames = updatedTask.orderedItems.map { it.name },
-                totalPrice = updatedTask.totalPrice
-            )
-        )
+        return ResponseEntity.ok(updatedTask.toTaskDataDTO())
     }  
 }    
