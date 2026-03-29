@@ -42,16 +42,16 @@ class JwtFilter(
             filterChain.doFilter(request, response) // Let it pass through and eventually be caught by Spring Security's exception handling for unauthenticated access
             return
         }
-        val AccessTokenClaim: AccessTokenClaim = jwtTokenService.extractAccessTokenClaim(jwtToken)
+        val accessTokenClaim: AccessTokenClaim = jwtTokenService.extractAccessTokenClaim(jwtToken)
         val authentication = UsernamePasswordAuthenticationToken(
-            AccessTokenClaim, // principal
+            accessTokenClaim, // principal
             null, // No credentials, I use JWT auth instead
-            AccessTokenClaim.accountRoles.map { SimpleGrantedAuthority(it.name) }
+            accessTokenClaim.accountRoles.map { SimpleGrantedAuthority(it.name) }
         ).apply {
             details = WebAuthenticationDetailsSource().buildDetails(request) // Add web details(e.g. IP, session info)
         }
         SecurityContextHolder.getContext().authentication = authentication // Set the authentication in the security context
-        logger.debug("Authenticated request for account ID ${AccessTokenClaim.accountId}, Request URI: ${request.requestURI}")
+        logger.debug("event=authentication_successful accountId={} roles={}", accessTokenClaim.accountId, accessTokenClaim.accountRoles.joinToString(","))
         filterChain.doFilter(request, response)
     }
 

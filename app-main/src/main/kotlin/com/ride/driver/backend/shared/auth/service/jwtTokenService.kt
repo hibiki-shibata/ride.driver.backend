@@ -78,6 +78,15 @@ open class JwtTokenService(
         )
     }
 
+    fun extractRefreshTokenClaim(token: String): RefreshTokenClaim {
+        val claims = extractAllClaims(token)
+        return RefreshTokenClaim(
+            accountId = UUID.fromString(claims["accountId"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
+            serviceType = claims["serviceType"] as ServiceType ?: throw InvalidJwtTokenException("Service type is not found in token")
+            // type enum service
+        )
+    }    
+
     fun extractAccountName(token: String): String {
         return extractAllClaims(token).subject ?: throw InvalidJwtTokenException("Account name not found in token")
     }
@@ -90,15 +99,6 @@ open class JwtTokenService(
     fun extractAccountRoles(token: String): List<AccountRoles> {
         val claims = extractAllClaims(token)
         return (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
-    }
-
-    fun extractRefreshTokenClaim(token: String): RefreshTokenClaim {
-        val claims = extractAllClaims(token)
-        return RefreshTokenClaim(
-            accountId = UUID.fromString(claims["accountId"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
-            serviceType = claims["serviceType"] as ServiceType ?: throw InvalidJwtTokenException("Service type is not found in token")
-            // type enum service
-        )
     }
 
     private fun extractAllClaims(token: String): Claims {
