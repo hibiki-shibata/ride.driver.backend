@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.http.ResponseEntity
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.merchant.service.MerchantAuthService
 import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
@@ -36,5 +37,11 @@ class MerchantAuthController(
         logger.info("event=merchant_login_request_received")
         val jwtTokens: JwtTokensDTO = merchantAuthService.loginMerchant(req)
         return ResponseEntity.ok(jwtTokens)
+    }
+
+    @PostMapping("auth/refresh-token")
+    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokensDTO> {
+        val newJwtTokens: JwtTokensDTO = merchantAuthService.refreshToken(req)
+        return ResponseEntity.ok(newJwtTokens)
     }
 }

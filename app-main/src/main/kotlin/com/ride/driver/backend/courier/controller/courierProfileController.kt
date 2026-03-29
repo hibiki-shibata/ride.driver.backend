@@ -56,7 +56,7 @@ class CourierProfileController (
         val updatedProfile: CourierProfileResDTO = courierProfileService.updateCourierLocation(
             courierDetails = courierDetails,
             newCurrentLocation = currentLocation
-)
+        )
         return ResponseEntity.ok().build()
     }    
 
