@@ -40,7 +40,7 @@ class LogisticsService(
     fun pollTask(courierDetails: AccessTokenClaim): TaskDataDTO? {
         val savedTask: Task = taskRepository.findByCourierProfile_IdAndTaskStatus(
                 courierDetails.accountId, 
-                TaskStatus.READY_FOR_ASSIGNMENT
+                TaskStatus.ASSIGNED_TO_COURIER
         ).firstOrNull() ?: return null
         return savedTask.toTaskDataDTO()
     }
@@ -75,7 +75,7 @@ class LogisticsService(
     }
 
     @Transactional
-    fun mxMarkAsReadyToDeliver(
+    fun readyForAssignment(
         taskStatusActionDTO: TaskStatusActionDTO,
         merchantDetails: AccessTokenClaim
     ): TaskDataDTO {
@@ -84,22 +84,22 @@ class LogisticsService(
             merchantDetails.accountId,
             TaskStatus.CREATED
         ) ?: throw TaskNotFoundException("Task not found with ID: ${taskStatusActionDTO.taskId} for the given merchant")        
-        val updatedAssignedTask: Task = taskRepository.save(
+        val updatedTask: Task = taskRepository.save(
             savedTask.apply { taskStatus = TaskStatus.READY_FOR_ASSIGNMENT }
         )
         logger.info("event=merchant_mark_task_ready_completed merchantId={} taskId={}", merchantDetails.accountId, taskStatusActionDTO.taskId)
-        return updatedAssignedTask.toTaskDataDTO()
+        return updatedTask.toTaskDataDTO()
     }
 
     @Transactional
-    fun cpAcceptTask(
+    fun acceptReadyForAssignmentTask(
         taskStatusActionDTO: TaskStatusActionDTO,
         courierDetails: AccessTokenClaim
     ): TaskDataDTO {
         val assignedTask: Task = taskRepository.findByIdAndCourierProfile_IdAndTaskStatus(
                 UUID.fromString(taskStatusActionDTO.taskId),
                 courierDetails.accountId,
-                TaskStatus.READY_FOR_ASSIGNMENT
+                TaskStatus.ASSIGNED_TO_COURIER
         ) ?: throw TaskNotFoundException("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
         val updatedAssignedTask: Task = taskRepository.save(
             assignedTask.apply { taskStatus = TaskStatus.IN_PICKUP }
@@ -109,7 +109,7 @@ class LogisticsService(
     }
 
     @Transactional
-    fun completePickup(
+    fun completePickupTask(
         taskStatusActionDTO: TaskStatusActionDTO,
         courierDetails: AccessTokenClaim
     ): TaskDataDTO {
@@ -126,7 +126,7 @@ class LogisticsService(
     }
 
     @Transactional
-    fun completeDropOff(
+    fun completeDropOffTask(
         taskStatusActionDTO: TaskStatusActionDTO,
         courierDetails: AccessTokenClaim
     ): TaskDataDTO {

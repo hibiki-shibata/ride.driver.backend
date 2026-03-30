@@ -37,7 +37,7 @@ class CourierTaskController (
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         logger.info("event=courier_accept_task_request_received courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
-        val updatedTask: TaskDataDTO = logisticsService.cpAcceptTask(
+        val updatedTask: TaskDataDTO = logisticsService.acceptReadyForAssignmentTask(
             taskStatusActionDTO = taskStatusActionDTO,
             courierDetails = courierDetails
         )
@@ -50,7 +50,7 @@ class CourierTaskController (
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         logger.info("event=courier_complete_pickup_request_received courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
-        val updatedTask: TaskDataDTO = logisticsService.completePickup(
+        val updatedTask: TaskDataDTO = logisticsService.completePickupTask(
             taskStatusActionDTO = taskStatusActionDTO,
             courierDetails = courierDetails
         )
@@ -63,7 +63,7 @@ class CourierTaskController (
         @AuthenticationPrincipal courierDetails: AccessTokenClaim        
     ): ResponseEntity<TaskDataDTO> {
         logger.info("event=courier_complete_dropoff_request_received courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
-        val updatedTask: TaskDataDTO = logisticsService.completeDropOff(
+        val updatedTask: TaskDataDTO = logisticsService.completeDropOffTask(
          taskStatusActionDTO = taskStatusActionDTO,
          courierDetails = courierDetails
         )

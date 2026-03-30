@@ -23,16 +23,30 @@ public class ScheduledTasks (
 	@Scheduled(fixedRate = 3000, initialDelay = 1000) // Run every 3 seconds with an initial delay of 5 seconds
     @Transactional
     public fun assignCpToTask() {
-        val availableTasks: List<Task> = taskRepository.findByTaskStatus(TaskStatus.READY_FOR_ASSIGNMENT)
-        val onlineCouriers: List<CourierProfile> = courierProfileRepository.findByCpStatus(CourierStatus.ONLINE)
-        var shuffledCourierProfiles: List<CourierProfile?> = onlineCouriers.shuffled()
+        val cpRequiredTasks: List<Task> = taskRepository.findByTaskStatus(
+            listOf(TaskStatus.ASSIGNED_TO_COURIER, TaskStatus.READY_FOR_ASSIGNMENT)
+        )
+        var shuffledOnlineCouriers: List<CourierProfile> = courierProfileRepository.findByCpStatus(CourierStatus.ONLINE).shuffled()
 
-        for (task in availableTasks) {
-            val assignedCourierProfile: CourierProfile = shuffledCourierProfiles.firstOrNull() ?: return // No more couriers available
-            task.courierProfile = assignedCourierProfile
-            taskRepository.save(task)
-            shuffledCourierProfiles = shuffledCourierProfiles.drop(1) // Remove the assigned courier from the list
-        }
-        logger.info("event=scheduled_task_assignment_completed assignedTasksCount={} availableTasksCount={} onlineCouriersCount={}", availableTasks.size, availableTasks.size, onlineCouriers.size)
+        for (task in cpRequiredTasks) {
+            val randomOnlineCourier: CourierProfile? = shuffledOnlineCouriers.firstOrNull()
+            if (randomOnlineCourier == null) {
+                logger.info("event=no_available_courier_for_task taskId={}", task.id)
+                updateTaskStatusAndCourier(task, TaskStatus.READY_FOR_ASSIGNMENT, null)
+                continue
+            }
+            updateTaskStatusAndCourier(task, TaskStatus.ASSIGNED_TO_COURIER, randomOnlineCourier)
+            shuffledOnlineCouriers = shuffledOnlineCouriers.drop(1) // Remove the assigned courier from the list
+        }            
+        logger.info("event=scheduled_task_assignment_completedavailableTasksCount={}", cpRequiredTasks.size)
+    }
+
+    private fun updateTaskStatusAndCourier(task: Task,  taskStatus: TaskStatus, courierProfile: CourierProfile?): Task {
+        return taskRepository.save(
+            task.apply {
+                this.courierProfile = courierProfile
+                this.taskStatus = taskStatus
+            }
+        )
     }
 }
