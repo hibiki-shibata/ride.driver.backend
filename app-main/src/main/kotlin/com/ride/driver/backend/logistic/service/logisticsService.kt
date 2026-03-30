@@ -25,6 +25,7 @@ import com.ride.driver.backend.merchant.model.MerchantItem
 import com.ride.driver.backend.merchant.model.MerchantProfile
 import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
+import com.ride.driver.backend.shared.exception.TaskNotFoundException
 
 @Service
 class LogisticsService(
@@ -78,11 +79,11 @@ class LogisticsService(
         taskStatusActionDTO: TaskStatusActionDTO,
         merchantDetails: AccessTokenClaim
     ): TaskDataDTO {
-        val savedTask: Task = taskRepository.findByIdAndTaskStatus(
+        val savedTask: Task = taskRepository.findByIdAndMerchantProfile_IdAndTaskStatus(
             UUID.fromString(taskStatusActionDTO.taskId),
+            merchantDetails.accountId,
             TaskStatus.CREATED
-        ).firstOrNull() ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} in CREATED status")
-        if (savedTask.merchantProfile.id != merchantDetails.accountId) throw Exception("Task does not belong to the merchant")
+        ) ?: throw TaskNotFoundException("Task not found with ID: ${taskStatusActionDTO.taskId} for the given merchant")        
         savedTask.taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
         val updatedAssignedTask: Task = taskRepository.save(savedTask)
         logger.info("event=merchant_mark_task_ready_completed merchantId={} taskId={}", merchantDetails.accountId, taskStatusActionDTO.taskId)
@@ -94,11 +95,11 @@ class LogisticsService(
         taskStatusActionDTO: TaskStatusActionDTO,
         courierDetails: AccessTokenClaim
     ): TaskDataDTO {
-        val assignedTask: Task = taskRepository.findByCourierProfile_IdAndTaskStatus(
+        val assignedTask: Task = taskRepository.findByIdAndCourierProfile_IdAndTaskStatus(
+                UUID.fromString(taskStatusActionDTO.taskId),
                 courierDetails.accountId,
                 TaskStatus.READY_FOR_ASSIGNMENT
-        ).firstOrNull() ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
-        if (assignedTask.id.toString() != taskStatusActionDTO.taskId) return throw Exception("Task ID does not match the assigned task for this courier")
+        ) ?: throw TaskNotFoundException("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
         assignedTask.taskStatus = TaskStatus.IN_PICKUP
         val updatedAssignedTask: Task = taskRepository.save(assignedTask)
         logger.info("event=courier_accept_task_completed courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
@@ -110,11 +111,11 @@ class LogisticsService(
         taskStatusActionDTO: TaskStatusActionDTO,
         courierDetails: AccessTokenClaim
     ): TaskDataDTO {
-        val assignedTask: Task = taskRepository.findByCourierProfile_IdAndTaskStatus(
+        val assignedTask: Task = taskRepository.findByIdAndCourierProfile_IdAndTaskStatus(
+                UUID.fromString(taskStatusActionDTO.taskId),
                 courierDetails.accountId,
                 TaskStatus.IN_PICKUP
-        ).firstOrNull() ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
-        if (assignedTask.id.toString() != taskStatusActionDTO.taskId) throw Exception("Task ID does not match the assigned task for this courier")
+        )?: throw TaskNotFoundException("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
         assignedTask.taskStatus = TaskStatus.IN_DROPOFF
         val updatedAssignedTask: Task = taskRepository.save(assignedTask)
         logger.info("event=courier_complete_pickup_completed courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
@@ -126,11 +127,12 @@ class LogisticsService(
         taskStatusActionDTO: TaskStatusActionDTO,
         courierDetails: AccessTokenClaim
     ): TaskDataDTO {
-        val assignedTask: Task = taskRepository.findByConsumerProfile_IdAndTaskStatus(
+        val assignedTask: Task = taskRepository.findByIdAndCourierProfile_IdAndTaskStatus(
+                UUID.fromString(taskStatusActionDTO.taskId),
                 courierDetails.accountId,
                 TaskStatus.IN_DROPOFF
-        ).firstOrNull() ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
-        if (assignedTask.id.toString() != taskStatusActionDTO.taskId) return throw Exception("Task ID does not match the assigned task for this courier")
+        ) ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
+    
         assignedTask.taskStatus = TaskStatus.DELIVERED
         val updatedAssignedTask: Task = taskRepository.save(assignedTask)
         logger.info("event=courier_complete_dropoff_completed courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
