@@ -1,6 +1,8 @@
 package com.ride.driver.backend.logistic.service
 
 import java.util.UUID
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -16,6 +18,8 @@ public class ScheduledTasks (
     private val courierProfileRepository: CourierProfileRepository,
     private val taskRepository: TaskRepository
 ){
+    private val logger: Logger = LoggerFactory.getLogger(ScheduledTasks::class.java)
+
 	@Scheduled(fixedRate = 3000, initialDelay = 1000) // Run every 3 seconds with an initial delay of 5 seconds
     @Transactional
     public fun assignCpToTask() {
@@ -29,5 +33,6 @@ public class ScheduledTasks (
             taskRepository.save(task)
             shuffledCourierProfiles = shuffledCourierProfiles.drop(1) // Remove the assigned courier from the list
         }
+        logger.info("event=scheduled_task_assignment_completed assignedTasksCount={} availableTasksCount={} onlineCouriersCount={}", availableTasks.size, availableTasks.size, onlineCouriers.size)
     }
 }
