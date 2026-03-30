@@ -12,6 +12,7 @@ import java.util.UUID
 
 @Repository
 interface TaskRepository: JpaRepository<Task, UUID> {
+   fun findByIdAndTaskStatus(id: UUID, taskStatus: TaskStatus): List<Task>
    fun findByConsumerProfile_Id(consumerProfileId: UUID): List<Task>
    fun findByCourierProfile_Id(courierProfileId: UUID): List<Task>
    fun findByMerchantProfile_Id(merchantProfileId: UUID): List<Task>
