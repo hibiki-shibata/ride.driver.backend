@@ -21,6 +21,6 @@ interface TaskRepository: JpaRepository<Task, UUID> {
    fun findByCourierProfile_IdAndTaskStatus(courierProfileId: UUID, taskStatus: TaskStatus): List<Task>
    // fun findByConsumerProfile_IdAndTaskStatus(consumerProfileId: UUID, taskStatus: TaskStatus): List<Task>
    // fun findByMerchantProfile_IdAndTaskStatus(merchantProfileId: UUID, taskStatus: TaskStatus): List<Task>
-   fun findByTaskStatus(taskStatus: List<TaskStatus>): List<Task>
+   fun findByTaskStatusIn(taskStatus: List<TaskStatus>): List<Task>
    override fun findAll(pageable: Pageable): Page<Task>
 }
