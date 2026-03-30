@@ -10,7 +10,7 @@ import java.util.UUID
 
 @Repository
 open interface MerchantItemRepository : JpaRepository<MerchantItem, UUID> {
-   fun findByMerchantProfile_Id(merchantProfileId: UUID): List<MerchantItem?>
-   fun findByName(name: String): List<MerchantItem?>
+   fun findByMerchantProfile_Id(merchantProfileId: UUID): List<MerchantItem>
+   fun findByName(name: String): List<MerchantItem>
    override fun findAll(pageable: Pageable): Page<MerchantItem>
 }

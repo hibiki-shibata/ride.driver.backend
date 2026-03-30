@@ -35,7 +35,7 @@ import com.ride.driver.backend.merchant.model.MerchantProfile
     ]
 )
 
-data class Task(
+class Task(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)
@@ -45,7 +45,7 @@ data class Task(
     val totalPrice: Double = 0.0,
 
     @Column(name = "courier_earning", nullable = false)
-    val courierEarning: Double = 0.0,
+    var courierEarning: Double = 0.0,
 
     @Column(name = "order_time", nullable = false)
     val orderTime: Long = System.currentTimeMillis(),
@@ -56,7 +56,7 @@ data class Task(
     // @JoinColumn(name = "courier_profile", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courier_profile", nullable = true, referencedColumnName = "id")
-    val courierProfile: CourierProfile? = null,
+    var courierProfile: CourierProfile? = null,
     
     // @JoinColumn(name = "consumer_profile", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -71,7 +71,7 @@ data class Task(
 
     @Enumerated(EnumType.STRING)
     @Column(name = "task_status", nullable = false)
-    val taskStatus: TaskStatus,
+    var taskStatus: TaskStatus,
 
     @OneToMany(cascade = [CascadeType.ALL], orphanRemoval = true)
     @JoinColumn(name = "task_id", nullable = false)

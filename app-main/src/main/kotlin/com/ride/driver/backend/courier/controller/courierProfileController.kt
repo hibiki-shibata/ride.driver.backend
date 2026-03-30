@@ -76,9 +76,9 @@ class CourierProfileController (
     @GetMapping("/history")
     fun getTaskHistory(
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
-    ): ResponseEntity<List<CourierTaskHistoryDTO>> {
+    ): ResponseEntity<List<CourierTaskHistoryDTO?>> {
         logger.info("event=courier_taskHistory_request_received courierId={}", courierDetails.accountId)        
-        val courierTaskHistory: List<CourierTaskHistoryDTO> = courierProfileService.getCourierOrderHistory(courierDetails = courierDetails)
+        val courierTaskHistory: List<CourierTaskHistoryDTO?> = courierProfileService.getCourierOrderHistory(courierDetails = courierDetails)
         return ResponseEntity.ok(courierTaskHistory)
     }
 }

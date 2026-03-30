@@ -71,10 +71,10 @@ class MerchantProfileService (
 
     fun getMerchantOrderHistory(
         merchantDetails: AccessTokenClaim
-    ): List<MerchantOrderHistoryDTO> {
-        val taskHistory: List<Task> = taskRepository.findByMerchantProfile_Id(merchantDetails.accountId).sortedByDescending { it.orderTime }
+    ): List<MerchantOrderHistoryDTO?> {
+        val taskHistory: List<Task?> = taskRepository.findByMerchantProfile_Id(merchantDetails.accountId).sortedByDescending { it?.orderTime }
         logger.info("event=merchant_orderHistory_fetched merchantId={}", merchantDetails.accountId)
-        return taskHistory.map {it.toMerchantOrderHistoryDto()}
+        return taskHistory.map {it?.toMerchantOrderHistoryDto()}
     }
 
     private fun getMerchantProfileById(merchantId: UUID): MerchantProfile {

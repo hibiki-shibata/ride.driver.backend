@@ -28,8 +28,8 @@ import java.util.UUID
 
 interface ConsumerProfileRepository : JpaRepository<ConsumerProfile, UUID> {
     fun existsByEmailAddress(emailAddress: String): Boolean
-    fun findByEmailAddress(emailAddress: String): ConsumerProfile?
-    fun findByEmailAddressIgnoreCase(emailAddress: String): ConsumerProfile?
+    fun findByEmailAddress(emailAddress: String): ConsumerProfile
+    fun findByEmailAddressIgnoreCase(emailAddress: String): ConsumerProfile
    //  fun findAllByEmailAddress(emailAddress: String, pageable: Pageable): Page<ConsumerProfile>
 }
 

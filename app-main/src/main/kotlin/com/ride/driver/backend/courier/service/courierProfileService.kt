@@ -85,10 +85,10 @@ class CourierProfileService(
 
     fun getCourierOrderHistory(
         courierDetails: AccessTokenClaim
-    ): List<CourierTaskHistoryDTO> {
-        val taskHistories: List<Task> = taskRepository.findByCourierProfile_Id(courierDetails.accountId)
+    ): List<CourierTaskHistoryDTO?> {
+        val taskHistories: List<Task> = taskRepository.findByCourierProfile_Id(courierDetails.accountId) ?: emptyList()
         logger.info("event=courier_orderHistory_fetched_courierId={}", courierDetails.accountId)
-        return taskHistories.map { it.toCourierTaskHistoryDto() }
+        return taskHistories.map { it?.toCourierTaskHistoryDto() }
     }
 
     private fun getCourierProfileById(courierId: UUID): CourierProfile {

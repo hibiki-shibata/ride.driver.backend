@@ -24,7 +24,7 @@ import jakarta.persistence.FetchType
     ]
 )
 
-data class OrderedItem(
+class OrderedItem(
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false, unique = true)

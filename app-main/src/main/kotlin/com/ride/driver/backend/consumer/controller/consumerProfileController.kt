@@ -48,9 +48,9 @@ class ConsumerProfileController (
     @GetMapping("/order/history")
     fun getConsumerOrderHistory(
         @AuthenticationPrincipal consumerDetails: AccessTokenClaim
-    ): ResponseEntity<List<ConsumerOrderHistoryDTO>> {      
+    ): ResponseEntity<List<ConsumerOrderHistoryDTO?>> {      
         logger.info("event=consumer_order_history_request_received consumerId={}", consumerDetails.accountId)
-        val consumerOrderHistory: List<ConsumerOrderHistoryDTO> = consumerProfileService.getConsumerOrderHistory(consumerDetails)
+        val consumerOrderHistory: List<ConsumerOrderHistoryDTO?> = consumerProfileService.getConsumerOrderHistory(consumerDetails)
         return ResponseEntity.ok(consumerOrderHistory)
     }         
 }

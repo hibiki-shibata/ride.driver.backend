@@ -22,7 +22,7 @@ class MerchantTaskController (
         @RequestBody @Valid taskStatusActionDTO: TaskStatusActionDTO,
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
-        val updatedTask: TaskDataDTO = logisticsService.markTaskAsReadyForAssignment(
+        val updatedTask: TaskDataDTO = logisticsService.mxMarkAsReadyToDeliver(
             taskStatusActionDTO = taskStatusActionDTO,
             merchantDetails = merchantDetails
         )

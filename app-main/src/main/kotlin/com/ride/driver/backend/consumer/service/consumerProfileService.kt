@@ -58,11 +58,11 @@ class ConsumerProfileService(
         }
     }
 
-    fun getConsumerOrderHistory(consumerDetails: AccessTokenClaim): List<ConsumerOrderHistoryDTO> {
-        val taskHistories: List<Task> = taskRepository.findByConsumerProfile_Id(consumerDetails.accountId)
+    fun getConsumerOrderHistory(consumerDetails: AccessTokenClaim): List<ConsumerOrderHistoryDTO?> {
+        val taskHistories: List<Task> = taskRepository.findByConsumerProfile_Id(consumerDetails.accountId) ?: emptyList()
         logger.info(
             "event=consumer_order_history_fetched consumerId={} totalOrders={}", consumerDetails.accountId, taskHistories.size
         )
-        return taskHistories.map { it.toConsumerOrderHistoryDto()}
+        return taskHistories.map { it?.toConsumerOrderHistoryDto()}
     }
 }

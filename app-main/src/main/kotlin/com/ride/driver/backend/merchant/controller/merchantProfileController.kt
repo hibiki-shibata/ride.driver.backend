@@ -62,9 +62,9 @@ class MerchantProfileController (
     @GetMapping("/orders/history")
     fun getMerchantOrderHistory(
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
-    ): ResponseEntity<List<MerchantOrderHistoryDTO>> {
+    ): ResponseEntity<List<MerchantOrderHistoryDTO?>> {
         logger.info("event=merchant_orderHistory_request_received merchantId={}", merchantDetails.accountId)
-        val merchantOrderHistory: List<MerchantOrderHistoryDTO> = merchantProfileService.getMerchantOrderHistory(merchantDetails) 
+        val merchantOrderHistory: List<MerchantOrderHistoryDTO?> = merchantProfileService.getMerchantOrderHistory(merchantDetails) 
         return ResponseEntity.ok(merchantOrderHistory)
     } 
  } 
