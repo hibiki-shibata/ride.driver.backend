@@ -84,8 +84,9 @@ class LogisticsService(
             merchantDetails.accountId,
             TaskStatus.CREATED
         ) ?: throw TaskNotFoundException("Task not found with ID: ${taskStatusActionDTO.taskId} for the given merchant")        
-        savedTask.taskStatus = TaskStatus.READY_FOR_ASSIGNMENT
-        val updatedAssignedTask: Task = taskRepository.save(savedTask)
+        val updatedAssignedTask: Task = taskRepository.save(
+            savedTask.apply { taskStatus = TaskStatus.READY_FOR_ASSIGNMENT }
+        )
         logger.info("event=merchant_mark_task_ready_completed merchantId={} taskId={}", merchantDetails.accountId, taskStatusActionDTO.taskId)
         return updatedAssignedTask.toTaskDataDTO()
     }
@@ -100,8 +101,9 @@ class LogisticsService(
                 courierDetails.accountId,
                 TaskStatus.READY_FOR_ASSIGNMENT
         ) ?: throw TaskNotFoundException("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
-        assignedTask.taskStatus = TaskStatus.IN_PICKUP
-        val updatedAssignedTask: Task = taskRepository.save(assignedTask)
+        val updatedAssignedTask: Task = taskRepository.save(
+            assignedTask.apply { taskStatus = TaskStatus.IN_PICKUP }
+        )
         logger.info("event=courier_accept_task_completed courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
         return updatedAssignedTask.toTaskDataDTO()
     }
@@ -116,8 +118,9 @@ class LogisticsService(
                 courierDetails.accountId,
                 TaskStatus.IN_PICKUP
         )?: throw TaskNotFoundException("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
-        assignedTask.taskStatus = TaskStatus.IN_DROPOFF
-        val updatedAssignedTask: Task = taskRepository.save(assignedTask)
+        val updatedAssignedTask: Task = taskRepository.save(
+            assignedTask.apply { taskStatus = TaskStatus.IN_DROPOFF }
+        )
         logger.info("event=courier_complete_pickup_completed courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
         return updatedAssignedTask.toTaskDataDTO()
     }
@@ -132,9 +135,9 @@ class LogisticsService(
                 courierDetails.accountId,
                 TaskStatus.IN_DROPOFF
         ) ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
-    
-        assignedTask.taskStatus = TaskStatus.DELIVERED
-        val updatedAssignedTask: Task = taskRepository.save(assignedTask)
+        val updatedAssignedTask: Task = taskRepository.save(
+            assignedTask.apply { taskStatus = TaskStatus.DELIVERED }
+        )
         logger.info("event=courier_complete_dropoff_completed courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
         return updatedAssignedTask.toTaskDataDTO()
     }
