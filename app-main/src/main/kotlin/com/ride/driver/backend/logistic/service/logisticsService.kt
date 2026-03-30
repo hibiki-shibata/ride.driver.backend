@@ -1,7 +1,10 @@
 package com.ride.driver.backend.logistic.service
 
 import java.util.UUID
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus
 import com.ride.driver.backend.courier.model.OperationArea
@@ -31,12 +34,15 @@ class LogisticsService(
     private val merchantMenuItemRepository: MerchantItemRepository,
     private val taskRepository: TaskRepository
 ){
-    fun pollForTask(consumerDetails: AccessTokenClaim): TaskDataDTO? {
+    private val logger: Logger = LoggerFactory.getLogger(LogisticsService::class.java)
+
+    fun cpPollTask(consumerDetails: AccessTokenClaim): TaskDataDTO? {
         val savedTask: Task = taskRepository.findByCourierProfile_IdAndTaskStatus(consumerDetails.accountId, TaskStatus.READY_FOR_ASSIGNMENT).firstOrNull() 
             ?: return null
         return savedTask.toTaskDataDTO()
     }
 
+    @Transactional
     fun createTask(
         createTaskDTO: CreateTaskDTO,
         consumerDetails: AccessTokenClaim
@@ -64,6 +70,7 @@ class LogisticsService(
         return createdTask.toTaskDataDTO()
     }
 
+    @Transactional
     fun mxMarkAsReadyToDeliver(
         taskStatusActionDTO: TaskStatusActionDTO,
         merchantDetails: AccessTokenClaim
@@ -79,32 +86,33 @@ class LogisticsService(
         return updatedAssignedTask.toTaskDataDTO()
     }
 
+    @Transactional
     fun cpAcceptTask(
         taskStatusActionDTO: TaskStatusActionDTO,
         courierDetails: AccessTokenClaim
     ): TaskDataDTO {
-        val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierDetails.accountId).firstOrNull()
+        val assignedTask: Task = taskRepository.findByCourierProfile_IdAndTaskStatus(courierDetails.accountId, TaskStatus.READY_FOR_ASSIGNMENT).firstOrNull()
             ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
         if (assignedTask.id.toString() != taskStatusActionDTO.taskId) return throw Exception("Task ID does not match the assigned task for this courier")
-        if (assignedTask.taskStatus != TaskStatus.READY_FOR_ASSIGNMENT) return throw Exception("Cannot accept task that is not in READY_FOR_ASSIGNMENT status")
         assignedTask.taskStatus = TaskStatus.IN_PICKUP
         val updatedAssignedTask: Task = taskRepository.save(assignedTask)
         return updatedAssignedTask.toTaskDataDTO()
     }
 
+    @Transactional
     fun completePickup(
         taskStatusActionDTO: TaskStatusActionDTO,
         courierDetails: AccessTokenClaim
     ): TaskDataDTO {
-        val assignedTask: Task = taskRepository.findByCourierProfile_Id(courierDetails.accountId).firstOrNull()
+        val assignedTask: Task = taskRepository.findByCourierProfile_IdAndTaskStatus(courierDetails.accountId, TaskStatus.IN_PICKUP).firstOrNull()
             ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
         if (assignedTask.id.toString() != taskStatusActionDTO.taskId) throw Exception("Task ID does not match the assigned task for this courier")
-        if (assignedTask.taskStatus != TaskStatus.IN_PICKUP) throw Exception("Cannot complete pickup for task that is not in IN_PICKUP status")
         assignedTask.taskStatus = TaskStatus.IN_DROPOFF
         val updatedAssignedTask: Task = taskRepository.save(assignedTask)
         return updatedAssignedTask.toTaskDataDTO()
     }
 
+    @Transactional
     fun completeDropOff(
         taskStatusActionDTO: TaskStatusActionDTO,
         courierDetails: AccessTokenClaim
@@ -112,7 +120,6 @@ class LogisticsService(
         val assignedTask: Task = taskRepository.findByConsumerProfile_IdAndTaskStatus(courierDetails.accountId, TaskStatus.IN_DROPOFF).firstOrNull()
             ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
         if (assignedTask.id.toString() != taskStatusActionDTO.taskId) return throw Exception("Task ID does not match the assigned task for this courier")
-        if (assignedTask.taskStatus != TaskStatus.IN_DROPOFF) return throw Exception("Cannot complete dropoff for task that is not in IN_DROPOFF status")
         assignedTask.taskStatus = TaskStatus.DELIVERED
         val updatedAssignedTask: Task = taskRepository.save(assignedTask)
         return updatedAssignedTask.toTaskDataDTO()

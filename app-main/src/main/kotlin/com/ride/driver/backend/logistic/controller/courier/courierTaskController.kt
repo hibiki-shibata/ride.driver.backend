@@ -22,7 +22,7 @@ class CourierTaskController (
     fun pollCurrentTask(
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
-        val assignedTask: TaskDataDTO? = logisticsService.pollForTask(courierDetails)
+        val assignedTask: TaskDataDTO? = logisticsService.cpPollTask(courierDetails)
         return ResponseEntity.ok(assignedTask)
     }
 
