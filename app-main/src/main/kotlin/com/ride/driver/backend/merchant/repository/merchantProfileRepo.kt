@@ -11,7 +11,7 @@ import java.util.UUID
 @Repository
 open interface MerchantProfileRepository : JpaRepository<MerchantProfile, UUID> {
    fun existsByPhoneNumber(phoneNumber: String): Boolean
-   fun findByPhoneNumber(phoneNumber: String): MerchantProfile
+   fun findByPhoneNumber(phoneNumber: String): MerchantProfile?
    fun findByMerchantStatus(merchantStatus: String): List<MerchantProfile>
    fun findByName(merchantName: String): List<MerchantProfile>
 }
