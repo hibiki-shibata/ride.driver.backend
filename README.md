@@ -48,7 +48,9 @@ You can use command `make help` to learn simplified CLI ops.
 - <file_name>.plane.jar is complied file without mainClass
 - <file_name>.jar is complied file with mainClass
 
-### Flyway control
+
+## Flyway control
+--memo--
 - Flyway is responsible only for DB migration - Create tables or stuffs.
 - Spring JPA is reading @Entity or @Table stuffs, to validate and use ORM
 - Data type of columns in SQL have to be corresponding to the data type of model Entities - JPA valdate it.
