@@ -2,6 +2,7 @@ package com.ride.driver.backend.courier.controller
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestBody
@@ -45,6 +46,15 @@ class CourierProfileController (
             courierDetails = courierDetails
         )
         return ResponseEntity.ok(updatedProfile)
+    }
+
+    @DeleteMapping("/me")
+    fun deleteCourierProfile(
+        @AuthenticationPrincipal courierDetails: AccessTokenClaim
+    ): ResponseEntity<Void> {
+        logger.info("event=courier_profile_delete_request_received courierId={}", courierDetails.accountId)        
+        courierProfileService.deleteCourierProfile(courierDetails)
+        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/location")

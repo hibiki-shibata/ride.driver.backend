@@ -70,6 +70,13 @@ class CourierProfileService(
         logger.info("event=courier_profile_update_completed courierId={}", courierDetails.accountId)        
         return updatedProfile.toCourierProfileResDto()
     }
+
+    @Transactional
+    fun deleteCourierProfile(courierDetails: AccessTokenClaim) {
+        val savedCourierProfile: CourierProfile = getCourierProfileById(courierDetails.accountId)
+        courierProfileRepository.delete(savedCourierProfile)
+        logger.info("event=courier_profile_deleted courierId={}", courierDetails.accountId)        
+    }
     
     @Transactional
     fun updateCourierOnlineStatus(
