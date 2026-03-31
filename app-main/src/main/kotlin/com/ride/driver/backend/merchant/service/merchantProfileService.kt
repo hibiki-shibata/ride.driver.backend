@@ -16,7 +16,6 @@ import com.ride.driver.backend.merchant.mapper.toMerchantProfileResDto
 import com.ride.driver.backend.merchant.mapper.toMerchantOrderHistoryDto
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.shared.model.Coordinate
-import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.AccountInvalidValuesException
@@ -27,7 +26,6 @@ import com.ride.driver.backend.logistic.repository.TaskRepository
 @Service
 class MerchantProfileService (
     val merchantProfileRepository: MerchantProfileRepository,
-    val passwordService: PasswordService,
     val taskRepository: TaskRepository
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MerchantProfileService::class.java)
