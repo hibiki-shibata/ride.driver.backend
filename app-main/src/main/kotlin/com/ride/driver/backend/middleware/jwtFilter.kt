@@ -34,27 +34,11 @@ class JwtFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-       if (SecurityContextHolder.getContext().authentication != null) {
-            filterChain.doFilter(request, response) // Just let it through when it's already authenticated
-            return
-        }
-
-        val jwtToken: String? = getJwtTokenFromRequest(request)
-        val expectedServiceType: ServiceType? = resolveExpectedServiceTypeFromRequest(request)
-        if (jwtToken.isNullOrBlank() || expectedServiceType == null) {
+        val jwtToken: String = getJwtTokenFromRequest(request)
+        if(isAlreadyAuthenticated() || !isTokenValid(request, jwtToken)) {
             filterChain.doFilter(request, response) // Let it through so that it'll be caught by Spring Security's exception handling for unauthenticated access
             return
-        }
-
-        val isTokenValid: Boolean = jwtTokenService.isTokenValid(
-            token = jwtToken,
-            expectedServiceType = expectedServiceType
-        )
-        if (!isTokenValid) {
-            filterChain.doFilter(request, response) // Let it through and eventually be caught by Spring Security's exception handling for unauthenticated access
-            return
-        }
-
+        }        
         val accessTokenClaim: AccessTokenClaim = jwtTokenService.extractAccessTokenClaim(jwtToken)
         val authentication = UsernamePasswordAuthenticationToken(
             accessTokenClaim, // principal
@@ -68,10 +52,23 @@ class JwtFilter(
         filterChain.doFilter(request, response)
     }
 
-    private fun getJwtTokenFromRequest(request: HttpServletRequest): String? {
+    private fun isAlreadyAuthenticated(): Boolean {
+        return SecurityContextHolder.getContext().authentication != null
+    }
+
+    private fun isTokenValid(request: HttpServletRequest, jwtToken: String?): Boolean {
+        val expectedServiceType: ServiceType? = resolveExpectedServiceTypeFromRequest(request)
+        if (jwtToken.isNullOrBlank() || expectedServiceType == null) return false        
+        return jwtTokenService.isTokenValid(
+            token = jwtToken,
+            expectedServiceType = expectedServiceType
+        )        
+    }
+
+    private fun getJwtTokenFromRequest(request: HttpServletRequest): String {
         val authHeader: String? = request.getHeader("Authorization")
         if (authHeader.isNullOrBlank() || !authHeader.startsWith("Bearer ")) {
-            return null
+            return ""
         }
         return authHeader.substringAfter("Bearer ").trim()
     }
