@@ -86,11 +86,9 @@ open class JwtTokenService(
             .compact()
     }
 
-    fun isTokenValid(token: String, expectedServiceType: ServiceType): Boolean {
-        val claim: Claims = extractAllClaims(token)
-        if (isTokenExpired(claim)) return false        
-        if (!isServiceTypeMatching(claim, expectedServiceType)) return false
-        return true
+    private fun validateToken(claims: Claims, expectedServiceType: ServiceType): Unit {
+        if (isTokenExpired(claims)) throw InvalidJwtTokenException("JWT token is expired")
+        if (!isServiceTypeMatching(claims, expectedServiceType)) throw InvalidJwtTokenException("JWT token service type does not match the expected service type")                
     }
 
     private fun isTokenExpired(claims: Claims): Boolean {        
@@ -101,8 +99,9 @@ open class JwtTokenService(
         return extractServiceType(claims) == expectedServiceType
     }
 
-    fun extractAccessTokenClaim(token: String): AccessTokenClaim {
-        val claims = extractAllClaims(token)
+    fun extractAccessTokenClaimAndValidate(token: String, expectedServiceType: ServiceType): AccessTokenClaim {
+        val claims = extractAllClaims(token)  
+        validateToken(claims, expectedServiceType = expectedServiceType)
         return AccessTokenClaim(
             accountId = extractAccountId(claims),
             accountName = extractAccountName(claims),
@@ -111,8 +110,9 @@ open class JwtTokenService(
         )
     }
 
-    fun extractRefreshTokenClaim(token: String): RefreshTokenClaim {
+    fun extractRefreshTokenClaimAndValidate(token: String, expectedServiceType: ServiceType): RefreshTokenClaim {
         val claims = extractAllClaims(token)
+        validateToken(claims, expectedServiceType = expectedServiceType)
         return RefreshTokenClaim(
             accountId = extractAccountId(claims),
             serviceType = extractServiceType(claims)

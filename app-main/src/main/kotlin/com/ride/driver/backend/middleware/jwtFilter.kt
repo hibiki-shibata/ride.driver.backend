@@ -34,12 +34,16 @@ class JwtFilter(
         response: HttpServletResponse,
         filterChain: FilterChain
     ) {
-        val jwtToken: String = getJwtTokenFromRequest(request)
-        if(isAlreadyAuthenticated() || !isTokenValid(request, jwtToken)) {
+        val jwtToken: String? = getJwtTokenFromRequest(request)
+        val expectedServiceType: ServiceType? = resolveExpectedServiceTypeFromRequest(request)
+        if (jwtToken == null || expectedServiceType == null || isAlreadyAuthenticated()) {
             filterChain.doFilter(request, response) // Let it through so that it'll be caught by Spring Security's exception handling for unauthenticated access
             return
         }        
-        val accessTokenClaim: AccessTokenClaim = jwtTokenService.extractAccessTokenClaim(jwtToken)
+        val accessTokenClaim: AccessTokenClaim = jwtTokenService.extractAccessTokenClaimAndValidate(
+            token = jwtToken,
+            expectedServiceType = expectedServiceType
+        )
         val authentication = UsernamePasswordAuthenticationToken(
             accessTokenClaim, // principal
             null, // No credentials, I use JWT auth instead
@@ -56,19 +60,10 @@ class JwtFilter(
         return SecurityContextHolder.getContext().authentication != null
     }
 
-    private fun isTokenValid(request: HttpServletRequest, jwtToken: String?): Boolean {
-        val expectedServiceType: ServiceType? = resolveExpectedServiceTypeFromRequest(request)
-        if (jwtToken.isNullOrBlank() || expectedServiceType == null) return false        
-        return jwtTokenService.isTokenValid(
-            token = jwtToken,
-            expectedServiceType = expectedServiceType
-        )        
-    }
-
-    private fun getJwtTokenFromRequest(request: HttpServletRequest): String {
+    private fun getJwtTokenFromRequest(request: HttpServletRequest): String? {
         val authHeader: String? = request.getHeader("Authorization")
         if (authHeader.isNullOrBlank() || !authHeader.startsWith("Bearer ")) {
-            return ""
+            return null
         }
         return authHeader.substringAfter("Bearer ").trim()
     }

@@ -65,11 +65,10 @@ class ConsumerAuthService(
     fun refreshToken(
         req: TokenRefreshDTO,
     ): JwtTokensDTO{
-        if (!jwtTokenService.isTokenValid(
-                token = req.refreshToken,
-                expectedServiceType = ServiceType.CONSUMER
-            )) throw InvalidJwtTokenException("Invalid refresh token")
-        val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
+        val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaimAndValidate(
+            token = req.refreshToken,
+            expectedServiceType = ServiceType.CONSUMER
+        )
         val savedConsumer: ConsumerProfile = consumerProfileRepository.findById(accountDetails.accountId).orElseThrow {
              InvalidJwtTokenException("Consumer not found for the given token")
         }

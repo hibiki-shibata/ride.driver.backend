@@ -66,11 +66,10 @@ class CourierAuthService(
     fun refreshToken(
         req: TokenRefreshDTO,
     ): JwtTokensDTO{
-        if (!jwtTokenService.isTokenValid(
-                token = req.refreshToken,
-                expectedServiceType = ServiceType.COURIER
-            )) throw InvalidJwtTokenException("Invalid refresh token")
-        val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
+        val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaimAndValidate(
+            token = req.refreshToken,
+            expectedServiceType = ServiceType.COURIER
+        )
         val savedCourier: CourierProfile = courierProfileRepository.findById(accountDetails.accountId).orElseThrow {
              InvalidJwtTokenException("Courier not found for the given token")
         }

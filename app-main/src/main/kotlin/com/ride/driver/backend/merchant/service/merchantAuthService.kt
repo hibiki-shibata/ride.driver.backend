@@ -68,11 +68,10 @@ class MerchantAuthService(
     fun refreshToken(
         req: TokenRefreshDTO,
     ): JwtTokensDTO{
-        if (!jwtTokenService.isTokenValid(
-                token = req.refreshToken,
-                expectedServiceType = ServiceType.MERCHANT
-            )) throw InvalidJwtTokenException("Invalid refresh token")
-        val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
+        val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaimAndValidate(
+            token = req.refreshToken,
+            expectedServiceType = ServiceType.MERCHANT
+        )
         val savedMerchant: MerchantProfile = merchantProfileRepository.findById(accountDetails.accountId).orElseThrow {
              InvalidJwtTokenException("Merchant not found for the given token")
         }
