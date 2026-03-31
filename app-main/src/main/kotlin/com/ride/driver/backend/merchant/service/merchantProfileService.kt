@@ -75,7 +75,7 @@ class MerchantProfileService (
         merchantProfileRepository.delete(savedMerchant)
         logger.info("event=merchant_profile_deleted merchantId={}", savedMerchant.id)
     }
-    
+
     fun getMerchantOrderHistory(
         merchantDetails: AccessTokenClaim
     ): List<MerchantOrderHistoryDTO?> {
