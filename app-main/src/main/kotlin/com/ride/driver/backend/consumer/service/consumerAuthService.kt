@@ -17,6 +17,7 @@ import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
+import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 
 @Service
@@ -64,7 +65,10 @@ class ConsumerAuthService(
     fun refreshToken(
         req: TokenRefreshDTO,
     ): JwtTokensDTO{
-        if (!jwtTokenService.isTokenValid(req.refreshToken)) throw InvalidJwtTokenException("Refresh token is either expired or invalid")
+        if (!jwtTokenService.isTokenValid(
+                token = req.refreshToken,
+                expectedServiceType = ServiceType.CONSUMER
+            )) throw InvalidJwtTokenException("Invalid refresh token")
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
         val savedConsumer: ConsumerProfile = consumerProfileRepository.findById(accountDetails.accountId).orElseThrow {
              InvalidJwtTokenException("Consumer not found for the given token")

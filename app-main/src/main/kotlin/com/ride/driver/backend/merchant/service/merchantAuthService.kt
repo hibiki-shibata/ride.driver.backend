@@ -16,6 +16,7 @@ import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
+import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.exception.AccountConflictException
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
@@ -67,7 +68,10 @@ class MerchantAuthService(
     fun refreshToken(
         req: TokenRefreshDTO,
     ): JwtTokensDTO{
-        if (!jwtTokenService.isTokenValid(req.refreshToken)) throw InvalidJwtTokenException("Refresh token is either expired or invalid")
+        if (!jwtTokenService.isTokenValid(
+                token = req.refreshToken,
+                expectedServiceType = ServiceType.MERCHANT
+            )) throw InvalidJwtTokenException("Invalid refresh token")
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaim(req.refreshToken)
         val savedMerchant: MerchantProfile = merchantProfileRepository.findById(accountDetails.accountId).orElseThrow {
              InvalidJwtTokenException("Merchant not found for the given token")

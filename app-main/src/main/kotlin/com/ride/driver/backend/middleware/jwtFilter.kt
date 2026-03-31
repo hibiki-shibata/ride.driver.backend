@@ -12,6 +12,7 @@ import jakarta.servlet.FilterChain
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
+import com.ride.driver.backend.shared.auth.domain.ServiceType
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -34,14 +35,26 @@ class JwtFilter(
         filterChain: FilterChain
     ) {
        if (SecurityContextHolder.getContext().authentication != null) {
-            filterChain.doFilter(request, response) // Just let it pass through when it's already authenticated
-            return
-        }        
-        val jwtToken: String? = getJwtTokenFromRequest(request)
-        if (jwtToken.isNullOrBlank() || !jwtTokenService.isTokenValid(jwtToken)) {
-            filterChain.doFilter(request, response) // Let it pass through and eventually be caught by Spring Security's exception handling for unauthenticated access
+            filterChain.doFilter(request, response) // Just let it through when it's already authenticated
             return
         }
+
+        val jwtToken: String? = getJwtTokenFromRequest(request)
+        val expectedServiceType: ServiceType? = resolveExpectedServiceTypeFromRequest(request)
+        if (jwtToken.isNullOrBlank() || expectedServiceType == null) {
+            filterChain.doFilter(request, response) // Let it through so that it'll be caught by Spring Security's exception handling for unauthenticated access
+            return
+        }
+
+        val isTokenValid: Boolean = jwtTokenService.isTokenValid(
+            token = jwtToken,
+            expectedServiceType = expectedServiceType
+        )
+        if (!isTokenValid) {
+            filterChain.doFilter(request, response) // Let it through and eventually be caught by Spring Security's exception handling for unauthenticated access
+            return
+        }
+
         val accessTokenClaim: AccessTokenClaim = jwtTokenService.extractAccessTokenClaim(jwtToken)
         val authentication = UsernamePasswordAuthenticationToken(
             accessTokenClaim, // principal
@@ -61,5 +74,15 @@ class JwtFilter(
             return null
         }
         return authHeader.substringAfter("Bearer ").trim()
+    }
+
+    private fun resolveExpectedServiceTypeFromRequest(request: HttpServletRequest): ServiceType? {
+        val path = request.servletPath
+        return when {
+            path.startsWith("/api/v1/consumers") -> ServiceType.CONSUMER
+            path.startsWith("/api/v1/couriers") -> ServiceType.COURIER
+            path.startsWith("/api/v1/merchants") -> ServiceType.MERCHANT
+            else -> null
+        }
     }
 }
