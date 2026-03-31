@@ -38,10 +38,7 @@ open class JwtTokenService(
         private const val CLAIM_ACCOUNT_NAME = "accountName"
         private const val CLAIM_ACCOUNT_ROLES = "accountRoles"
         private const val CLAIM_SERVICE_TYPE = "serviceType"
-        private const val CLAIM_TOKEN_TYPE = "tokenType"
-
-        private const val ACCESS_AUDIENCE = "ride-access-api"
-        private const val REFRESH_AUDIENCE = "ride-refresh-api"
+        private const val CLAIM_TOKEN_TYPE = "tokenType" 
     }
 
     fun generateAccessTokenAndRefreshToken(
@@ -101,7 +98,8 @@ open class JwtTokenService(
         return AccessTokenClaim(
             accountId = UUID.fromString(claims.subject ?: throw InvalidJwtTokenException("Account ID not found in token")),
             accountName = claims["accountName"] as String ?: throw InvalidJwtTokenException("Account name not found in token"),
-            accountRoles = (claims["accountRoles"] as List<AccountRoles>).map { AccountRoles.valueOf(it.toString()) }
+            accountRoles = (claims["accountRoles"] as List<AccountRoles>).map { AccountRoles.valueOf(it.toString()) },
+            serviceType = claims["serviceType"] as ServiceType ?: throw InvalidJwtTokenException("Service type is not found in token")
         )
     }
 
@@ -114,18 +112,23 @@ open class JwtTokenService(
         )
     }    
 
-    fun extractAccountName(token: String): String {
+    private fun extractAccountName(token: String): String {
         return extractAllClaims(token).subject ?: throw InvalidJwtTokenException("Account name not found in token")
     }
 
-    fun extractAccountId(token: String): UUID {
+    private fun extractAccountId(token: String): UUID {
         val claims = extractAllClaims(token)
         return UUID.fromString(claims["accountId"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token"))
     }
 
-    fun extractAccountRoles(token: String): List<AccountRoles> {
+    private fun extractAccountRoles(token: String): List<AccountRoles> {
         val claims = extractAllClaims(token)
         return (claims["accountRoles"] as List<*>).map { AccountRoles.valueOf(it.toString()) }
+    }
+
+    private fun extractServiceType(token: String): ServiceType {
+        val claims = extractAllClaims(token)
+        return claims["serviceType"] as ServiceType ?: throw InvalidJwtTokenException("Service type is not found in token")
     }
 
     private fun extractAllClaims(token: String): Claims {

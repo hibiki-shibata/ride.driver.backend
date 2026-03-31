@@ -13,7 +13,8 @@ fun CourierProfile.toTokenClaims(): JwtTokenClaims {
         accessTokenClaim = AccessTokenClaim(
             accountId = this.id ?: throw AccountInvalidValuesException("Profile mapping failed due to cp id is null"),
             accountName = this.name,
-            accountRoles = listOf(AccountRoles.BASE_COURIER_ROLE)
+            accountRoles = listOf(AccountRoles.BASE_COURIER_ROLE),
+            serviceType = ServiceType.COURIER
         ),
         refreshTokenClaim = RefreshTokenClaim(
             accountId = this.id ?: throw AccountInvalidValuesException("Profile mapping failed due to cp id is null"),

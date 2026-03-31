@@ -34,13 +34,14 @@ import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
 import com.ride.driver.backend.consumer.service.ConsumerProfileService
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
+import com.ride.driver.backend.shared.model.Coordinate
+import com.ride.driver.backend.shared.auth.domain.ServiceType
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.util.UUID
-import com.ride.driver.backend.shared.model.Coordinate
 
 class ConsumerProfileControllerUnitTest {
 
@@ -54,7 +55,8 @@ class ConsumerProfileControllerUnitTest {
         val claim = AccessTokenClaim(
             accountId = consumerId,
             accountName = "hibiki",
-            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
+            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
+            serviceType = ServiceType.CONSUMER
         )
 
         val response = ConsumerProfileResDTO(
