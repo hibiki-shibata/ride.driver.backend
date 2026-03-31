@@ -32,9 +32,6 @@ open class JwtTokenService(
     private val issuer: String,
     
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
-    // private val accessTokenValidityInMilliseconds: Long = 36000000, // 10 hour
-    // private val refreshTokenValidityInMilliseconds: Long = 86400000, // 24 hours
-    // private val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!",
 ) {
     companion object {
         private const val CLAIM_ACCOUNT_ID = "accountId"
