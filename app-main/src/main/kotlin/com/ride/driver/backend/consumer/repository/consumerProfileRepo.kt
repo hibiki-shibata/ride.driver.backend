@@ -33,7 +33,6 @@ interface ConsumerProfileRepository : JpaRepository<ConsumerProfile, UUID> {
    //  fun findAllByEmailAddress(emailAddress: String, pageable: Pageable): Page<ConsumerProfile>
 }
 
-
 // import org.springframework.data.domain.Page
 // import org.springframework.data.domain.Pageable
 // import org.springframework.data.domain.PageRequest
