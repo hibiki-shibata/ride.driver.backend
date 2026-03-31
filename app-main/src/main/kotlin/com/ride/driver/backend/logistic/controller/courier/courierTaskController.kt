@@ -1,4 +1,4 @@
-package com.ride.driver.backend.courier.controller
+package com.ride.driver.backend.logistic.controller
 
 import jakarta.validation.Valid
 import org.slf4j.Logger

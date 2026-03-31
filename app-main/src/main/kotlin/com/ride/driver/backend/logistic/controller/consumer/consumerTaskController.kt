@@ -1,4 +1,4 @@
-package com.ride.driver.backend.consumer.controller
+package com.ride.driver.backend.logistic.controller
 
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
