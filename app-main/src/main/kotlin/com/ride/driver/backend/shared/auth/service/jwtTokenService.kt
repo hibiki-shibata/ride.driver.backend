@@ -12,23 +12,46 @@ import org.springframework.beans.factory.annotation.Value
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
-import com.ride.driver.backend.shared.auth.domain.TokenClaims
+import com.ride.driver.backend.shared.auth.domain.JwtTokenClaims
 import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 
 @Service
 open class JwtTokenService(
-    private val accessTokenValidityInMilliseconds: Long = 36000000, // 10 hour
-    private val refreshTokenValidityInMilliseconds: Long = 86400000, // 24 hours
-    private val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!",
+    @Value("\${security.jwt.access-token-validity-ms:36000000}")
+    private val accessTokenValidityInMilliseconds: Long,
+
+    @Value("\${security.jwt.refresh-token-validity-ms:86400000}")
+    private val refreshTokenValidityInMilliseconds: Long,
+
+    @Value("\${security.jwt.secret-string}")
+    signingKeyString: String,
+
+    @Value("\${security.jwt.issuer:ride-backend}")
+    private val issuer: String,
+    
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
-) {    
+    // private val accessTokenValidityInMilliseconds: Long = 36000000, // 10 hour
+    // private val refreshTokenValidityInMilliseconds: Long = 86400000, // 24 hours
+    // private val signingKeyString: String = "this-is-a-very-long-test-secret-key-that-is-at-least-32-bytes!",
+) {
+    companion object {
+        private const val CLAIM_ACCOUNT_ID = "accountId"
+        private const val CLAIM_ACCOUNT_NAME = "accountName"
+        private const val CLAIM_ACCOUNT_ROLES = "accountRoles"
+        private const val CLAIM_SERVICE_TYPE = "serviceType"
+        private const val CLAIM_TOKEN_TYPE = "tokenType"
+
+        private const val ACCESS_AUDIENCE = "ride-access-api"
+        private const val REFRESH_AUDIENCE = "ride-refresh-api"
+    }
+
     fun generateAccessTokenAndRefreshToken(
-        tokenClaims: TokenClaims
+        jwtTokenClaims: JwtTokenClaims
     ): JwtTokensDTO {
-        val accessToken = generateAccessToken(tokenClaims.accessTokenClaim)
-        val refreshToken = generateRefreshToken(tokenClaims.refreshTokenClaim)
+        val accessToken = generateAccessToken(jwtTokenClaims.accessTokenClaim)
+        val refreshToken = generateRefreshToken(jwtTokenClaims.refreshTokenClaim)
         return JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken)
     }
 
@@ -37,12 +60,14 @@ open class JwtTokenService(
     ): String {
         val now = System.currentTimeMillis()
         val additionalClaims =  mapOf(
-            "accountId" to accessTokenClaim.accountId.toString(),
-            "accountRoles" to accessTokenClaim.accountRoles.map { it.name }
+            CLAIM_ACCOUNT_ID to accessTokenClaim.accountId.toString(),
+            CLAIM_ACCOUNT_NAME to accessTokenClaim.accountName,
+            CLAIM_ACCOUNT_ROLES to accessTokenClaim.accountRoles.map { it.name },
+            CLAIM_TOKEN_TYPE to "access"
         )
         return Jwts.builder()
             .setClaims(additionalClaims)
-            .setSubject(accessTokenClaim.accountName)
+            .setSubject(accessTokenClaim.accountId.toString())
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + accessTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -53,8 +78,13 @@ open class JwtTokenService(
         refreshTokenClaim: RefreshTokenClaim
     ): String {
         val now = System.currentTimeMillis()
+        val additionalClaims =  mapOf(
+            CLAIM_ACCOUNT_ID to refreshTokenClaim.accountId.toString(),
+            CLAIM_SERVICE_TYPE to refreshTokenClaim.serviceType.name,
+            CLAIM_TOKEN_TYPE to "refresh"
+        )
         return Jwts.builder()
-            .setClaims(mapOf("accountId" to refreshTokenClaim.accountId.toString()))
+            .setClaims(additionalClaims)
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + refreshTokenValidityInMilliseconds))
             .signWith(signingKey)
@@ -72,8 +102,8 @@ open class JwtTokenService(
     fun extractAccessTokenClaim(token: String): AccessTokenClaim {
         val claims = extractAllClaims(token)
         return AccessTokenClaim(
-            accountId = UUID.fromString(claims["accountId"].toString() ?: throw InvalidJwtTokenException("Account ID not found in token")),
-            accountName = claims.subject ?: throw InvalidJwtTokenException("Account name not found in token"),
+            accountId = UUID.fromString(claims.subject ?: throw InvalidJwtTokenException("Account ID not found in token")),
+            accountName = claims["accountName"] as String ?: throw InvalidJwtTokenException("Account name not found in token"),
             accountRoles = (claims["accountRoles"] as List<AccountRoles>).map { AccountRoles.valueOf(it.toString()) }
         )
     }

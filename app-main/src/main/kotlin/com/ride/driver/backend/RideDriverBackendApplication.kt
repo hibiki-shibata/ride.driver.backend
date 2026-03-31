@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Value
 @SpringBootApplication
 @EnableScheduling
 class RideDriverBackendApplication(
-        @Value("\${server.port}") private val serverPort: String
+    @Value("\${server.port}")
+    private val serverPort: String
 ) {
     init {
         println("Ride Driver Backend Application is starting on port: $serverPort")
