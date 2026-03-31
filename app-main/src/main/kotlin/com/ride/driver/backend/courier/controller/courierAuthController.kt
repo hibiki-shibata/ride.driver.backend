@@ -16,13 +16,13 @@ import com.ride.driver.backend.courier.service.CourierAuthService
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
 
 @RestController
-@RequestMapping("/api/v1/couriers")
+@RequestMapping("api/v1/couriers/auth")
 class CourierAuthController (
     private val courierAuthService: CourierAuthService
 ){
 private val logger: Logger = LoggerFactory.getLogger(CourierAuthController::class.java)
 
-@PostMapping("/auth/signup")
+@PostMapping("/signup")
     fun courierSignup(@RequestBody @Valid req: CourierSignupDTO): ResponseEntity<JwtTokensDTO> {
         logger.info("event=courier_signup_request_received")
         val jwtTokens: JwtTokensDTO = courierAuthService.signupCourier(req)
@@ -31,14 +31,14 @@ private val logger: Logger = LoggerFactory.getLogger(CourierAuthController::clas
             .body(jwtTokens)
     }
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     fun courierLogin(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<JwtTokensDTO> {
         logger.info("event=courier_signup_request_received")
         val jwtTokens: JwtTokensDTO = courierAuthService.loginCourier(req)
         return ResponseEntity.ok(jwtTokens)        
     }
 
-    @PostMapping("auth/refresh-token")
+    @PostMapping("/refresh-token")
     fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokensDTO> {
         val newJwtTokens: JwtTokensDTO = courierAuthService.refreshToken(req)
         return ResponseEntity.ok(newJwtTokens)

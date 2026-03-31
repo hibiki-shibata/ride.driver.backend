@@ -16,27 +16,27 @@ import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
  
 @RestController
-@RequestMapping("/api/v1/consumers")
+@RequestMapping("api/v1/consumers/auth")
 class ConsumerAuthController(
     private val consumerAuthService: ConsumerAuthService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(ConsumerAuthController::class.java)
 
-    @PostMapping("/auth/signup")
+    @PostMapping("/signup")
     fun consumerSignup(@RequestBody @Valid req: ConsumerSignupDTO): ResponseEntity<JwtTokensDTO> {
         logger.info("event=consumer_signup_request_received")
         val jwtTokens: JwtTokensDTO = consumerAuthService.signupConsumer(req)
         return ResponseEntity.created(URI("/api/v1/consumers/me")).body(jwtTokens)
     }
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     fun consumerLogin(@RequestBody @Valid req: ConsumerLoginDTO): ResponseEntity<JwtTokensDTO> {
         logger.info("event=consumer_login_request_received")
         val jwtTokens: JwtTokensDTO = consumerAuthService.loginConsumer(req)
         return ResponseEntity.ok(jwtTokens)
     }
 
-    @PostMapping("auth/refresh-token")
+    @PostMapping("/refresh-token")
     fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokensDTO> {
         val newJwtTokens: JwtTokensDTO = consumerAuthService.refreshToken(req)
         return ResponseEntity.ok(newJwtTokens)

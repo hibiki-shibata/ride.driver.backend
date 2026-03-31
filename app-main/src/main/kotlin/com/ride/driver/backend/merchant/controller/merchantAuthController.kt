@@ -17,13 +17,13 @@ import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
 
 @RestController
-@RequestMapping("/api/v1/merchants")
+@RequestMapping("api/v1/merchants/auth")
 class MerchantAuthController(
     private val merchantAuthService: MerchantAuthService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(MerchantAuthController::class.java)
 
-    @PostMapping("/auth/signup")
+    @PostMapping("/signup")
     fun merchantSignup(@RequestBody @Valid req: MerchantSignupDTO): ResponseEntity<JwtTokensDTO> {
         logger.info("event=merchant_signup_request_received")
         val jwtTokens: JwtTokensDTO = merchantAuthService.signupMerchant(req)   
@@ -32,14 +32,14 @@ class MerchantAuthController(
             ).body(jwtTokens)
     }
 
-    @PostMapping("/auth/login")
+    @PostMapping("/login")
     fun merchantLogin(@RequestBody @Valid req: MerchantLoginDTO): ResponseEntity<JwtTokensDTO> {
         logger.info("event=merchant_login_request_received")
         val jwtTokens: JwtTokensDTO = merchantAuthService.loginMerchant(req)
         return ResponseEntity.ok(jwtTokens)
     }
 
-    @PostMapping("auth/refresh-token")
+    @PostMapping("/refresh-token")
     fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokensDTO> {
         val newJwtTokens: JwtTokensDTO = merchantAuthService.refreshToken(req)
         return ResponseEntity.ok(newJwtTokens)

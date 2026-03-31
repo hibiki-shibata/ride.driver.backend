@@ -120,11 +120,11 @@ open class JwtTokenService(
     }    
 
     private fun extractAccountName(claims: Claims): String {
-        return claims.subject ?: throw InvalidJwtTokenException("Account name not found in token")
+        return claims[CLAIM_ACCOUNT_NAME] as? String ?: throw InvalidJwtTokenException("Account name not found in token")
     }
 
     private fun extractAccountId(claims: Claims): UUID {
-        return UUID.fromString(claims[CLAIM_ACCOUNT_ID]?.toString() ?: throw InvalidJwtTokenException("Account ID not found in token"))
+        return UUID.fromString(claims.subject.toString() ?: throw InvalidJwtTokenException("Account ID not found in token"))
     }
 
     private fun extractAccountRoles(claims: Claims): List<AccountRoles> {
@@ -132,7 +132,7 @@ open class JwtTokenService(
     }
 
     private fun extractServiceType(claims: Claims): ServiceType {
-        return claims[CLAIM_SERVICE_TYPE] as? ServiceType ?: throw InvalidJwtTokenException("Service type not found in token")
+        return ServiceType.valueOf(claims[CLAIM_SERVICE_TYPE].toString()) ?: throw InvalidJwtTokenException("Service type not found in token")
     }
 
     private fun extractAllClaims(token: String): Claims {
