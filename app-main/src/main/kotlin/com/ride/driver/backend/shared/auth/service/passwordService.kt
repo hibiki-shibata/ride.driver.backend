@@ -1,17 +1,18 @@
 package com.ride.driver.backend.shared.auth.service
 
 import org.springframework.stereotype.Service
-import org.mindrot.jbcrypt.BCrypt
+import org.springframework.security.crypto.password.PasswordEncoder
+import com.ride.driver.backend.shared.exception.PasswordEncodingException
 
-// I will imlement decent password service later!!
 @Service
-class PasswordService {
+class PasswordService(
+    private val encoder: PasswordEncoder
+) {
     fun hashPassword(inputPassword: String): String {
-        // return inputPassword.hashCode().toString()
-        return BCrypt.hashpw(inputPassword, BCrypt.gensalt())
+        return encoder.encode(inputPassword) ?: throw PasswordEncodingException("Password hashing failed")
     }
 
     fun isPasswordValid(inputPassword: String, storedHashedPassword: String): Boolean {
-        return inputPassword.hashCode().toString() == storedHashedPassword
+        return encoder.matches(inputPassword, storedHashedPassword) ?: throw PasswordEncodingException("Password validation failed")
     }
 }
