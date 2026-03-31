@@ -54,6 +54,13 @@ class ConsumerProfileService(
        return updatedConsumerProfile.toConsumerProfileResDTO()
     }
 
+    @Transactional
+    fun deleteConsumerProfile(consumerDetails: AccessTokenClaim) {
+        val savedConsumerProfile: ConsumerProfile = getConsumerProfileById(consumerDetails.accountId)
+        consumerProfileRepository.delete(savedConsumerProfile)
+        logger.info("event=consumer_profile_deleted consumerId={}", consumerDetails.accountId)
+    }
+
     private fun getConsumerProfileById(consumerId: UUID): ConsumerProfile {
         return consumerProfileRepository.findById(consumerId).orElseThrow { 
             AccountNotFoundException("Consumer not found with ID: $consumerId") 

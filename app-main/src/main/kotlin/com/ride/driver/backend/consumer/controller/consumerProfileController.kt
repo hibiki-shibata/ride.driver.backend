@@ -2,6 +2,7 @@ package com.ride.driver.backend.consumer.controller
 
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -43,6 +44,15 @@ class ConsumerProfileController (
             newConsumerProfileData = newConsumerProfileData
          )
          return ResponseEntity.ok(updatedConsumerProfile)
+    }
+
+    @DeleteMapping("/me")
+    fun deleteConsumerProfile(
+        @AuthenticationPrincipal consumerDetails: AccessTokenClaim
+    ): ResponseEntity<Void> {
+        logger.info("event=consumer_profile_delete_request_received consumerId={}", consumerDetails.accountId)
+        consumerProfileService.deleteConsumerProfile(consumerDetails)
+        return ResponseEntity.noContent().build()
     }
 
     @GetMapping("/order/history")
