@@ -3,6 +3,8 @@ package com.ride.driver.backend.merchant.service
 import java.util.UUID
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Page
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import com.ride.driver.backend.merchant.model.MerchantProfile
@@ -72,9 +74,9 @@ class MerchantProfileService (
     fun getMerchantOrderHistory(
         merchantDetails: AccessTokenClaim
     ): List<MerchantOrderHistoryDTO?> {
-        val taskHistory: List<Task?> = taskRepository.findByMerchantProfile_Id(merchantDetails.accountId).sortedByDescending { it?.orderTime }
+        val taskHistory: Page<Task> = taskRepository.findByMerchantProfile_Id(merchantDetails.accountId, PageRequest.of(0, 100))
         logger.info("event=merchant_orderHistory_fetched merchantId={}", merchantDetails.accountId)
-        return taskHistory.map {it?.toMerchantOrderHistoryDto()}
+        return taskHistory.content.map { it.toMerchantOrderHistoryDto() }
     }
 
     private fun getMerchantProfileById(merchantId: UUID): MerchantProfile {

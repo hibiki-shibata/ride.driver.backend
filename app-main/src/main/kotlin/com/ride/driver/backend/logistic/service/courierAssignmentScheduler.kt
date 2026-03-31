@@ -2,6 +2,8 @@ package com.ride.driver.backend.logistic.service
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,11 +25,12 @@ class CourierAssignmentScheduler(
     @Transactional
     fun assignOnlineCpToPendingTasks() {
         var onlineCouriers: MutableList<CourierProfile> = courierProfileRepository
-            .findByCpStatus(CourierStatus.ONLINE)
+            .findByCpStatus(CourierStatus.ONLINE, PageRequest.of(0, 500))
             .shuffled()
             .toMutableList()
-        val pendingTasks: List<Task> = taskRepository.findByTaskStatusIn(
-            listOf(TaskStatus.ASSIGNED_TO_COURIER, TaskStatus.READY_FOR_ASSIGNMENT)
+        val pendingTasks: Page<Task> = taskRepository.findByTaskStatusIn(
+            listOf(TaskStatus.ASSIGNED_TO_COURIER, TaskStatus.READY_FOR_ASSIGNMENT),
+            PageRequest.of(0, 500)
         )
         for (task in pendingTasks) {
             val courier: CourierProfile? = onlineCouriers.removeFirstOrNull()

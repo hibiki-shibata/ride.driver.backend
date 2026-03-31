@@ -12,15 +12,15 @@ import java.util.UUID
 
 @Repository
 interface TaskRepository: JpaRepository<Task, UUID> {
-   fun findByConsumerProfile_Id(consumerProfileId: UUID): List<Task>
-   fun findByCourierProfile_Id(courierProfileId: UUID): List<Task>
-   fun findByMerchantProfile_Id(merchantProfileId: UUID): List<Task>
+   fun findByConsumerProfile_Id(consumerProfileId: UUID, pageable: Pageable): Page<Task>
+   fun findByCourierProfile_Id(courierProfileId: UUID, pageable: Pageable): Page<Task>
+   fun findByMerchantProfile_Id(merchantProfileId: UUID, pageable: Pageable): Page<Task>
    fun findByIdAndConsumerProfile_IdAndTaskStatus(taskId: UUID, consumerProfileId: UUID, taskStatus: TaskStatus): Task?
    fun findByIdAndCourierProfile_IdAndTaskStatus(taskId: UUID, courierProfileId: UUID, taskStatus: TaskStatus): Task?
    fun findByIdAndMerchantProfile_IdAndTaskStatus(taskId: UUID, merchantProfileId: UUID, taskStatus: TaskStatus): Task?
-   fun findByCourierProfile_IdAndTaskStatus(courierProfileId: UUID, taskStatus: TaskStatus): List<Task>
+   fun findByCourierProfile_IdAndTaskStatus(courierProfileId: UUID, taskStatus: TaskStatus, pageable: Pageable): Page<Task>
    // fun findByConsumerProfile_IdAndTaskStatus(consumerProfileId: UUID, taskStatus: TaskStatus): List<Task>
    // fun findByMerchantProfile_IdAndTaskStatus(merchantProfileId: UUID, taskStatus: TaskStatus): List<Task>
-   fun findByTaskStatusIn(taskStatus: List<TaskStatus>): List<Task>
+   fun findByTaskStatusIn(taskStatus: List<TaskStatus>, pageable: Pageable): Page<Task>
    override fun findAll(pageable: Pageable): Page<Task>
 }

@@ -23,6 +23,7 @@ import com.ride.driver.backend.merchant.model.MerchantItem
 import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import java.util.UUID
+import org.springframework.data.domain.PageRequest
 
 @Configuration
 @Profile("demo", "test", "local", "staging", "development", "dev")
@@ -37,7 +38,8 @@ class DbDemoDataInitializerConfig{
             consumerProfileRepository: ConsumerProfileRepository
     ) = ApplicationRunner {
         // Initialize the database with some default data
-        if (operationAreaRepository.findByName("Tokyo").isNullOrEmpty()){
+        // page size for pagination
+        if (operationAreaRepository.findByName("Tokyo") == null) {
             val savedArea = operationAreaRepository.save(
                 OperationArea(
                     name = "Tokyo")
@@ -54,7 +56,7 @@ class DbDemoDataInitializerConfig{
                 cpRate = 4.5,
                 cpStatus = CourierStatus.ONLINE,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
-                operationArea = operationAreaRepository.findByName("Tokyo")?.firstOrNull(),
+                operationArea = operationAreaRepository.findByName("Tokyo"),
                 cpComments = "Reliable courier",
             )
         )
@@ -68,7 +70,7 @@ class DbDemoDataInitializerConfig{
                 cpRate = 4.8,
                 cpStatus = CourierStatus.ONLINE,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
-                operationArea = operationAreaRepository.findByName("Tokyo")?.firstOrNull(),
+                operationArea = operationAreaRepository.findByName("Tokyo"),
                 cpComments = "Fast and efficient"
             )
         )
@@ -82,7 +84,7 @@ class DbDemoDataInitializerConfig{
                 cpRate = 4.2,
                 cpStatus = CourierStatus.ONLINE,
                 currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
-                operationArea = operationAreaRepository.findByName("Tokyo")?.firstOrNull(),
+                operationArea = operationAreaRepository.findByName("Tokyo"),
                 cpComments = "New courier"
             )
         )

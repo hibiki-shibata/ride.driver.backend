@@ -11,7 +11,6 @@ data class ConsumerProfileResDTO(
     @field:NotBlank
     val id: String,
 
-
     @field:NotBlank
     @field:Size(max = 100, message = "Name must not exceed 100 characters")
     val name: String,

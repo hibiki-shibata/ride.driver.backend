@@ -6,7 +6,9 @@ import jakarta.validation.constraints.Size
 import org.springframework.format.annotation.DateTimeFormat
 
 data class CourierTaskHistoryDTO(
+    @field:NotBlank
     val id: String,
+
     @field:NotBlank
     val courierEarning: Double,
 

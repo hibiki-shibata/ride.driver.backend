@@ -9,9 +9,9 @@ import com.ride.driver.backend.merchant.model.MerchantProfile
 import java.util.UUID
 
 @Repository
-open interface MerchantProfileRepository : JpaRepository<MerchantProfile, UUID> {
+interface MerchantProfileRepository : JpaRepository<MerchantProfile, UUID> {
    fun existsByPhoneNumber(phoneNumber: String): Boolean
    fun findByPhoneNumber(phoneNumber: String): MerchantProfile?
-   fun findByMerchantStatus(merchantStatus: String): List<MerchantProfile>
-   fun findByName(merchantName: String): List<MerchantProfile>
+   fun findByMerchantStatus(merchantStatus: String, pageable: Pageable): Page<MerchantProfile>
+   fun findByName(merchantName: String, pageable: Pageable): Page<MerchantProfile>
 }

@@ -2,6 +2,8 @@ package com.ride.driver.backend.courier.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Page
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.util.UUID
@@ -86,9 +88,10 @@ class CourierProfileService(
     fun getCourierOrderHistory(
         courierDetails: AccessTokenClaim
     ): List<CourierTaskHistoryDTO?> {
-        val taskHistories: List<Task> = taskRepository.findByCourierProfile_Id(courierDetails.accountId) ?: emptyList()
+        val pageSize = 20
+        val taskHistories: Page<Task> = taskRepository.findByCourierProfile_Id(courierDetails.accountId, PageRequest.of(0, pageSize))
         logger.info("event=courier_orderHistory_fetched_courierId={}", courierDetails.accountId)
-        return taskHistories.map { it?.toCourierTaskHistoryDto() }
+        return taskHistories.content.map { it.toCourierTaskHistoryDto() }
     }
 
     private fun getCourierProfileById(courierId: UUID): CourierProfile {

@@ -5,6 +5,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.data.domain.PageRequest
 import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus
 import com.ride.driver.backend.courier.model.OperationArea
@@ -44,7 +45,8 @@ class LogisticsService(
     fun pollTask(courierDetails: AccessTokenClaim): TaskDataDTO? {
         val savedTask: Task = taskRepository.findByCourierProfile_IdAndTaskStatus(
                 courierDetails.accountId, 
-                TaskStatus.ASSIGNED_TO_COURIER
+                TaskStatus.ASSIGNED_TO_COURIER,
+                PageRequest.of(0, 1)
         ).firstOrNull() ?: return null
         return savedTask.toTaskDataDTO()
     }

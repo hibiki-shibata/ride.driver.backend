@@ -2,6 +2,8 @@ package com.ride.driver.backend.consumer.service
 
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Page
 import org.slf4j.LoggerFactory
 import org.slf4j.Logger
 import java.util.UUID
@@ -59,10 +61,11 @@ class ConsumerProfileService(
     }
 
     fun getConsumerOrderHistory(consumerDetails: AccessTokenClaim): List<ConsumerOrderHistoryDTO?> {
-        val taskHistories: List<Task> = taskRepository.findByConsumerProfile_Id(consumerDetails.accountId) ?: emptyList()
+        val pageSize = 20
+        val taskHistories: Page<Task> = taskRepository.findByConsumerProfile_Id(consumerDetails.accountId, PageRequest.of(0, pageSize))
         logger.info(
             "event=consumer_order_history_fetched consumerId={} totalOrders={}", consumerDetails.accountId, taskHistories.size
         )
-        return taskHistories.map { it?.toConsumerOrderHistoryDto()}
+        return taskHistories.content.map { it.toConsumerOrderHistoryDto() }
     }
 }
