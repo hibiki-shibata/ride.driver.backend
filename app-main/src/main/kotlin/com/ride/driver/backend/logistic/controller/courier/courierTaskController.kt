@@ -37,7 +37,7 @@ class CourierTaskController (
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<TaskDataDTO> {
         logger.info("event=courier_accept_task_request_received courierId={} taskId={}", courierDetails.accountId, taskStatusActionDTO.taskId)
-        val updatedTask: TaskDataDTO = logisticsService.acceptReadyForAssignmentTask(
+        val updatedTask: TaskDataDTO = logisticsService.acceptAssignedToCourierTask(
             taskStatusActionDTO = taskStatusActionDTO,
             courierDetails = courierDetails
         )
