@@ -138,7 +138,7 @@ class LogisticsService(
                 UUID.fromString(taskStatusActionDTO.taskId),
                 courierDetails.accountId,
                 TaskStatus.IN_DROPOFF
-        ) ?: throw Exception("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
+        ) ?: throw TaskNotFoundException("Task not found with ID: ${taskStatusActionDTO.taskId} for the given courier")
         val updatedAssignedTask: Task = taskRepository.save(
             assignedTask.apply { taskStatus = TaskStatus.DELIVERED }
         )
