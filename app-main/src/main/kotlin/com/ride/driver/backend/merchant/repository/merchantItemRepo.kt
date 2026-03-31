@@ -9,7 +9,8 @@ import com.ride.driver.backend.merchant.model.MerchantItem
 import java.util.UUID
 
 @Repository
-open interface MerchantItemRepository : JpaRepository<MerchantItem, UUID> {
+interface MerchantItemRepository : JpaRepository<MerchantItem, UUID> {
+   fun findByIdInAndMerchantProfile_Id(itemIds: List<UUID>, merchantProfileId: UUID): List<MerchantItem>
    fun findByMerchantProfile_Id(merchantProfileId: UUID): List<MerchantItem>
    fun findByName(name: String): List<MerchantItem>
    override fun findAll(pageable: Pageable): Page<MerchantItem>

@@ -9,5 +9,5 @@ data class CreateTaskDTO(
     val merchantID: UUID,
 
     @field:NotEmpty
-    val addedItemIDs: List<String>
+    val orderedItemIDs: List<String>
 )

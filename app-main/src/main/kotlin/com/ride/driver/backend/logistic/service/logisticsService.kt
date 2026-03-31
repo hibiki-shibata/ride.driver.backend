@@ -17,8 +17,10 @@ import com.ride.driver.backend.logistic.dto.TaskDataDTO
 import com.ride.driver.backend.logistic.dto.CreateTaskDTO
 import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
 import com.ride.driver.backend.logistic.mapper.toTaskDataDTO
+import com.ride.driver.backend.logistic.mapper.toOrderedItem
 import com.ride.driver.backend.logistic.repository.TaskRepository
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
+import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.merchant.repository.MerchantItemRepository
 import com.ride.driver.backend.merchant.model.MerchantItem
@@ -26,13 +28,15 @@ import com.ride.driver.backend.merchant.model.MerchantProfile
 import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.exception.TaskNotFoundException
+import com.ride.driver.backend.shared.exception.ItemNotFoundException
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
 
 @Service
 class LogisticsService(
     private val courierProfileRepository: CourierProfileRepository,
     private val consumerProfileRepository: ConsumerProfileRepository,
     private val merchantProfileRepository: MerchantProfileRepository,
-    private val merchantMenuItemRepository: MerchantItemRepository,
+    private val merchantItemRepository: MerchantItemRepository,
     private val taskRepository: TaskRepository
 ){
     private val logger: Logger = LoggerFactory.getLogger(LogisticsService::class.java)
@@ -50,25 +54,25 @@ class LogisticsService(
         createTaskDTO: CreateTaskDTO,
         consumerDetails: AccessTokenClaim
     ): TaskDataDTO {
-        // validate if the item data
-        val savedMerchantMenu: List<MerchantItem?> = merchantMenuItemRepository.findByMerchantProfile_Id(createTaskDTO.merchantID)
-        val addedItemsData: List<MerchantItem?> = savedMerchantMenu.filter { createTaskDTO.addedItemIDs.contains(it?.id.toString()) }
-        if (addedItemsData.size != createTaskDTO.addedItemIDs.size) throw Exception("One or more ordered items are invalid for the given merchant")        
+        val consumerProfile: ConsumerProfile = consumerProfileRepository.findById(consumerDetails.accountId).orElseThrow { 
+            AccountNotFoundException("Consumer not found with ID: ${consumerDetails.accountId}")
+        }
+        val merchantProfile: MerchantProfile = merchantProfileRepository.findById(createTaskDTO.merchantID).orElseThrow { 
+            AccountNotFoundException("Merchant not found with ID: ${createTaskDTO.merchantID}")
+        }
+        val merchantItems: List<MerchantItem> = merchantItemRepository.findByIdInAndMerchantProfile_Id(
+                createTaskDTO.orderedItemIDs.map { UUID.fromString(it) },
+                createTaskDTO.merchantID
+            )
+        if (merchantItems.size != createTaskDTO.orderedItemIDs.size) throw ItemNotFoundException("One or more ordered items not found for the given merchant with ID: ${createTaskDTO.merchantID}")
+        val orderedItems: List<OrderedItem> = merchantItems.map { it.toOrderedItem() }
         val createdTask: Task = taskRepository.save(
             Task(
-                consumerProfile = consumerProfileRepository.findById(consumerDetails.accountId).orElseThrow { Exception("Consumer not found with ID: ${consumerDetails.accountId}")},
-                merchantProfile = merchantProfileRepository.findById(createTaskDTO.merchantID).orElseThrow { Exception("Merchant not found with ID: ${createTaskDTO.merchantID}")},
+                consumerProfile = consumerProfile,
+                merchantProfile = merchantProfile,
                 taskStatus = TaskStatus.CREATED,
-                orderedItems = addedItemsData.map { item ->
-                    OrderedItem(
-                        itemId = item?.id ?: throw Exception("Item ID is null"),
-                        name = item?.name ?: throw Exception("Item name is null"),
-                        description = item?.description,
-                        price = item?.price ?: throw Exception("Price not registered"),
-                        merchantId = item?.merchantProfile?.id ?: throw Exception("Merchant profile ID is null")
-                    )
-                }
-             )
+                orderedItems = orderedItems,
+            )
         )
         logger.info("event=task_created taskId={} consumerId={} merchantId={}", createdTask.id, consumerDetails.accountId, createTaskDTO.merchantID)
         return createdTask.toTaskDataDTO()
