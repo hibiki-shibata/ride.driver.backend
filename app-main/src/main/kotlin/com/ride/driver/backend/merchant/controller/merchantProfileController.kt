@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -44,6 +45,15 @@ class MerchantProfileController (
             req = req
         )
         return ResponseEntity.ok(updatedProfile)
+    }
+
+    @DeleteMapping("/me")
+    fun deleteMerchantProfile(
+        @AuthenticationPrincipal merchantDetails: AccessTokenClaim
+    ): ResponseEntity<Void> {
+        logger.info("event=merchant_profile_delete_request_received merchantId={}", merchantDetails.accountId)
+        merchantProfileService.deleteMerchantProfile(merchantDetails)
+        return ResponseEntity.noContent().build()
     }
 
     @PutMapping("/me/status")

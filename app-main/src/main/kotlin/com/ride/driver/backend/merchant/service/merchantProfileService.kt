@@ -69,6 +69,13 @@ class MerchantProfileService (
         return updatedProfile.toMerchantProfileResDto()
     }
 
+    @Transactional
+    fun deleteMerchantProfile(merchantDetails: AccessTokenClaim) {
+        val savedMerchant: MerchantProfile = getMerchantProfileById(merchantDetails.accountId)
+        merchantProfileRepository.delete(savedMerchant)
+        logger.info("event=merchant_profile_deleted merchantId={}", savedMerchant.id)
+    }
+    
     fun getMerchantOrderHistory(
         merchantDetails: AccessTokenClaim
     ): List<MerchantOrderHistoryDTO?> {
