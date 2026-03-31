@@ -1,19 +1,28 @@
-## This is a backend for Ride Driver App (Under development)
+# Ride App Backend
 
-What does it do:📝
-1. Registering new Couriers
-2. Response existing Coureirs data
-3. Authentication
+## Overview
+A backend service for a Ride app, built with Spring Boot and Kotlin. It provides APIs for managing consumers, couriers, delivery tasks, and authentication.
 
-How to run the project:🏃‍♂️
-1. Clone the project
-```
-git clone https://github.com/hibiki-shibata/ride.driver.backend
-```
-3. Prepare local DB with Postgres
+## Features
+- Account management: Consumer, Courier, and Merchant registration, retrieve its data and authentication.
+- Task management: Create, assign, and update delivery tasks.
+- Role-based access control for different user types.
+
+## Tech Stack
+- Spring Boot
+- Kotlin
+- PostgreSQL
+- JPA/Hibernate
+- Flyway for database migrations
+- Docker for containerization
+
+
+## Quick Start
+1. Get Postgres image
 ```bash
 docker pull postgres
 ```
+2. Run local Postgres for testing
 ```bash
 docker run -p 5432:5432 -d \
     --name postgres \
@@ -38,16 +47,6 @@ You can use command `make help` to learn simplified CLI ops.
 - Spring Plug in(@SpringBootApplication) helps automatically find the mainClass to include it in manifest
 - <file_name>.plane.jar is complied file without mainClass
 - <file_name>.jar is complied file with mainClass
-
-### Initiate Postgers Container:
-```
-docker run -p 5432:5432 -d \
-    --name postgres \
-    -e POSTGRES_PASSWORD=postgres \
-    -e POSTGRES_USER=postgres \
-    -e POSTGRES_DB=postgres \
-    postgres
-```
 
 ### Flyway control
 - Flyway is responsible only for DB migration - Create tables or stuffs.
