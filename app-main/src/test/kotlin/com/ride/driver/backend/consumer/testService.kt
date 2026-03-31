@@ -6,7 +6,6 @@ import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.logistic.repository.TaskRepository
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccountRoles
-import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import io.mockk.every
@@ -44,8 +43,7 @@ class ConsumerProfileServiceTest {
         val accessTokenClaim = AccessTokenClaim(
             accountId = consumerId,
             accountName = "test_consumer",
-            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
-            serviceType = ServiceType.CONSUMER
+            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
         )
 
         val consumerProfile = ConsumerProfile(
@@ -79,8 +77,8 @@ class ConsumerProfileServiceTest {
         val accessTokenClaim = AccessTokenClaim(
             accountId = consumerId,
             accountName = "test_consumer",
-            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
-            serviceType = ServiceType.CONSUMER            
+            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
+            
         )
 
         every { consumerProfileRepository.findById(consumerId) } returns Optional.empty()

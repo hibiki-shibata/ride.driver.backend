@@ -13,8 +13,7 @@ fun CourierProfile.toTokenClaims(): TokenClaims {
         accessTokenClaim = AccessTokenClaim(
             accountId = this.id ?: throw AccountInvalidValuesException("Profile mapping failed due to cp id is null"),
             accountName = this.name,
-            accountRoles = listOf(AccountRoles.BASE_COURIER_ROLE),
-            serviceType = ServiceType.COURIER
+            accountRoles = listOf(AccountRoles.BASE_COURIER_ROLE)
         ),
         refreshTokenClaim = RefreshTokenClaim(
             accountId = this.id ?: throw AccountInvalidValuesException("Profile mapping failed due to cp id is null"),

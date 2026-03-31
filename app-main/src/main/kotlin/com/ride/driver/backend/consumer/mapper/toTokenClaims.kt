@@ -13,8 +13,7 @@ fun ConsumerProfile.toTokenClaims(): TokenClaims {
         accessTokenClaim = AccessTokenClaim(
             accountId = this.id ?: throw AccountInvalidValuesException("Consumer ID is null"),
             accountName = this.name,
-            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
-            serviceType = ServiceType.CONSUMER
+            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
         ),
         refreshTokenClaim = RefreshTokenClaim(
             accountId = this.id ?: throw AccountInvalidValuesException("Consumer ID is null"),

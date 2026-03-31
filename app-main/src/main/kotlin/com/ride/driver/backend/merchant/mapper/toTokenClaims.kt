@@ -13,8 +13,7 @@ fun MerchantProfile.toTokenClaims(): TokenClaims {
         accessTokenClaim = AccessTokenClaim(
                 accountId = this.id ?: throw AccountInvalidValuesException("Profile mapping failed, Merchant ID is null"),
                 accountName = this.name,
-                accountRoles = listOf(AccountRoles.BASE_MERCHANT_ROLE),
-                serviceType = ServiceType.MERCHANT
+                accountRoles = listOf(AccountRoles.BASE_MERCHANT_ROLE)
         ),
         refreshTokenClaim = RefreshTokenClaim(
                 accountId = this.id ?: throw AccountInvalidValuesException("Profile mapping failed, Merchant ID is null"),

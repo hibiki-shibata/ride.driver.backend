@@ -41,9 +41,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.util.UUID
 import com.ride.driver.backend.shared.model.Coordinate
-import com.ride.driver.backend.shared.auth.domain.ServiceType
 
 class ConsumerProfileControllerUnitTest {
+
     private val consumerProfileService = mockk<ConsumerProfileService>()
     private val controller = ConsumerProfileController(consumerProfileService)
 
@@ -54,8 +54,7 @@ class ConsumerProfileControllerUnitTest {
         val claim = AccessTokenClaim(
             accountId = consumerId,
             accountName = "hibiki",
-            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
-            serviceType = ServiceType.CONSUMER
+            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE)
         )
 
         val response = ConsumerProfileResDTO(

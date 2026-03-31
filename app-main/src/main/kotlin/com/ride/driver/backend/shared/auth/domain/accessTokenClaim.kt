@@ -13,6 +13,5 @@ enum class AccountRoles {
 data class AccessTokenClaim(
     val accountId: UUID,
     val accountName: String,
-    val accountRoles: List<AccountRoles>,
-    val serviceType: ServiceType
+    val accountRoles: List<AccountRoles>
 )
