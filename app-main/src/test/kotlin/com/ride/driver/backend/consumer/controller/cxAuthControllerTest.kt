@@ -1,33 +1,3 @@
-// package com.ride.driver.backend.consumer.controller
-
-// import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
-// import com.ride.driver.backend.consumer.service.ConsumerProfileService
-// import org.junit.jupiter.api.Test
-// import org.mockito.BDDMockito.given
-// import org.springframework.beans.factory.annotation.Autowired
-// import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
-// import org.springframework.test.context.bean.override.mockito.MockitoBean
-// import org.springframework.test.web.servlet.MockMvc
-// import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-// import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-
-// @WebMvcTest(ConsumerProfileController::class)
-// @AutoConfigureMockMvc(addFilters = false) // Disable security filters for testing
-// class ConsumerProfileControllerTest(
-//     @Autowired private val mockMvc: MockMvc
-// ) {
-
-//     @MockitoBean
-//     lateinit var consumerProfileService: ConsumerProfileService
-
-//     @Test
-//     fun `request should reach controller`() {
-//         // stub service here with given(...).willReturn(...)
-//         mockMvc.perform(get("/api/v1/consumers/me"))
-//             .andExpect(status().isOk)
-//     }
-// }
-
 package com.ride.driver.backend.consumer.controller
 
 import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
@@ -38,7 +8,7 @@ import com.ride.driver.backend.shared.model.Coordinate
 import com.ride.driver.backend.shared.auth.domain.ServiceType
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.springframework.http.HttpStatus
 import java.util.UUID
@@ -72,7 +42,7 @@ class ConsumerProfileControllerUnitTest {
         val result = controller.getConsumerProfile(claim)
         println(result.body)
 
-        assertEquals(HttpStatus.OK, result.statusCode)
-        assertEquals(response, result.body)
+        Assertions.assertEquals(HttpStatus.OK, result.statusCode)
+        Assertions.assertEquals(response, result.body)
     }
 }

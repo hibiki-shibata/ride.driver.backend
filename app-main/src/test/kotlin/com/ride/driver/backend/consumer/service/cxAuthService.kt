@@ -12,12 +12,15 @@ import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+// import org.junit.jupiter.api.Assertions.assertEquals
+// import org.junit.jupiter.api.Assertions.assertThrows
 import java.util.Optional
 import java.util.UUID
+
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.DisplayName
 
 class ConsumerProfileServiceTest {
 
@@ -63,12 +66,18 @@ class ConsumerProfileServiceTest {
         val result: ConsumerProfileResDTO = consumerProfileService.getConsumerProfile(accessTokenClaim)
 
         // then
-        assertEquals(emailAddress, result.emailAddress)
+        Assertions.assertEquals(emailAddress, result.emailAddress)
         // add more assertions based on your DTO fields
         // assertEquals("Hibiki", result.name)
         // assertEquals("hibiki@example.com", result.email)
 
         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+
+        Assertions.assertNotSame(1, 2)
+        Assertions.assertThrows(
+            RuntimeException::class.java
+        ) { throw RuntimeException() }
+        Assertions.assertEquals(1, 1)
     }
 
     @Test
@@ -87,7 +96,7 @@ class ConsumerProfileServiceTest {
         every { consumerProfileRepository.findById(consumerId) } returns Optional.empty()
 
         // when & then
-        assertThrows(AccountNotFoundException::class.java) {
+        Assertions.assertThrows(AccountNotFoundException::class.java) {
             consumerProfileService.getConsumerProfile(accessTokenClaim)
         }
 

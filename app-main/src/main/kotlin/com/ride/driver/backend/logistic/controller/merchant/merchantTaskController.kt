@@ -1,4 +1,4 @@
-package com.ride.driver.backend.merchant.controller
+package com.ride.driver.backend.logistic.controller
 
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
