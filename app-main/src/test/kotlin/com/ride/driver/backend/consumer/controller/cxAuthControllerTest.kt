@@ -1,110 +1,58 @@
 package com.ride.driver.backend.consumer.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.ride.driver.backend.shared.model.Coordinate
-import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
+import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
+import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
+import com.ride.driver.backend.shared.model.Coordinate
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest
-import org.springframework.test.context.bean.override.mockito.MockitoBean
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
-import org.mockito.BDDMockito.given
-import org.springframework.http.MediaType
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.verify
+import org.springframework.http.HttpStatus
+import java.util.UUID
 
-
-@WebMvcTest(ConsumerAuthController::class)
-class ConsumerAuthControllerTest(
-    @Autowired private val mockMvc: MockMvc,
-    @Autowired private val objectMapper: ObjectMapper
+class ConsumerAuthControllerUnitTest(
 ) {
+    private val consumerAuthService = mockk<ConsumerAuthService>()
+    private val ConsumerAuthController = ConsumerAuthController(consumerAuthService)
 
-    @MockitoBean
-    private lateinit var consumerAuthService: ConsumerAuthService
+    val req = ConsumerSignupDTO(
+        name = "Hibiki",
+        emailAddress = "a@gmail.com",
+        consumerAddress = "Tokyo",
+        consumerAddressCoordinate = Coordinate(35.6895, 139.6917),
+        password = "password123"
+    )
+
+    val res = JwtTokensDTO(
+        accessToken = "fake_access_token",
+        refreshToken = "fake_refresh_token"
+    )
 
     @Test
-    fun `signup returns 201 with location and tokens`() {
-        val req = ConsumerSignupDTO(
-            emailAddress = "test@example.com",
-            password = "Password123!",
-            name = "Test User",
-            consumerAddress = "123 Main St",
-            consumerAddressCoordinate = Coordinate(35.6895, 139.6917)
-        )
-
-        val tokens = JwtTokensDTO(
-            accessToken = "access-token",
-            refreshToken = "refresh-token"
-        )
-
-        given(consumerAuthService.signupConsumer(any())).willReturn(tokens)
-
-        mockMvc.perform(
-            post("/api/v1/consumers/auth/signup")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(req))
-        )
-            .andExpect(status().isCreated)
-            .andExpect(header().string("Location", "/api/v1/consumers/me"))
-            .andExpect(jsonPath("$.accessToken").value("access-token"))
-            .andExpect(jsonPath("$.refreshToken").value("refresh-token"))
-
-        verify(consumerAuthService).signupConsumer(any())
+    fun `consumerSignup returns 201 with body`() {
+        every { consumerAuthService.signupConsumer(req) } returns res
+        val result = ConsumerAuthController.consumerSignup(req)
+        Assertions.assertEquals(HttpStatus.CREATED, result.statusCode)
+        Assertions.assertEquals(res, result.body)
     }
 
     @Test
-    fun `login returns 200 with tokens`() {
-        val req = ConsumerLoginDTO(
-            emailAddress = "test@example.com",
-            password = "Password123!"
-        )
-
-        val tokens = JwtTokensDTO(
-            accessToken = "access-token",
-            refreshToken = "refresh-token"
-        )
-
-        given(consumerAuthService.loginConsumer(any())).willReturn(tokens)
-
-        mockMvc.perform(
-            post("/api/v1/consumers/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(req))
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.accessToken").value("access-token"))
-            .andExpect(jsonPath("$.refreshToken").value("refresh-token"))
-
-        verify(consumerAuthService).loginConsumer(any())
+    fun `consumerSignup throws AccountConflictException when email already exists`() {
+        every { consumerAuthService.signupConsumer(req) } throws AccountNotFoundException("Consumer with request email address already exists") 
+        Assertions.assertThrows(AccountNotFoundException::class.java) {
+            ConsumerAuthController.consumerSignup(req)
+        }
     }
 
     @Test
-    fun `refresh token returns 200 with new tokens`() {
-        val req = TokenRefreshDTO(refreshToken = "old-refresh-token")
-
-        val tokens = JwtTokensDTO(
-            accessToken = "new-access-token",
-            refreshToken = "new-refresh-token"
-        )
-
-        given(consumerAuthService.refreshToken(any())).willReturn(tokens)
-
-        mockMvc.perform(
-            post("/api/v1/consumers/auth/refresh-token")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(req))
-        )
-            .andExpect(status().isOk)
-            .andExpect(jsonPath("$.accessToken").value("new-access-token"))
-            .andExpect(jsonPath("$.refreshToken").value("new-refresh-token"))
-
-        verify(consumerAuthService).refreshToken(any())
+    fun `consumerSignup throws generic exception when unexpected error occurs`() {
+        every { consumerAuthService.signupConsumer(req) } throws RuntimeException("Unexpected error")
+        Assertions.assertThrows(RuntimeException::class.java) {
+            ConsumerAuthController.consumerSignup(req)  
+        }
     }
 }

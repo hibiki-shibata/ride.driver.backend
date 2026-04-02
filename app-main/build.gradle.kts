@@ -55,7 +55,6 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-restclient-test:4.0.4")
     testImplementation("io.mockk:mockk:1.13.10")
 
-    
 }
 
 kotlin {
