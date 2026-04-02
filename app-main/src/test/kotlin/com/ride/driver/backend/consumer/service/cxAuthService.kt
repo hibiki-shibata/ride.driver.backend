@@ -1,105 +1,108 @@
-package com.ride.driver.backend.consumer.service
+package com.ride.driver.backend.consumer.controller
 
-import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
-import com.ride.driver.backend.consumer.model.ConsumerProfile
-import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
-import com.ride.driver.backend.logistic.repository.TaskRepository
-import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
-import com.ride.driver.backend.shared.auth.domain.AccountRoles
-import com.ride.driver.backend.shared.auth.domain.ServiceType
-import com.ride.driver.backend.shared.model.Coordinate
+import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
+import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
+import com.ride.driver.backend.consumer.service.ConsumerAuthService
+import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
+import com.ride.driver.backend.shared.model.Coordinate
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.verify
-// import org.junit.jupiter.api.Assertions.assertEquals
-// import org.junit.jupiter.api.Assertions.assertThrows
-import java.util.Optional
-import java.util.UUID
-
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.DisplayName
+import org.springframework.http.HttpStatus
 
-class ConsumerProfileServiceTest {
+class ConsumerAuthControllerUnitTestt(
+) {
+    private val consumerAuthService = mockk<ConsumerAuthService>()
+    private val ConsumerAuthController = ConsumerAuthController(consumerAuthService)
 
-    private lateinit var consumerProfileRepository: ConsumerProfileRepository
-    private lateinit var taskRepository: TaskRepository
-    private lateinit var consumerProfileService: ConsumerProfileService
+    val signupReq = ConsumerSignupDTO(
+        name = "Hibiki",
+        emailAddress = "a@gmail.com",
+        consumerAddress = "Tokyo",
+        consumerAddressCoordinate = Coordinate(35.6895, 139.6917),
+        password = "password123"
+    )
 
-    @BeforeEach
-    fun setUp() {
-        consumerProfileRepository = mockk()
-        taskRepository = mockk()
-        consumerProfileService = ConsumerProfileService(
-            consumerProfileRepository,
-            taskRepository
-        )
+    val loginReq = mockk<ConsumerLoginDTO>()
+    val refreshReq = mockk<TokenRefreshDTO>()
+
+    val res = JwtTokensDTO(
+        accessToken = "fake_access_token",
+        refreshToken = "fake_refresh_token"
+    )
+
+    @Test
+    fun `consumerSignup returns 201 with body`() {
+        every { consumerAuthService.signupConsumer(signupReq) } returns res
+        val result = ConsumerAuthController.consumerSignup(signupReq)
+        Assertions.assertEquals(HttpStatus.CREATED, result.statusCode)
+        Assertions.assertEquals(res, result.body)
     }
 
     @Test
-    fun `should return consumer profile response when consumer exists`() {
-        // given
-        val emailAddress = "hibiki@gmail.com"
-        val consumerId = UUID.randomUUID()
-
-        val accessTokenClaim = AccessTokenClaim(
-            accountId = consumerId,
-            accountName = "test_consumer",
-            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
-            serviceType = ServiceType.CONSUMER
-        )
-
-        val consumerProfile = ConsumerProfile(
-            id = consumerId,
-            name = "Hibiki",
-            emailAddress = emailAddress,
-            consumerAddressCoordinate = Coordinate(35.6895, 139.6917),
-            consumerAddress = "123 Main St",
-            passwordHash = "hashed_password"
-        )
-
-        every { consumerProfileRepository.findById(consumerId) } returns Optional.of(consumerProfile)
-
-        // when
-        val result: ConsumerProfileResDTO = consumerProfileService.getConsumerProfile(accessTokenClaim)
-
-        // then
-        Assertions.assertEquals(emailAddress, result.emailAddress)
-        // add more assertions based on your DTO fields
-        // assertEquals("Hibiki", result.name)
-        // assertEquals("hibiki@example.com", result.email)
-
-        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
-
-        Assertions.assertNotSame(1, 2)
-        Assertions.assertThrows(
-            RuntimeException::class.java
-        ) { throw RuntimeException() }
-        Assertions.assertEquals(1, 1)
-    }
-
-    @Test
-    fun `should throw AccountNotFoundException when consumer does not exist`() {
-        // given
-        val consumerId = UUID.randomUUID()
-
-        val accessTokenClaim = AccessTokenClaim(
-            accountId = consumerId,
-            accountName = "test_consumer",
-            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
-            serviceType = ServiceType.CONSUMER
-            
-        )
-
-        every { consumerProfileRepository.findById(consumerId) } returns Optional.empty()
-
-        // when & then
+    fun `consumerSignup throws AccountConflictException when email already exists`() {
+        every { consumerAuthService.signupConsumer(signupReq) } throws AccountNotFoundException("Consumer with request email address already exists")
         Assertions.assertThrows(AccountNotFoundException::class.java) {
-            consumerProfileService.getConsumerProfile(accessTokenClaim)
+            ConsumerAuthController.consumerSignup(signupReq)
         }
+    }
 
-        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+    @Test
+    fun `consumerSignup throws generic exception when unexpected error occurs`() {
+        every { consumerAuthService.signupConsumer(signupReq) } throws RuntimeException("Unexpected error")
+        Assertions.assertThrows(RuntimeException::class.java) {
+            ConsumerAuthController.consumerSignup(signupReq)
+        }
+    }
+
+    @Test
+    fun `consumerLogin returns 200 with body`() {
+        every { consumerAuthService.loginConsumer(loginReq) } returns res
+        val result = ConsumerAuthController.consumerLogin(loginReq)
+        Assertions.assertEquals(HttpStatus.OK, result.statusCode)
+        Assertions.assertEquals(res, result.body)
+    }
+
+    @Test
+    fun `consumerLogin throws AccountNotFoundException when account does not exist`() {
+        every { consumerAuthService.loginConsumer(loginReq) } throws AccountNotFoundException("Consumer account not found")
+        Assertions.assertThrows(AccountNotFoundException::class.java) {
+            ConsumerAuthController.consumerLogin(loginReq)
+        }
+    }
+
+    @Test
+    fun `consumerLogin throws generic exception when unexpected error occurs`() {
+        every { consumerAuthService.loginConsumer(loginReq) } throws RuntimeException("Unexpected error")
+        Assertions.assertThrows(RuntimeException::class.java) {
+            ConsumerAuthController.consumerLogin(loginReq)
+        }
+    }
+
+    @Test
+    fun `refreshToken returns 200 with body`() {
+        every { consumerAuthService.refreshToken(refreshReq) } returns res
+        val result = ConsumerAuthController.refreshToken(refreshReq)
+        Assertions.assertEquals(HttpStatus.OK, result.statusCode)
+        Assertions.assertEquals(res, result.body)
+    }
+
+    @Test
+    fun `refreshToken throws AccountNotFoundException when refresh token is invalid`() {
+        every { consumerAuthService.refreshToken(refreshReq) } throws AccountNotFoundException("Invalid refresh token")
+        Assertions.assertThrows(AccountNotFoundException::class.java) {
+            ConsumerAuthController.refreshToken(refreshReq)
+        }
+    }
+
+    @Test
+    fun `refreshToken throws generic exception when unexpected error occurs`() {
+        every { consumerAuthService.refreshToken(refreshReq) } throws RuntimeException("Unexpected error")
+        Assertions.assertThrows(RuntimeException::class.java) {
+            ConsumerAuthController.refreshToken(refreshReq)
+        }
     }
 }

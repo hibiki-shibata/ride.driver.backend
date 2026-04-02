@@ -24,10 +24,8 @@ class ConsumerAuthController(
 
     @PostMapping("/signup")
     fun consumerSignup(@RequestBody @Valid req: ConsumerSignupDTO): ResponseEntity<JwtTokensDTO> {
-        println("Received signup request: $req hibiki")
         logger.info("event=consumer_signup_request_received")
         val jwtTokens: JwtTokensDTO = consumerAuthService.signupConsumer(req)
-        println("Generated JWT tokens: $jwtTokens hibiki")
         return ResponseEntity.created(URI("/api/v1/consumers/me")).body(jwtTokens)
     }
 
