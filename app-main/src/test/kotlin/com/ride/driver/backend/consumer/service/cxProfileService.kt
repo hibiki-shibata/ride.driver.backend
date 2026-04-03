@@ -1,105 +1,221 @@
-// package com.ride.driver.backend.consumer.servicepackage com.ride.driver.backend.consumer.service
+package com.ride.driver.backend.consumer.service
 
-// import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
-// import com.ride.driver.backend.consumer.model.ConsumerProfile
-// import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
-// import com.ride.driver.backend.logistic.repository.TaskRepository
-// import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
-// import com.ride.driver.backend.shared.auth.domain.AccountRoles
-// import com.ride.driver.backend.shared.auth.domain.ServiceType
-// import com.ride.driver.backend.shared.model.Coordinate
-// import com.ride.driver.backend.shared.exception.AccountNotFoundException
-// import io.mockk.every
-// import io.mockk.mockk
-// import io.mockk.verify
-// // import org.junit.jupiter.api.Assertions.assertEquals
-// // import org.junit.jupiter.api.Assertions.assertThrows
-// import java.util.Optional
-// import java.util.UUID
+import com.ride.driver.backend.consumer.dto.ConsumerProfileReqDTO
+import com.ride.driver.backend.consumer.model.ConsumerProfile
+import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
+import com.ride.driver.backend.logistic.model.Task
+import com.ride.driver.backend.logistic.repository.TaskRepository
+import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
+import com.ride.driver.backend.shared.auth.domain.AccountRoles
+import com.ride.driver.backend.shared.auth.domain.ServiceType
+import com.ride.driver.backend.shared.model.Coordinate
+import com.ride.driver.backend.shared.exception.AccountConflictException
+import com.ride.driver.backend.shared.exception.AccountNotFoundException
+import io.mockk.every
+import io.mockk.impl.annotations.InjectMockKs
+import io.mockk.impl.annotations.MockK
+import io.mockk.junit5.MockKExtension
+import io.mockk.slot
+import io.mockk.verify
+import io.mockk.confirmVerified
+import org.junit.jupiter.api.Assertions.assertDoesNotThrow
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
+import java.util.Optional
+import java.util.UUID
 
-// import org.junit.jupiter.api.BeforeEach
-// import org.junit.jupiter.api.Assertions
-// import org.junit.jupiter.api.Test
-// import org.junit.jupiter.api.DisplayName
+@ExtendWith(MockKExtension::class)
+class ConsumerProfileServiceTest {
 
-// class ConsumerProfileServiceTest {
+    @MockK
+    lateinit var consumerProfileRepository: ConsumerProfileRepository
 
-//     private lateinit var consumerProfileRepository: ConsumerProfileRepository
-//     private lateinit var taskRepository: TaskRepository
-//     private lateinit var consumerProfileService: ConsumerProfileService
+    @MockK
+    lateinit var taskRepository: TaskRepository
 
-//     @BeforeEach
-//     fun setUp() {
-//         consumerProfileRepository = mockk()
-//         taskRepository = mockk()
-//         consumerProfileService = ConsumerProfileService(
-//             consumerProfileRepository,
-//             taskRepository
-//         )
-//     }
+    @InjectMockKs
+    lateinit var consumerProfileService: ConsumerProfileService
 
-//     @Test
-//     fun `should return consumer profile response when consumer exists`() {
-//         // given
-//         val emailAddress = "hibiki@gmail.com"
-//         val consumerId = UUID.randomUUID()
+    private lateinit var consumerId: UUID
+    private lateinit var accessTokenClaim: AccessTokenClaim
+    private lateinit var savedConsumerProfile: ConsumerProfile
+    private lateinit var updatedRequest: ConsumerProfileReqDTO
 
-//         val accessTokenClaim = AccessTokenClaim(
-//             accountId = consumerId,
-//             accountName = "test_consumer",
-//             accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
-//             serviceType = ServiceType.CONSUMER
-//         )
+    @BeforeEach
+    fun setUp() {
+        consumerId = UUID.randomUUID()
 
-//         val consumerProfile = ConsumerProfile(
-//             id = consumerId,
-//             name = "Hibiki",
-//             emailAddress = emailAddress,
-//             consumerAddressCoordinate = Coordinate(35.6895, 139.6917),
-//             consumerAddress = "123 Main St",
-//             passwordHash = "hashed_password"
-//         )
+        accessTokenClaim = AccessTokenClaim(
+            accountId = consumerId,      
+            accountName ="Hibiki Test Name",
+            accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
+            serviceType = ServiceType.CONSUMER
+        )
 
-//         every { consumerProfileRepository.findById(consumerId) } returns Optional.of(consumerProfile)
+        savedConsumerProfile = ConsumerProfile(
+            id = consumerId,
+            name = "Old Name",
+            emailAddress = "old@email.com",
+            consumerAddress = "Old Address",
+            consumerAddressCoordinate = Coordinate(35.0000, 135.0000),
+            passwordHash = "hashed Password"
+            // add any other required fields for your entity
+        )
 
-//         // when
-//         val result: ConsumerProfileResDTO = consumerProfileService.getConsumerProfile(accessTokenClaim)
+        updatedRequest = ConsumerProfileReqDTO(
+            name = "New Name",
+            emailAddress = "new@email.com",
+            consumerAddress = "New Address",
+            consumerAddressCoordinate = Coordinate(35.6762, 139.6503),
+            password = "newpassword123"
+        )
+    }
 
-//         // then
-//         Assertions.assertEquals(emailAddress, result.emailAddress)
-//         // add more assertions based on your DTO fields
-//         // assertEquals("Hibiki", result.name)
-//         // assertEquals("hibiki@example.com", result.email)
+    @Test
+    fun `getConsumerProfile returns profile response when consumer exists`() {
+        every { consumerProfileRepository.findById(consumerId) } returns Optional.of(savedConsumerProfile)
 
-//         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+        val result = consumerProfileService.getConsumerProfile(accessTokenClaim)
 
-//         Assertions.assertNotSame(1, 2)
-//         Assertions.assertThrows(
-//             RuntimeException::class.java
-//         ) { throw RuntimeException() }
-//         Assertions.assertEquals(1, 1)
-//     }
+        assertEquals(savedConsumerProfile.id, UUID.fromString(result.id))
+        assertEquals(savedConsumerProfile.name, result.name)
+        assertEquals(savedConsumerProfile.emailAddress, result.emailAddress)
 
-//     @Test
-//     fun `should throw AccountNotFoundException when consumer does not exist`() {
-//         // given
-//         val consumerId = UUID.randomUUID()
+        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+        confirmVerified(consumerProfileRepository, taskRepository)
+    }
 
-//         val accessTokenClaim = AccessTokenClaim(
-//             accountId = consumerId,
-//             accountName = "test_consumer",
-//             accountRoles = listOf(AccountRoles.BASE_CONSUMER_ROLE),
-//             serviceType = ServiceType.CONSUMER
-            
-//         )
+    @Test
+    fun `getConsumerProfile throws AccountNotFoundException when consumer does not exist`() {
+        every { consumerProfileRepository.findById(consumerId) } returns Optional.empty()
 
-//         every { consumerProfileRepository.findById(consumerId) } returns Optional.empty()
+        val exception = assertThrows(AccountNotFoundException::class.java) {
+            consumerProfileService.getConsumerProfile(accessTokenClaim)
+        }
 
-//         // when & then
-//         Assertions.assertThrows(AccountNotFoundException::class.java) {
-//             consumerProfileService.getConsumerProfile(accessTokenClaim)
-//         }
+        assertEquals("Consumer not found with ID: $consumerId", exception.message)
 
-//         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
-//     }
-// }
+        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+        confirmVerified(consumerProfileRepository, taskRepository)
+    }
+
+    @Test
+    fun `updateConsumerProfile updates and returns profile when email is changed and not duplicated`() {
+        every { consumerProfileRepository.findById(consumerId) } returns Optional.of(savedConsumerProfile)
+        every { consumerProfileRepository.existsByEmailAddress(updatedRequest.emailAddress) } returns false
+        every { consumerProfileRepository.save(savedConsumerProfile) } returns savedConsumerProfile
+
+        val result = consumerProfileService.updateConsumerProfile(accessTokenClaim, updatedRequest)
+
+        assertEquals(updatedRequest.name, result.name)
+        assertEquals(updatedRequest.emailAddress, result.emailAddress)
+        assertEquals(updatedRequest.consumerAddress, result.consumerAddress)
+        assertEquals(updatedRequest.consumerAddressCoordinate, result.consumerAddressCoordinate)
+
+        assertEquals("New Name", savedConsumerProfile.name)
+        assertEquals("new@email.com", savedConsumerProfile.emailAddress)
+        assertEquals("New Address", savedConsumerProfile.consumerAddress)
+        assertEquals(updatedRequest.consumerAddressCoordinate, savedConsumerProfile.consumerAddressCoordinate)
+
+        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+        verify(exactly = 1) { consumerProfileRepository.existsByEmailAddress(updatedRequest.emailAddress) }
+        verify(exactly = 1) { consumerProfileRepository.save(savedConsumerProfile) }
+        confirmVerified(consumerProfileRepository, taskRepository)
+    }
+
+    @Test
+    fun `updateConsumerProfile updates profile when email is unchanged`() {
+        val sameEmailRequest = ConsumerProfileReqDTO(
+            name = "Updated Name",
+            emailAddress = savedConsumerProfile.emailAddress,
+            consumerAddress = "Updated Address",
+            consumerAddressCoordinate = Coordinate(11.1111, 22.2222),
+            password = "updatedpassword123"
+        )
+
+        every { consumerProfileRepository.findById(consumerId) } returns Optional.of(savedConsumerProfile)
+        every { consumerProfileRepository.existsByEmailAddress(any()) } returns true
+        every { consumerProfileRepository.save(savedConsumerProfile) } returns savedConsumerProfile
+
+        val result = consumerProfileService.updateConsumerProfile(accessTokenClaim, sameEmailRequest)
+
+        assertEquals("Updated Name", result.name)
+        assertEquals(savedConsumerProfile.emailAddress, result.emailAddress)
+        assertEquals("Updated Address", result.consumerAddress)
+        assertEquals(sameEmailRequest.consumerAddressCoordinate, result.consumerAddressCoordinate)
+
+        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+        verify(exactly = 1) { consumerProfileRepository.existsByEmailAddress(sameEmailRequest.emailAddress) }
+        verify(exactly = 1) { consumerProfileRepository.save(savedConsumerProfile) }
+        confirmVerified(consumerProfileRepository, taskRepository)
+    }
+
+    @Test
+    fun `updateConsumerProfile throws AccountConflictException when new email already exists`() {
+        every { consumerProfileRepository.findById(consumerId) } returns Optional.of(savedConsumerProfile)
+        every { consumerProfileRepository.existsByEmailAddress(updatedRequest.emailAddress) } returns true
+
+        val exception = assertThrows(AccountConflictException::class.java) {
+            consumerProfileService.updateConsumerProfile(accessTokenClaim, updatedRequest)
+        }
+
+        assertEquals("Consumer with request email address already exists", exception.message)
+
+        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+        verify(exactly = 1) { consumerProfileRepository.existsByEmailAddress(updatedRequest.emailAddress) }
+        verify(exactly = 0) { consumerProfileRepository.save(any()) }
+        confirmVerified(consumerProfileRepository, taskRepository)
+    }
+
+    @Test
+    fun `updateConsumerProfile throws AccountNotFoundException when consumer does not exist`() {
+        every { consumerProfileRepository.findById(consumerId) } returns Optional.empty()
+
+        val exception = assertThrows(AccountNotFoundException::class.java) {
+            consumerProfileService.updateConsumerProfile(accessTokenClaim, updatedRequest)
+        }
+
+        assertEquals("Consumer not found with ID: $consumerId", exception.message)
+
+        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+        verify(exactly = 0) { consumerProfileRepository.existsByEmailAddress(any()) }
+        verify(exactly = 0) { consumerProfileRepository.save(any()) }
+        confirmVerified(consumerProfileRepository, taskRepository)
+    }
+
+    @Test
+    fun `deleteConsumerProfile deletes consumer when found`() {
+        every { consumerProfileRepository.findById(consumerId) } returns Optional.of(savedConsumerProfile)
+        every { consumerProfileRepository.delete(savedConsumerProfile) } returns Unit
+
+        assertDoesNotThrow {
+            consumerProfileService.deleteConsumerProfile(accessTokenClaim)
+        }
+
+        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+        verify(exactly = 1) { consumerProfileRepository.delete(savedConsumerProfile) }
+        confirmVerified(consumerProfileRepository, taskRepository)
+    }
+
+    @Test
+    fun `deleteConsumerProfile throws AccountNotFoundException when consumer does not exist`() {
+        every { consumerProfileRepository.findById(consumerId) } returns Optional.empty()
+
+        val exception = assertThrows(AccountNotFoundException::class.java) {
+            consumerProfileService.deleteConsumerProfile(accessTokenClaim)
+        }
+
+        assertEquals("Consumer not found with ID: $consumerId", exception.message)
+
+        verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
+        verify(exactly = 0) { consumerProfileRepository.delete(any()) }
+        confirmVerified(consumerProfileRepository, taskRepository)
+    }
+
+}
