@@ -10,7 +10,6 @@ import com.ride.driver.backend.courier.model.CourierProfile
 import com.ride.driver.backend.courier.model.CourierStatus
 import com.ride.driver.backend.courier.model.OperationArea
 import com.ride.driver.backend.courier.model.VehicleType
-import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.logistic.model.Task
 import com.ride.driver.backend.logistic.model.TaskStatus
 import com.ride.driver.backend.logistic.model.OrderedItem
@@ -34,7 +33,6 @@ import com.ride.driver.backend.shared.exception.AccountNotFoundException
 
 @Service
 class LogisticsService(
-    private val courierProfileRepository: CourierProfileRepository,
     private val consumerProfileRepository: ConsumerProfileRepository,
     private val merchantProfileRepository: MerchantProfileRepository,
     private val merchantItemRepository: MerchantItemRepository,

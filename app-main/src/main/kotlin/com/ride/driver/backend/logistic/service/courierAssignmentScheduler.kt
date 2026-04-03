@@ -23,7 +23,7 @@ class CourierAssignmentScheduler(
 
 	@Scheduled(fixedRate = 15000, initialDelay = 1000) // every 15 seconds
     @Transactional
-    fun assignOnlineCpToPendingTasks() {
+    fun assignOnlineCpToPendingTasks(): Unit {
         var onlineCouriers: MutableList<CourierProfile> = courierProfileRepository
             .findByCpStatus(CourierStatus.ONLINE, PageRequest.of(0, 500))
             .shuffled()
