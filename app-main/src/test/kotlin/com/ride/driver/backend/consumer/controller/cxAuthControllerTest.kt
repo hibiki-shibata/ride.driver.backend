@@ -77,7 +77,7 @@ class ConsumerAuthControllerUnitTest {
         val result = consumerAuthController.consumerLogin(loginReq)
 
         Assertions.assertEquals(HttpStatus.OK, result.statusCode)
-        Assertions.assertEquals(jwtTokens, result.body)
+        Assertions.assertEquals(accessTokenDTO, result.body)
     }
 
     @Test
@@ -107,7 +107,7 @@ class ConsumerAuthControllerUnitTest {
         val result = consumerAuthController.refreshToken(refreshReq)
 
         Assertions.assertEquals(HttpStatus.OK, result.statusCode)
-        Assertions.assertEquals(jwtTokens, result.body)
+        Assertions.assertEquals(accessTokenDTO, result.body)
     }
 
     @Test

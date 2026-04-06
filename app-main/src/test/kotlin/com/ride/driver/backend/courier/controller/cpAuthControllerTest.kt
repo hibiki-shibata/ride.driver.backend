@@ -9,12 +9,12 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 
 class CourierAuthControllerTest {
@@ -29,17 +29,21 @@ class CourierAuthControllerTest {
     }
 
     @Test
-    fun `courierSignup should return 201 created with jwt tokens and location header`() {
+    fun `courierSignup should return 200 ok with access token and refresh token cookie`() {
         val request = mockk<CourierSignupDTO>()
-        val jwtTokens = mockk<JwtTokens>()
+        val jwtTokens = JwtTokens(
+            accessToken = "fake_access_token",
+            refreshToken = "fake_refresh_token"
+        )
 
         every { courierAuthService.signupCourier(request) } returns jwtTokens
 
         val response = courierAuthController.courierSignup(request)
 
-        assertEquals(HttpStatus.CREATED, response.statusCode)
-        assertEquals(URI("/api/v1/couriers/me"), response.headers.location)
-        assertSame(jwtTokens, response.body)
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals("fake_access_token", response.body?.accessToken)
+
+        assertRefreshTokenCookie(response.headers.getFirst(HttpHeaders.SET_COOKIE), "fake_refresh_token")
 
         verify(exactly = 1) { courierAuthService.signupCourier(request) }
         confirmVerified(courierAuthService)
@@ -63,16 +67,21 @@ class CourierAuthControllerTest {
     }
 
     @Test
-    fun `courierLogin should return 200 ok with jwt tokens`() {
+    fun `courierLogin should return 200 ok with access token and refresh token cookie`() {
         val request = mockk<CourierLoginDTO>()
-        val jwtTokens = mockk<JwtTokens>()
+        val jwtTokens = JwtTokens(
+            accessToken = "fake_access_token",
+            refreshToken = "fake_refresh_token"
+        )
 
         every { courierAuthService.loginCourier(request) } returns jwtTokens
 
         val response = courierAuthController.courierLogin(request)
 
         assertEquals(HttpStatus.OK, response.statusCode)
-        assertSame(jwtTokens, response.body)
+        assertEquals("fake_access_token", response.body?.accessToken)
+
+        assertRefreshTokenCookie(response.headers.getFirst(HttpHeaders.SET_COOKIE), "fake_refresh_token")
 
         verify(exactly = 1) { courierAuthService.loginCourier(request) }
         confirmVerified(courierAuthService)
@@ -96,16 +105,21 @@ class CourierAuthControllerTest {
     }
 
     @Test
-    fun `refreshToken should return 200 ok with new jwt tokens`() {
+    fun `refreshToken should return 200 ok with new access token and refresh token cookie`() {
         val request = mockk<TokenRefreshDTO>()
-        val newJwtTokens = mockk<JwtTokens>()
+        val jwtTokens = JwtTokens(
+            accessToken = "new_access_token",
+            refreshToken = "new_refresh_token"
+        )
 
-        every { courierAuthService.refreshToken(request) } returns newJwtTokens
+        every { courierAuthService.refreshToken(request) } returns jwtTokens
 
         val response = courierAuthController.refreshToken(request)
 
         assertEquals(HttpStatus.OK, response.statusCode)
-        assertSame(newJwtTokens, response.body)
+        assertEquals("new_access_token", response.body?.accessToken)
+
+        assertRefreshTokenCookie(response.headers.getFirst(HttpHeaders.SET_COOKIE), "new_refresh_token")
 
         verify(exactly = 1) { courierAuthService.refreshToken(request) }
         confirmVerified(courierAuthService)
@@ -126,5 +140,14 @@ class CourierAuthControllerTest {
 
         verify(exactly = 1) { courierAuthService.refreshToken(request) }
         confirmVerified(courierAuthService)
+    }
+
+    private fun assertRefreshTokenCookie(setCookieHeader: String?, expectedRefreshToken: String) {
+        assertNotNull(setCookieHeader)
+        assertEquals(true, setCookieHeader!!.contains("refreshToken=$expectedRefreshToken"))
+        assertEquals(true, setCookieHeader.contains("HttpOnly"))
+        assertEquals(true, setCookieHeader.contains("Secure"))
+        assertEquals(true, setCookieHeader.contains("Path=/api/v1/couriers/auth/refresh-token"))
+        assertEquals(true, setCookieHeader.contains("Max-Age=604800"))
     }
 }

@@ -21,7 +21,7 @@ import com.ride.driver.backend.shared.auth.domain.JwtTokens
 @RestController
 @RequestMapping("api/v1/consumers/auth")
 class ConsumerAuthController(
-    private val consumerAuthService: ConsumerAuthService
+    private val consumerAuthService: ConsumerAuthService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(ConsumerAuthController::class.java)
 
@@ -29,28 +29,38 @@ class ConsumerAuthController(
     fun consumerSignup(@RequestBody @Valid req: ConsumerSignupDTO): ResponseEntity<AccessTokenDTO> {
         logger.info("event=consumer_signup_request_received")
         val jwtTokens: JwtTokens = consumerAuthService.signupConsumer(req)
+        val cookieHeader: String = createCookie(jwtTokens.refreshToken)
+        return ResponseEntity.ok()
+                             .header(HttpHeaders.SET_COOKIE, cookieHeader)
+                             .body(AccessTokenDTO(accessToken = jwtTokens.accessToken))
+    }
 
-        val cookieHeader = ResponseCookie.from("refreshToken", jwtTokens.refreshToken)
-            .httpOnly(true)
-            .secure(true)
-            .path("/api/v1/consumers/auth/refresh-token")
-            .maxAge(7 * 24 * 60 * 60) // 7 days
-            .build()
+    @PostMapping("/login")
+    fun consumerLogin(@RequestBody @Valid req: ConsumerLoginDTO): ResponseEntity<AccessTokenDTO>{
+        logger.info("event=consumer_login_request_received")
+        val jwtTokens: JwtTokens = consumerAuthService.loginConsumer(req)
+        val cookieHeader: String = createCookie(jwtTokens.refreshToken)
         return ResponseEntity.ok()
                              .header(HttpHeaders.SET_COOKIE, cookieHeader.toString())
                              .body(AccessTokenDTO(accessToken = jwtTokens.accessToken))
     }
 
-    @PostMapping("/login")
-    fun consumerLogin(@RequestBody @Valid req: ConsumerLoginDTO): ResponseEntity<JwtTokens> {
-        logger.info("event=consumer_login_request_received")
-        val jwtTokens: JwtTokens = consumerAuthService.loginConsumer(req)
-        return ResponseEntity.ok(jwtTokens)
+    @PostMapping("/refresh-token")
+    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<AccessTokenDTO> {
+        val jwtTokens: JwtTokens = consumerAuthService.refreshToken(req)
+        val cookieHeader: String = createCookie(jwtTokens.refreshToken)
+        return ResponseEntity.ok()
+                             .header(HttpHeaders.SET_COOKIE, cookieHeader.toString())
+                             .body(AccessTokenDTO(accessToken = jwtTokens.accessToken))
     }
 
-    @PostMapping("/refresh-token")
-    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokens> {
-        val newJwtTokens: JwtTokens = consumerAuthService.refreshToken(req)
-        return ResponseEntity.ok(newJwtTokens)
+    private fun createCookie(refreshToken: String): String {
+        return ResponseCookie.from("refreshToken", refreshToken)
+            .httpOnly(true)
+            .secure(true)
+            .path("/api/v1/consumers/auth/refresh-token")
+            .maxAge(7 * 24 * 60 * 60) // 7 days
+            .build()
+            .toString()
     }
 }

@@ -9,12 +9,13 @@ import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.net.URI
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 
 class MerchantAuthControllerTest {
@@ -29,17 +30,25 @@ class MerchantAuthControllerTest {
     }
 
     @Test
-    fun `merchantSignup should return 201 created with jwt tokens and location header`() {
+    fun `merchantSignup should return 200 ok with access token and refresh token cookie`() {
         val request = mockk<MerchantSignupDTO>()
-        val jwtTokens = mockk<JwtTokens>()
+        val jwtTokens = JwtTokens(
+            accessToken = "fake_access_token",
+            refreshToken = "fake_refresh_token"
+        )
 
         every { merchantAuthService.signupMerchant(request) } returns jwtTokens
 
         val response = merchantAuthController.merchantSignup(request)
 
-        assertEquals(HttpStatus.CREATED, response.statusCode)
-        assertEquals(URI("/api/v1/merchants/me"), response.headers.location)
-        assertSame(jwtTokens, response.body)
+        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals("fake_access_token", response.body?.accessToken)
+
+        assertRefreshTokenCookie(
+            setCookieHeader = response.headers.getFirst(HttpHeaders.SET_COOKIE),
+            expectedRefreshToken = "fake_refresh_token",
+            expectedPath = "/api/v1/merchants/auth/refresh-token"
+        )
 
         verify(exactly = 1) { merchantAuthService.signupMerchant(request) }
         confirmVerified(merchantAuthService)
@@ -63,16 +72,25 @@ class MerchantAuthControllerTest {
     }
 
     @Test
-    fun `merchantLogin should return 200 ok with jwt tokens`() {
+    fun `merchantLogin should return 200 ok with access token and refresh token cookie`() {
         val request = mockk<MerchantLoginDTO>()
-        val jwtTokens = mockk<JwtTokens>()
+        val jwtTokens = JwtTokens(
+            accessToken = "fake_access_token",
+            refreshToken = "fake_refresh_token"
+        )
 
         every { merchantAuthService.loginMerchant(request) } returns jwtTokens
 
         val response = merchantAuthController.merchantLogin(request)
 
         assertEquals(HttpStatus.OK, response.statusCode)
-        assertSame(jwtTokens, response.body)
+        assertEquals("fake_access_token", response.body?.accessToken)
+
+        assertRefreshTokenCookie(
+            setCookieHeader = response.headers.getFirst(HttpHeaders.SET_COOKIE),
+            expectedRefreshToken = "fake_refresh_token",
+            expectedPath = "/api/v1/merchants/auth/refresh-token"
+        )
 
         verify(exactly = 1) { merchantAuthService.loginMerchant(request) }
         confirmVerified(merchantAuthService)
@@ -96,16 +114,25 @@ class MerchantAuthControllerTest {
     }
 
     @Test
-    fun `refreshToken should return 200 ok with new jwt tokens`() {
+    fun `refreshToken should return 200 ok with new access token and refresh token cookie`() {
         val request = mockk<TokenRefreshDTO>()
-        val newJwtTokens = mockk<JwtTokens>()
+        val jwtTokens = JwtTokens(
+            accessToken = "new_access_token",
+            refreshToken = "new_refresh_token"
+        )
 
-        every { merchantAuthService.refreshToken(request) } returns newJwtTokens
+        every { merchantAuthService.refreshToken(request) } returns jwtTokens
 
         val response = merchantAuthController.refreshToken(request)
 
         assertEquals(HttpStatus.OK, response.statusCode)
-        assertSame(newJwtTokens, response.body)
+        assertEquals("new_access_token", response.body?.accessToken)
+
+        assertRefreshTokenCookie(
+            setCookieHeader = response.headers.getFirst(HttpHeaders.SET_COOKIE),
+            expectedRefreshToken = "new_refresh_token",
+            expectedPath = "/api/v1/merchants/auth/refresh-token"
+        )
 
         verify(exactly = 1) { merchantAuthService.refreshToken(request) }
         confirmVerified(merchantAuthService)
@@ -126,5 +153,18 @@ class MerchantAuthControllerTest {
 
         verify(exactly = 1) { merchantAuthService.refreshToken(request) }
         confirmVerified(merchantAuthService)
+    }
+
+    private fun assertRefreshTokenCookie(
+        setCookieHeader: String?,
+        expectedRefreshToken: String,
+        expectedPath: String
+    ) {
+        assertNotNull(setCookieHeader)
+        assertTrue(setCookieHeader!!.contains("refreshToken=$expectedRefreshToken"))
+        assertTrue(setCookieHeader.contains("HttpOnly"))
+        assertTrue(setCookieHeader.contains("Secure"))
+        assertTrue(setCookieHeader.contains("Path=$expectedPath"))
+        assertTrue(setCookieHeader.contains("Max-Age=604800"))
     }
 }
