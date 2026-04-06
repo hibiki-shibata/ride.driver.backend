@@ -83,7 +83,7 @@ class CourierProfileController (
         return ResponseEntity.ok().build()
     }
 
-    @GetMapping("/history")
+    @GetMapping("order/history")
     fun getTaskHistory(
         @AuthenticationPrincipal courierDetails: AccessTokenClaim
     ): ResponseEntity<List<CourierTaskHistoryDTO?>> {

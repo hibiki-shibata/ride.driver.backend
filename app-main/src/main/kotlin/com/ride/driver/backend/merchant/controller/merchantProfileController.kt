@@ -56,7 +56,7 @@ class MerchantProfileController (
         return ResponseEntity.noContent().build()
     }
 
-    @PutMapping("/me/status")
+    @PutMapping("/online")
     fun updateMerchantOpenStatus(
         @RequestBody @Valid req: MerchantProfileReqDTO,
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
@@ -69,7 +69,7 @@ class MerchantProfileController (
         return ResponseEntity.ok(updatedProfile)
     }
 
-    @GetMapping("/orders/history")
+    @GetMapping("/order/history")
     fun getMerchantOrderHistory(
         @AuthenticationPrincipal merchantDetails: AccessTokenClaim
     ): ResponseEntity<List<MerchantOrderHistoryDTO?>> {
