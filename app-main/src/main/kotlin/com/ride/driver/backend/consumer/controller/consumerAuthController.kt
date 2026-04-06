@@ -4,6 +4,7 @@ import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseCookie
 import org.springframework.http.HttpHeaders
+import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,7 +15,6 @@ import java.net.URI
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.dto.AccessTokenDTO
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
  
@@ -46,8 +46,9 @@ class ConsumerAuthController(
     }
 
     @PostMapping("/refresh-token")
-    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<AccessTokenDTO> {
-        val jwtTokens: JwtTokens = consumerAuthService.refreshToken(req)
+    fun refreshToken(@CookieValue("refreshToken") refreshToken: String): ResponseEntity<AccessTokenDTO> {
+        logger.info("event=consumer_refresh_token_request_received")
+        val jwtTokens: JwtTokens = consumerAuthService.refreshToken(refreshToken)
         val cookieHeader: String = createCookie(jwtTokens.refreshToken)
         return ResponseEntity.ok()
                              .header(HttpHeaders.SET_COOKIE, cookieHeader.toString())

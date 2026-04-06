@@ -13,7 +13,6 @@ import com.ride.driver.backend.merchant.mapper.toTokenClaims
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
@@ -66,10 +65,10 @@ class MerchantAuthService(
     }
 
     fun refreshToken(
-        req: TokenRefreshDTO,
+        refreshToken: String
     ): JwtTokens{
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaimAndValidate(
-            token = req.refreshToken,
+            token = refreshToken,
             expectedServiceType = ServiceType.MERCHANT
         )
         val savedMerchant: MerchantProfile = merchantProfileRepository.findById(accountDetails.accountId).orElseThrow {

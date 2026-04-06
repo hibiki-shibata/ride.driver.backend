@@ -9,7 +9,6 @@ import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.exception.AccountConflictException
@@ -206,11 +205,10 @@ class CourierAuthServiceTest {
 
     @Test
     fun `refreshToken should throw InvalidJwtTokenException when courier is not found`() {
-        val req = mockk<TokenRefreshDTO>()
+        val req = "valid_refresh_token"
         val refreshTokenClaim = mockk<RefreshTokenClaim>()
         val courierId = UUID.randomUUID()
 
-        every { req.refreshToken } returns "refresh-token"
         every { refreshTokenClaim.accountId } returns courierId
         every {
             jwtTokenService.extractRefreshTokenClaimAndValidate(
@@ -229,7 +227,7 @@ class CourierAuthServiceTest {
 
     @Test
     fun `refreshToken should return new jwt tokens when token is valid`() {
-        val req = mockk<TokenRefreshDTO>()
+        val req = "valid_refresh_token"
         val refreshTokenClaim = mockk<RefreshTokenClaim>()
         val jwtTokens = mockk<JwtTokens>()
         val courierId = UUID.randomUUID()
@@ -242,7 +240,6 @@ class CourierAuthServiceTest {
             vehicleType = enumValues<VehicleType>().first()
         )
 
-        every { req.refreshToken } returns "valid-refresh-token"
         every { refreshTokenClaim.accountId } returns courierId
         every {
             jwtTokenService.extractRefreshTokenClaimAndValidate(

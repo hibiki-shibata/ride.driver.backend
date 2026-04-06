@@ -4,7 +4,6 @@ import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
 import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.service.MerchantAuthService
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
@@ -115,7 +114,7 @@ class MerchantAuthControllerTest {
 
     @Test
     fun `refreshToken should return 200 ok with new access token and refresh token cookie`() {
-        val request = mockk<TokenRefreshDTO>()
+        val request = "valid_refresh_token"
         val jwtTokens = JwtTokens(
             accessToken = "new_access_token",
             refreshToken = "new_refresh_token"
@@ -140,7 +139,7 @@ class MerchantAuthControllerTest {
 
     @Test
     fun `refreshToken should propagate exception when service throws`() {
-        val request = mockk<TokenRefreshDTO>()
+        val request = "valid_refresh_token"
         val exception = RuntimeException("refresh token invalid")
 
         every { merchantAuthService.refreshToken(request) } throws exception

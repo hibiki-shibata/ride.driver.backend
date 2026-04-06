@@ -15,7 +15,6 @@ import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
@@ -63,10 +62,10 @@ class ConsumerAuthService(
     }
 
     fun refreshToken(
-        req: TokenRefreshDTO,
+        refreshToken: String
     ): JwtTokens{
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaimAndValidate(
-            token = req.refreshToken,
+            token = refreshToken,
             expectedServiceType = ServiceType.CONSUMER
         )
         val savedConsumer: ConsumerProfile = consumerProfileRepository.findById(accountDetails.accountId).orElseThrow {

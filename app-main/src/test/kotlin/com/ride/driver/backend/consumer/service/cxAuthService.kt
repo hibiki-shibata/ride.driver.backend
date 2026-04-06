@@ -7,7 +7,6 @@ import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.exception.AccountConflictException
@@ -44,7 +43,7 @@ class ConsumerAuthServiceUnitTest {
     )
 
     private val loginReq = mockk<ConsumerLoginDTO>()
-    private val refreshReq = mockk<TokenRefreshDTO>()
+    private val refreshReq = "valid_refresh_token"
     private val savedConsumer = mockk<ConsumerProfile>(relaxed = true)
     private val refreshTokenClaim = mockk<RefreshTokenClaim>()
 
@@ -59,8 +58,6 @@ class ConsumerAuthServiceUnitTest {
     init {
         every { loginReq.emailAddress } returns "a@gmail.com"
         every { loginReq.password } returns "password123"
-
-        every { refreshReq.refreshToken } returns "valid_refresh_token"
 
         every { savedConsumer.id } returns accountId
         every { savedConsumer.passwordHash } returns hashedPassword

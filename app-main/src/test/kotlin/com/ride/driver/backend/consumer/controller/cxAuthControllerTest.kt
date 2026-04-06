@@ -4,7 +4,6 @@ import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.model.Coordinate
 import io.mockk.confirmVerified
@@ -169,7 +168,7 @@ class ConsumerAuthControllerTest {
 
     @Test
     fun `refreshToken should return 200 ok with new access token and refresh token cookie`() {
-        val request = mockk<TokenRefreshDTO>()
+        val request = "valid_refresh_token"
         val jwtTokens = JwtTokens(
             accessToken = "new_access_token",
             refreshToken = "new_refresh_token"
@@ -194,7 +193,7 @@ class ConsumerAuthControllerTest {
 
     @Test
     fun `refreshToken should propagate AccountNotFoundException when refresh token is invalid`() {
-        val request = mockk<TokenRefreshDTO>()
+        val request = "invalid_refresh_token"
 
         every { consumerAuthService.refreshToken(request) } throws
             AccountNotFoundException("Invalid refresh token")
@@ -211,7 +210,7 @@ class ConsumerAuthControllerTest {
 
     @Test
     fun `refreshToken should propagate RuntimeException when unexpected error occurs`() {
-        val request = mockk<TokenRefreshDTO>()
+        val request = "valid_refresh_token"
 
         every { consumerAuthService.refreshToken(request) } throws
             RuntimeException("Unexpected error")

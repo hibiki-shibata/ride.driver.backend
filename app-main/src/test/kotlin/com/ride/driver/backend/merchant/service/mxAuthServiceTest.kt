@@ -8,7 +8,6 @@ import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.exception.AccountConflictException
@@ -185,11 +184,10 @@ class MerchantAuthServiceTest {
 
     @Test
     fun `refreshToken should throw InvalidJwtTokenException when merchant is not found`() {
-        val req = mockk<TokenRefreshDTO>()
+        val req = "valid_refresh_token"
         val refreshTokenClaim = mockk<RefreshTokenClaim>()
         val merchantId = UUID.randomUUID()
 
-        every { req.refreshToken } returns "refresh-token"
         every { refreshTokenClaim.accountId } returns merchantId
         every {
             jwtTokenService.extractRefreshTokenClaimAndValidate(
@@ -218,7 +216,7 @@ class MerchantAuthServiceTest {
 
     @Test
     fun `refreshToken should return new jwt tokens when token is valid`() {
-        val req = mockk<TokenRefreshDTO>()
+        val req = "valid_refresh_token"
         val refreshTokenClaim = mockk<RefreshTokenClaim>()
         val jwtTokens = mockk<JwtTokens>()
         val merchantId = UUID.randomUUID()
@@ -233,7 +231,6 @@ class MerchantAuthServiceTest {
             merchantStatus = MerchantStatus.ADMINS_ONLY
         )
 
-        every { req.refreshToken } returns "valid-refresh-token"
         every { refreshTokenClaim.accountId } returns merchantId
         every {
             jwtTokenService.extractRefreshTokenClaimAndValidate(

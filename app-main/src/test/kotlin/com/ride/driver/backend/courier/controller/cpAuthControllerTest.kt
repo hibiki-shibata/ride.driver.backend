@@ -4,7 +4,6 @@ import com.ride.driver.backend.courier.dto.CourierLoginDTO
 import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.service.CourierAuthService
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import io.mockk.confirmVerified
 import io.mockk.every
 import io.mockk.mockk
@@ -106,7 +105,7 @@ class CourierAuthControllerTest {
 
     @Test
     fun `refreshToken should return 200 ok with new access token and refresh token cookie`() {
-        val request = mockk<TokenRefreshDTO>()
+        val request = "valid_refresh_token"
         val jwtTokens = JwtTokens(
             accessToken = "new_access_token",
             refreshToken = "new_refresh_token"
@@ -127,7 +126,7 @@ class CourierAuthControllerTest {
 
     @Test
     fun `refreshToken should propagate exception when service throws`() {
-        val request = mockk<TokenRefreshDTO>()
+        val request = "valid_refresh_token"
         val exception = RuntimeException("refresh token invalid")
 
         every { courierAuthService.refreshToken(request) } throws exception

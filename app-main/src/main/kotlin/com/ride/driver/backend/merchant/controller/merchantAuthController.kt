@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.http.ResponseEntity
 import org.springframework.http.ResponseCookie
 import org.springframework.http.HttpHeaders
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.dto.AccessTokenDTO
 import com.ride.driver.backend.merchant.service.MerchantAuthService
 import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
@@ -47,8 +47,9 @@ class MerchantAuthController(
     }
 
     @PostMapping("/refresh-token")
-    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<AccessTokenDTO> {
-        val jwtTokens: JwtTokens = merchantAuthService.refreshToken(req)
+    fun refreshToken(@CookieValue("refreshToken") refreshToken: String): ResponseEntity<AccessTokenDTO> {
+        logger.info("event=merchant_refresh_token_request_received")
+        val jwtTokens: JwtTokens = merchantAuthService.refreshToken(refreshToken)
         val cookieHeader: String = createCookie(jwtTokens.refreshToken)
         return ResponseEntity.ok()
                              .header(HttpHeaders.SET_COOKIE, cookieHeader.toString())

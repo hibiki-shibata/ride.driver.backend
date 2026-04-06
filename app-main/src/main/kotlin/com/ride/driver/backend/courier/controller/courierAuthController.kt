@@ -11,9 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.CookieValue
 import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
-import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
+
 import com.ride.driver.backend.shared.auth.dto.AccessTokenDTO
 import com.ride.driver.backend.courier.service.CourierAuthService
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
@@ -46,8 +47,9 @@ private val logger: Logger = LoggerFactory.getLogger(CourierAuthController::clas
     }
 
     @PostMapping("/refresh-token")
-    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<AccessTokenDTO> {
-        val jwtTokens: JwtTokens = courierAuthService.refreshToken(req)
+    fun refreshToken(@CookieValue("refreshToken") refreshToken: String): ResponseEntity<AccessTokenDTO> {
+        logger.info("event=courier_refresh_token_request_received")
+        val jwtTokens: JwtTokens = courierAuthService.refreshToken(refreshToken)
         val cookieHeader: String = createCookie(jwtTokens.refreshToken)
         return ResponseEntity.ok()
                              .header(HttpHeaders.SET_COOKIE, cookieHeader.toString())
