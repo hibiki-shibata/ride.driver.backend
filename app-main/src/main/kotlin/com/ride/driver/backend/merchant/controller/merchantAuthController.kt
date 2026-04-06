@@ -20,7 +20,7 @@ import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
 
 @RestController
-@RequestMapping("api/v1/merchants/auth")
+@RequestMapping("api/v1/merchant/auth")
 class MerchantAuthController(
     private val merchantAuthService: MerchantAuthService
 ) {
@@ -59,7 +59,7 @@ class MerchantAuthController(
         return ResponseCookie.from("refreshToken", refreshToken)
             .httpOnly(true)
             .secure(true)
-            .path("/api/v1/merchants/auth/refresh-token")
+            .path("/api/v1/merchant/auth/refresh-token")
             .maxAge(7 * 24 * 60 * 60) // 7 days
             .build()
             .toString()

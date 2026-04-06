@@ -19,7 +19,7 @@ import com.ride.driver.backend.merchant.dto.MerchantOpenStatusUpdateDTO
 import com.ride.driver.backend.merchant.dto.MerchantOrderHistoryDTO
 
 @RestController
-@RequestMapping("/api/v1/merchants")
+@RequestMapping("/api/v1/merchant")
 class MerchantProfileController (
     private val merchantProfileService: MerchantProfileService
 ){

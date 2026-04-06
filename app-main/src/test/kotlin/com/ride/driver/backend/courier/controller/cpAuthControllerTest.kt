@@ -147,7 +147,7 @@ class CourierAuthControllerTest {
         assertEquals(true, setCookieHeader!!.contains("refreshToken=$expectedRefreshToken"))
         assertEquals(true, setCookieHeader.contains("HttpOnly"))
         assertEquals(true, setCookieHeader.contains("Secure"))
-        assertEquals(true, setCookieHeader.contains("Path=/api/v1/couriers/auth/refresh-token"))
+        assertEquals(true, setCookieHeader.contains("Path=/api/v1/courier/auth/refresh-token"))
         assertEquals(true, setCookieHeader.contains("Max-Age=604800"))
     }
 }

@@ -24,9 +24,9 @@ class JwtFilter(
 
     override fun shouldNotFilter(request: HttpServletRequest): Boolean {
         val path = request.servletPath
-        return path.startsWith("/api/v1/merchants/auth") || 
-               path.startsWith("/api/v1/consumers/auth") || 
-               path.startsWith("/api/v1/couriers/auth")
+        return path.startsWith("/api/v1/merchant/auth") || 
+               path.startsWith("/api/v1/consumer/auth") || 
+               path.startsWith("/api/v1/courier/auth")
     }
     
     override fun doFilterInternal(
@@ -71,9 +71,9 @@ class JwtFilter(
     private fun resolveExpectedServiceTypeFromRequest(request: HttpServletRequest): ServiceType? {
         val path = request.servletPath
         return when {
-            path.startsWith("/api/v1/consumers") -> ServiceType.CONSUMER
-            path.startsWith("/api/v1/couriers") -> ServiceType.COURIER
-            path.startsWith("/api/v1/merchants") -> ServiceType.MERCHANT
+            path.startsWith("/api/v1/consumer") -> ServiceType.CONSUMER
+            path.startsWith("/api/v1/courier") -> ServiceType.COURIER
+            path.startsWith("/api/v1/merchant") -> ServiceType.MERCHANT
             else -> null
         }
     }

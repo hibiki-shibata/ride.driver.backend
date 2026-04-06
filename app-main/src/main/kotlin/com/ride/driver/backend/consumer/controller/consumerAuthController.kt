@@ -19,7 +19,7 @@ import com.ride.driver.backend.shared.auth.dto.AccessTokenDTO
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
  
 @RestController
-@RequestMapping("api/v1/consumers/auth")
+@RequestMapping("api/v1/consumer/auth")
 class ConsumerAuthController(
     private val consumerAuthService: ConsumerAuthService,
 ) {
@@ -58,7 +58,7 @@ class ConsumerAuthController(
         return ResponseCookie.from("refreshToken", refreshToken)
             .httpOnly(true)
             .secure(true)
-            .path("/api/v1/consumers/auth/refresh-token")
+            .path("/api/v1/consumer/auth/refresh-token")
             .maxAge(7 * 24 * 60 * 60) // 7 days
             .build()
             .toString()

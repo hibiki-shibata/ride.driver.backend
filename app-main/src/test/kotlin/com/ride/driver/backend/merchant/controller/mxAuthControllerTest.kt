@@ -47,7 +47,7 @@ class MerchantAuthControllerTest {
         assertRefreshTokenCookie(
             setCookieHeader = response.headers.getFirst(HttpHeaders.SET_COOKIE),
             expectedRefreshToken = "fake_refresh_token",
-            expectedPath = "/api/v1/merchants/auth/refresh-token"
+            expectedPath = "/api/v1/merchant/auth/refresh-token"
         )
 
         verify(exactly = 1) { merchantAuthService.signupMerchant(request) }
@@ -89,7 +89,7 @@ class MerchantAuthControllerTest {
         assertRefreshTokenCookie(
             setCookieHeader = response.headers.getFirst(HttpHeaders.SET_COOKIE),
             expectedRefreshToken = "fake_refresh_token",
-            expectedPath = "/api/v1/merchants/auth/refresh-token"
+            expectedPath = "/api/v1/merchant/auth/refresh-token"
         )
 
         verify(exactly = 1) { merchantAuthService.loginMerchant(request) }
@@ -131,7 +131,7 @@ class MerchantAuthControllerTest {
         assertRefreshTokenCookie(
             setCookieHeader = response.headers.getFirst(HttpHeaders.SET_COOKIE),
             expectedRefreshToken = "new_refresh_token",
-            expectedPath = "/api/v1/merchants/auth/refresh-token"
+            expectedPath = "/api/v1/merchant/auth/refresh-token"
         )
 
         verify(exactly = 1) { merchantAuthService.refreshToken(request) }

@@ -15,7 +15,7 @@ import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
 
 @RestController
-@RequestMapping("api/v1/merchants/task")
+@RequestMapping("api/v1/merchant/task")
 class MerchantTaskController (
     private val logisticsService: LogisticsService
 ){

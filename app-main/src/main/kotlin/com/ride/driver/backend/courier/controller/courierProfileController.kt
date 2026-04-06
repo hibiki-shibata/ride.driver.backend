@@ -20,7 +20,7 @@ import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.model.Coordinate
 
 @RestController
-@RequestMapping("api/v1/couriers")
+@RequestMapping("api/v1/courier")
 class CourierProfileController ( 
     private val courierProfileService: CourierProfileService, 
 ){

@@ -18,7 +18,7 @@ import com.ride.driver.backend.consumer.dto.ConsumerProfileResDTO
 import com.ride.driver.backend.consumer.dto.ConsumerOrderHistoryDTO
 
 @RestController
-@RequestMapping("api/v1/consumers")
+@RequestMapping("api/v1/consumer")
 class ConsumerProfileController ( 
     private val consumerProfileService: ConsumerProfileService
 ){

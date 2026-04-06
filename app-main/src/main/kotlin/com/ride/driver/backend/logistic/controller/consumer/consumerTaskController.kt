@@ -15,7 +15,7 @@ import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.logistic.dto.CreateTaskDTO
 
 @RestController
-@RequestMapping("api/v1/consumers/task")
+@RequestMapping("api/v1/consumer/task")
 class ConsumerTaskController (
     private val logisticsService: LogisticsService
 ){

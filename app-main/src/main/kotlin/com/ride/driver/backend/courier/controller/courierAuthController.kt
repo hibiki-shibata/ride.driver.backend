@@ -19,7 +19,7 @@ import com.ride.driver.backend.courier.service.CourierAuthService
 import com.ride.driver.backend.shared.auth.domain.JwtTokens
 
 @RestController
-@RequestMapping("api/v1/couriers/auth")
+@RequestMapping("api/v1/courier/auth")
 class CourierAuthController (
     private val courierAuthService: CourierAuthService
 ){
@@ -58,7 +58,7 @@ private val logger: Logger = LoggerFactory.getLogger(CourierAuthController::clas
         return ResponseCookie.from("refreshToken", refreshToken)
             .httpOnly(true)
             .secure(true)
-            .path("/api/v1/couriers/auth/refresh-token")
+            .path("/api/v1/courier/auth/refresh-token")
             .maxAge(7 * 24 * 60 * 60) // 7 days
             .build()
             .toString()

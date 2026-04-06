@@ -16,7 +16,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 @RestController
-@RequestMapping("/api/v1/merchants/items")
+@RequestMapping("/api/v1/merchant/items")
 class MerchantItemController (
     private val merchantItemService: MerchantItemService
 ){

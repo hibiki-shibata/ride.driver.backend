@@ -55,7 +55,7 @@ class ConsumerAuthControllerTest {
         assertRefreshTokenCookie(
             setCookieHeader = response.headers.getFirst(HttpHeaders.SET_COOKIE),
             expectedRefreshToken = "fake_refresh_token",
-            expectedPath = "/api/v1/consumers/auth/refresh-token"
+            expectedPath = "/api/v1/consumer/auth/refresh-token"
         )
 
         verify(exactly = 1) { consumerAuthService.signupConsumer(request) }
@@ -126,7 +126,7 @@ class ConsumerAuthControllerTest {
         assertRefreshTokenCookie(
             setCookieHeader = response.headers.getFirst(HttpHeaders.SET_COOKIE),
             expectedRefreshToken = "fake_refresh_token",
-            expectedPath = "/api/v1/consumers/auth/refresh-token"
+            expectedPath = "/api/v1/consumer/auth/refresh-token"
         )
 
         verify(exactly = 1) { consumerAuthService.loginConsumer(request) }
@@ -185,7 +185,7 @@ class ConsumerAuthControllerTest {
         assertRefreshTokenCookie(
             setCookieHeader = response.headers.getFirst(HttpHeaders.SET_COOKIE),
             expectedRefreshToken = "new_refresh_token",
-            expectedPath = "/api/v1/consumers/auth/refresh-token"
+            expectedPath = "/api/v1/consumer/auth/refresh-token"
         )
 
         verify(exactly = 1) { consumerAuthService.refreshToken(request) }

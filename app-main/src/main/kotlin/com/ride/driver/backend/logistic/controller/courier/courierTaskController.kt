@@ -16,7 +16,7 @@ import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
 
 @RestController
-@RequestMapping("api/v1/couriers/task")
+@RequestMapping("api/v1/courier/task")
 class CourierTaskController (
     private val logisticsService: LogisticsService
 ){
