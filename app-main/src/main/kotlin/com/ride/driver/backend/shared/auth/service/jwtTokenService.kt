@@ -14,7 +14,7 @@ import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.JwtTokenClaims
 import com.ride.driver.backend.shared.auth.domain.ServiceType
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 
 @Service
@@ -43,10 +43,10 @@ open class JwtTokenService(
 
     fun generateAccessTokenAndRefreshToken(
         jwtTokenClaims: JwtTokenClaims
-    ): JwtTokensDTO {
+    ): JwtTokens {
         val accessToken = generateAccessToken(jwtTokenClaims.accessTokenClaim)
         val refreshToken = generateRefreshToken(jwtTokenClaims.refreshTokenClaim)
-        return JwtTokensDTO(accessToken = accessToken, refreshToken = refreshToken)
+        return JwtTokens(accessToken = accessToken, refreshToken = refreshToken)
     }
 
     private fun generateAccessToken(

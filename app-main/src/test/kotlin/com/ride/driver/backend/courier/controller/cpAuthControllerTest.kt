@@ -3,7 +3,7 @@ package com.ride.driver.backend.courier.controller
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
 import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.service.CourierAuthService
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -31,7 +31,7 @@ class CourierAuthControllerTest {
     @Test
     fun `courierSignup should return 201 created with jwt tokens and location header`() {
         val request = mockk<CourierSignupDTO>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
 
         every { courierAuthService.signupCourier(request) } returns jwtTokens
 
@@ -65,7 +65,7 @@ class CourierAuthControllerTest {
     @Test
     fun `courierLogin should return 200 ok with jwt tokens`() {
         val request = mockk<CourierLoginDTO>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
 
         every { courierAuthService.loginCourier(request) } returns jwtTokens
 
@@ -98,7 +98,7 @@ class CourierAuthControllerTest {
     @Test
     fun `refreshToken should return 200 ok with new jwt tokens`() {
         val request = mockk<TokenRefreshDTO>()
-        val newJwtTokens = mockk<JwtTokensDTO>()
+        val newJwtTokens = mockk<JwtTokens>()
 
         every { courierAuthService.refreshToken(request) } returns newJwtTokens
 

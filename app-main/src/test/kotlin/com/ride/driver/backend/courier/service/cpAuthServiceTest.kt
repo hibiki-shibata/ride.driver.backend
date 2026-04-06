@@ -8,7 +8,7 @@ import com.ride.driver.backend.courier.model.VehicleType
 import com.ride.driver.backend.courier.repository.CourierProfileRepository
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.service.PasswordService
@@ -72,7 +72,7 @@ class CourierAuthServiceTest {
     @Test
     fun `signupCourier should hash password save courier and return jwt tokens`() {
         val req = mockk<CourierSignupDTO>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
         val vehicleType = enumValues<VehicleType>().first()
         val courierId = UUID.randomUUID()
 
@@ -169,7 +169,7 @@ class CourierAuthServiceTest {
     @Test
     fun `loginCourier should return jwt tokens when credentials are valid`() {
         val req = mockk<CourierLoginDTO>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
         val savedCourier = buildCourierProfile(
             id = UUID.randomUUID(),
             name = "Valid Courier",
@@ -231,7 +231,7 @@ class CourierAuthServiceTest {
     fun `refreshToken should return new jwt tokens when token is valid`() {
         val req = mockk<TokenRefreshDTO>()
         val refreshTokenClaim = mockk<RefreshTokenClaim>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
         val courierId = UUID.randomUUID()
 
         val savedCourier = buildCourierProfile(

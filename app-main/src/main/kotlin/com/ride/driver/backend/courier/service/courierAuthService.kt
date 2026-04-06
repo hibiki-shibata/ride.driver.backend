@@ -18,7 +18,7 @@ import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
@@ -33,7 +33,7 @@ class CourierAuthService(
     private val logger: Logger = LoggerFactory.getLogger(CourierAuthService::class.java)
     
     @Transactional
-    fun signupCourier(req: CourierSignupDTO): JwtTokensDTO {
+    fun signupCourier(req: CourierSignupDTO): JwtTokens {
         if (courierProfileRepository.existsByPhoneNumber(req.phoneNumber))
             throw AccountConflictException("Courier with request phone number already exists")
         
@@ -51,7 +51,7 @@ class CourierAuthService(
         return jwtTokenService.generateAccessTokenAndRefreshToken(savedCourier.toTokenClaims())
     }
 
-    fun loginCourier(req: CourierLoginDTO): JwtTokensDTO {
+    fun loginCourier(req: CourierLoginDTO): JwtTokens {
         val savedCourier: CourierProfile = courierProfileRepository.findByPhoneNumber(req.phoneNumber) ?: 
             throw AccountNotFoundException("Courier with the phone number does not exist. Please sign up first.")
             val isPasswordValid: Boolean = passwordService.isPasswordValid(
@@ -65,7 +65,7 @@ class CourierAuthService(
 
     fun refreshToken(
         req: TokenRefreshDTO,
-    ): JwtTokensDTO{
+    ): JwtTokens{
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaimAndValidate(
             token = req.refreshToken,
             expectedServiceType = ServiceType.COURIER

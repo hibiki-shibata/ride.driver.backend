@@ -12,7 +12,7 @@ import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
 import com.ride.driver.backend.merchant.mapper.toTokenClaims
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
@@ -34,7 +34,7 @@ class MerchantAuthService(
     @Transactional
     fun signupMerchant(
         req: MerchantSignupDTO         
-    ): JwtTokensDTO {
+    ): JwtTokens {
         if (merchantProfileRepository.existsByPhoneNumber(req.phoneNumber))
              throw AccountConflictException("Merchant with phone number already exists")
         val savedMerchant: MerchantProfile = merchantProfileRepository.save(
@@ -53,7 +53,7 @@ class MerchantAuthService(
 
     fun loginMerchant(
         req: MerchantLoginDTO
-    ): JwtTokensDTO {
+    ): JwtTokens {
         val savedMerchant: MerchantProfile = merchantProfileRepository.findByPhoneNumber(req.phoneNumber) ?: 
             throw AccountNotFoundException("Merchant with the phone number does not exist. Please sign up first.")
         val isPasswordValid: Boolean = passwordService.isPasswordValid(
@@ -67,7 +67,7 @@ class MerchantAuthService(
 
     fun refreshToken(
         req: TokenRefreshDTO,
-    ): JwtTokensDTO{
+    ): JwtTokens{
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaimAndValidate(
             token = req.refreshToken,
             expectedServiceType = ServiceType.MERCHANT

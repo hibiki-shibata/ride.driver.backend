@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.http.ResponseEntity
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.merchant.service.MerchantAuthService
 import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
@@ -24,24 +24,24 @@ class MerchantAuthController(
     private val logger: Logger = LoggerFactory.getLogger(MerchantAuthController::class.java)
 
     @PostMapping("/signup")
-    fun merchantSignup(@RequestBody @Valid req: MerchantSignupDTO): ResponseEntity<JwtTokensDTO> {
+    fun merchantSignup(@RequestBody @Valid req: MerchantSignupDTO): ResponseEntity<JwtTokens> {
         logger.info("event=merchant_signup_request_received")
-        val jwtTokens: JwtTokensDTO = merchantAuthService.signupMerchant(req)   
+        val jwtTokens: JwtTokens = merchantAuthService.signupMerchant(req)   
         return ResponseEntity.created(
             URI("/api/v1/merchants/me")
             ).body(jwtTokens)
     }
 
     @PostMapping("/login")
-    fun merchantLogin(@RequestBody @Valid req: MerchantLoginDTO): ResponseEntity<JwtTokensDTO> {
+    fun merchantLogin(@RequestBody @Valid req: MerchantLoginDTO): ResponseEntity<JwtTokens> {
         logger.info("event=merchant_login_request_received")
-        val jwtTokens: JwtTokensDTO = merchantAuthService.loginMerchant(req)
+        val jwtTokens: JwtTokens = merchantAuthService.loginMerchant(req)
         return ResponseEntity.ok(jwtTokens)
     }
 
     @PostMapping("/refresh-token")
-    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokensDTO> {
-        val newJwtTokens: JwtTokensDTO = merchantAuthService.refreshToken(req)
+    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokens> {
+        val newJwtTokens: JwtTokens = merchantAuthService.refreshToken(req)
         return ResponseEntity.ok(newJwtTokens)
     }
 }

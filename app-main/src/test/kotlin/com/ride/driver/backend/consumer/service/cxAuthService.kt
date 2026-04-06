@@ -6,7 +6,7 @@ import com.ride.driver.backend.consumer.model.ConsumerProfile
 import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.service.PasswordService
@@ -48,7 +48,7 @@ class ConsumerAuthServiceUnitTest {
     private val savedConsumer = mockk<ConsumerProfile>(relaxed = true)
     private val refreshTokenClaim = mockk<RefreshTokenClaim>()
 
-    private val jwtTokens = JwtTokensDTO(
+    private val jwtTokens = JwtTokens(
         accessToken = "fake_access_token",
         refreshToken = "fake_refresh_token"
     )

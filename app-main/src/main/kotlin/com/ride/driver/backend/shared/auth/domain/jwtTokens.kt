@@ -1,8 +1,8 @@
-package com.ride.driver.backend.shared.auth.dto
+package com.ride.driver.backend.shared.auth.domain
 
 import jakarta.validation.constraints.NotBlank
 
-data class JwtTokensDTO(
+data class JwtTokens(
     @field:NotBlank
     val accessToken: String,
 

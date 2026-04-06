@@ -3,8 +3,9 @@ package com.ride.driver.backend.consumer.controller
 import com.ride.driver.backend.consumer.dto.ConsumerLoginDTO
 import com.ride.driver.backend.consumer.dto.ConsumerSignupDTO
 import com.ride.driver.backend.consumer.service.ConsumerAuthService
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
+import com.ride.driver.backend.shared.auth.dto.AccessTokenDTO
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.model.Coordinate
 import io.mockk.every
@@ -30,9 +31,13 @@ class ConsumerAuthControllerUnitTest {
     private val loginReq = mockk<ConsumerLoginDTO>()
     private val refreshReq = mockk<TokenRefreshDTO>()
 
-    private val jwtTokens = JwtTokensDTO(
+    private val jwtTokens = JwtTokens(
         accessToken = "fake_access_token",
         refreshToken = "fake_refresh_token"
+    )
+
+    private val accessTokenDTO = AccessTokenDTO(
+        accessToken = "fake_access_token"
     )
 
     @Test
@@ -41,9 +46,8 @@ class ConsumerAuthControllerUnitTest {
 
         val result = consumerAuthController.consumerSignup(signupReq)
 
-        Assertions.assertEquals(HttpStatus.CREATED, result.statusCode)
-        Assertions.assertEquals(jwtTokens, result.body)
-        Assertions.assertEquals("/api/v1/consumers/me", result.headers.location?.toString())
+        Assertions.assertEquals(HttpStatus.OK, result.statusCode)
+        Assertions.assertEquals(accessTokenDTO, result.body)
     }
 
     @Test

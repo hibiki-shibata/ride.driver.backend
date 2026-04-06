@@ -7,7 +7,7 @@ import com.ride.driver.backend.merchant.model.MerchantStatus
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
 import com.ride.driver.backend.shared.auth.service.PasswordService
@@ -65,7 +65,7 @@ class MerchantAuthServiceTest {
     @Test
     fun `signupMerchant should hash password save merchant and return jwt tokens`() {
         val req = mockk<MerchantSignupDTO>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
         val merchantId = UUID.randomUUID()
         val merchantCoordinate = Coordinate(latitude = 35.6812, longitude = 139.7671)
 
@@ -161,7 +161,7 @@ class MerchantAuthServiceTest {
     @Test
     fun `loginMerchant should return jwt tokens when credentials are valid`() {
         val req = mockk<MerchantLoginDTO>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
         val savedMerchant = buildMerchantProfile(
             id = UUID.randomUUID(),
             name = "Valid Merchant",
@@ -220,7 +220,7 @@ class MerchantAuthServiceTest {
     fun `refreshToken should return new jwt tokens when token is valid`() {
         val req = mockk<TokenRefreshDTO>()
         val refreshTokenClaim = mockk<RefreshTokenClaim>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
         val merchantId = UUID.randomUUID()
 
         val savedMerchant = buildMerchantProfile(

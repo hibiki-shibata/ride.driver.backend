@@ -3,7 +3,7 @@ package com.ride.driver.backend.merchant.controller
 import com.ride.driver.backend.merchant.dto.MerchantLoginDTO
 import com.ride.driver.backend.merchant.dto.MerchantSignupDTO
 import com.ride.driver.backend.merchant.service.MerchantAuthService
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import io.mockk.confirmVerified
 import io.mockk.every
@@ -31,7 +31,7 @@ class MerchantAuthControllerTest {
     @Test
     fun `merchantSignup should return 201 created with jwt tokens and location header`() {
         val request = mockk<MerchantSignupDTO>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
 
         every { merchantAuthService.signupMerchant(request) } returns jwtTokens
 
@@ -65,7 +65,7 @@ class MerchantAuthControllerTest {
     @Test
     fun `merchantLogin should return 200 ok with jwt tokens`() {
         val request = mockk<MerchantLoginDTO>()
-        val jwtTokens = mockk<JwtTokensDTO>()
+        val jwtTokens = mockk<JwtTokens>()
 
         every { merchantAuthService.loginMerchant(request) } returns jwtTokens
 
@@ -98,7 +98,7 @@ class MerchantAuthControllerTest {
     @Test
     fun `refreshToken should return 200 ok with new jwt tokens`() {
         val request = mockk<TokenRefreshDTO>()
-        val newJwtTokens = mockk<JwtTokensDTO>()
+        val newJwtTokens = mockk<JwtTokens>()
 
         every { merchantAuthService.refreshToken(request) } returns newJwtTokens
 

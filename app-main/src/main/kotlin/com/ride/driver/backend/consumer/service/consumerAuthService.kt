@@ -14,7 +14,7 @@ import com.ride.driver.backend.shared.exception.AccountNotFoundException
 import com.ride.driver.backend.shared.exception.IncorrectPasswordException
 import com.ride.driver.backend.shared.auth.service.PasswordService
 import com.ride.driver.backend.shared.auth.service.JwtTokenService
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.shared.auth.domain.RefreshTokenClaim
 import com.ride.driver.backend.shared.auth.domain.ServiceType
@@ -31,7 +31,7 @@ class ConsumerAuthService(
     @Transactional
     fun signupConsumer(
         req: ConsumerSignupDTO
-    ): JwtTokensDTO {
+    ): JwtTokens {
         if (consumerProfileRepository.existsByEmailAddress(req.emailAddress))
              throw AccountConflictException("Consumer with request email address already exists")
         
@@ -50,7 +50,7 @@ class ConsumerAuthService(
 
     fun loginConsumer(
         req: ConsumerLoginDTO
-    ): JwtTokensDTO {
+    ): JwtTokens {
         val savedConsumer: ConsumerProfile = consumerProfileRepository.findByEmailAddress(req.emailAddress)
             ?: throw AccountNotFoundException("Consumer not found with request email address")
         val isPasswordValid: Boolean = passwordService.isPasswordValid(
@@ -64,7 +64,7 @@ class ConsumerAuthService(
 
     fun refreshToken(
         req: TokenRefreshDTO,
-    ): JwtTokensDTO{
+    ): JwtTokens{
         val accountDetails: RefreshTokenClaim = jwtTokenService.extractRefreshTokenClaimAndValidate(
             token = req.refreshToken,
             expectedServiceType = ServiceType.CONSUMER

@@ -13,7 +13,7 @@ import com.ride.driver.backend.courier.dto.CourierSignupDTO
 import com.ride.driver.backend.courier.dto.CourierLoginDTO
 import com.ride.driver.backend.shared.auth.dto.TokenRefreshDTO
 import com.ride.driver.backend.courier.service.CourierAuthService
-import com.ride.driver.backend.shared.auth.dto.JwtTokensDTO
+import com.ride.driver.backend.shared.auth.domain.JwtTokens
 
 @RestController
 @RequestMapping("api/v1/couriers/auth")
@@ -23,24 +23,24 @@ class CourierAuthController (
 private val logger: Logger = LoggerFactory.getLogger(CourierAuthController::class.java)
 
 @PostMapping("/signup")
-    fun courierSignup(@RequestBody @Valid req: CourierSignupDTO): ResponseEntity<JwtTokensDTO> {
+    fun courierSignup(@RequestBody @Valid req: CourierSignupDTO): ResponseEntity<JwtTokens> {
         logger.info("event=courier_signup_request_received")
-        val jwtTokens: JwtTokensDTO = courierAuthService.signupCourier(req)
+        val jwtTokens: JwtTokens = courierAuthService.signupCourier(req)
         return ResponseEntity
             .created(URI("/api/v1/couriers/me"))
             .body(jwtTokens)
     }
 
     @PostMapping("/login")
-    fun courierLogin(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<JwtTokensDTO> {
+    fun courierLogin(@RequestBody @Valid req: CourierLoginDTO): ResponseEntity<JwtTokens> {
         logger.info("event=courier_signup_request_received")
-        val jwtTokens: JwtTokensDTO = courierAuthService.loginCourier(req)
+        val jwtTokens: JwtTokens = courierAuthService.loginCourier(req)
         return ResponseEntity.ok(jwtTokens)        
     }
 
     @PostMapping("/refresh-token")
-    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokensDTO> {
-        val newJwtTokens: JwtTokensDTO = courierAuthService.refreshToken(req)
+    fun refreshToken(@RequestBody @Valid req: TokenRefreshDTO): ResponseEntity<JwtTokens> {
+        val newJwtTokens: JwtTokens = courierAuthService.refreshToken(req)
         return ResponseEntity.ok(newJwtTokens)
     }
 }
