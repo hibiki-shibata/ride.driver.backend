@@ -1,0 +1,4 @@
+
+
+# Keep in mind to set profile to prod in production
+#  SPRING_PROFILES_ACTIVE=prod java -jar app-main/build/libs/app-main-0.0.1-SNAPSHOT.jar
