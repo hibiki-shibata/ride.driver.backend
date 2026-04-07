@@ -30,7 +30,7 @@ class ConsumerAuthController(
         logger.info("event=consumer_signup_request_received")
         val jwtTokens: JwtTokens = consumerAuthService.signupConsumer(req)
         val cookieHeader: String = createCookie(jwtTokens.refreshToken)
-        return ResponseEntity.ok()
+        return ResponseEntity.created(URI.create("/consumer/me"))
                              .header(HttpHeaders.SET_COOKIE, cookieHeader)
                              .body(AccessTokenDTO(accessToken = jwtTokens.accessToken))
     }
@@ -40,7 +40,7 @@ class ConsumerAuthController(
         logger.info("event=consumer_login_request_received")
         val jwtTokens: JwtTokens = consumerAuthService.loginConsumer(req)
         val cookieHeader: String = createCookie(jwtTokens.refreshToken)
-        return ResponseEntity.ok()
+        return ResponseEntity.created(URI.create("/consumer/me"))
                              .header(HttpHeaders.SET_COOKIE, cookieHeader.toString())
                              .body(AccessTokenDTO(accessToken = jwtTokens.accessToken))
     }

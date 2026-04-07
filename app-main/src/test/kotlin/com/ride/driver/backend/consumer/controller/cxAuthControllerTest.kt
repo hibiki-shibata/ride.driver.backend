@@ -48,7 +48,7 @@ class ConsumerAuthControllerTest {
 
         val response = consumerAuthController.consumerSignup(request)
 
-        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(HttpStatus.CREATED, response.statusCode)
         assertEquals("fake_access_token", response.body?.accessToken)
 
         assertRefreshTokenCookie(
@@ -119,7 +119,7 @@ class ConsumerAuthControllerTest {
 
         val response = consumerAuthController.consumerLogin(request)
 
-        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(HttpStatus.CREATED, response.statusCode)
         assertEquals("fake_access_token", response.body?.accessToken)
 
         assertRefreshTokenCookie(

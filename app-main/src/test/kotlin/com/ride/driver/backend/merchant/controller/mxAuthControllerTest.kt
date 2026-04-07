@@ -40,7 +40,7 @@ class MerchantAuthControllerTest {
 
         val response = merchantAuthController.merchantSignup(request)
 
-        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(HttpStatus.CREATED, response.statusCode)
         assertEquals("fake_access_token", response.body?.accessToken)
 
         assertRefreshTokenCookie(
@@ -82,7 +82,7 @@ class MerchantAuthControllerTest {
 
         val response = merchantAuthController.merchantLogin(request)
 
-        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(HttpStatus.CREATED, response.statusCode)
         assertEquals("fake_access_token", response.body?.accessToken)
 
         assertRefreshTokenCookie(

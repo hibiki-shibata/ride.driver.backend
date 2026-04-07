@@ -39,7 +39,7 @@ class CourierAuthControllerTest {
 
         val response = courierAuthController.courierSignup(request)
 
-        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(HttpStatus.CREATED, response.statusCode)
         assertEquals("fake_access_token", response.body?.accessToken)
 
         assertRefreshTokenCookie(response.headers.getFirst(HttpHeaders.SET_COOKIE), "fake_refresh_token")
@@ -77,7 +77,7 @@ class CourierAuthControllerTest {
 
         val response = courierAuthController.courierLogin(request)
 
-        assertEquals(HttpStatus.OK, response.statusCode)
+        assertEquals(HttpStatus.CREATED, response.statusCode)
         assertEquals("fake_access_token", response.body?.accessToken)
 
         assertRefreshTokenCookie(response.headers.getFirst(HttpHeaders.SET_COOKIE), "fake_refresh_token")

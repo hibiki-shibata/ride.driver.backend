@@ -31,7 +31,7 @@ class MerchantAuthController(
         logger.info("event=merchant_signup_request_received")
         val jwtTokens: JwtTokens = merchantAuthService.signupMerchant(req) 
         val cookieHeader: String = createCookie(jwtTokens.refreshToken)
-        return ResponseEntity.ok()
+        return ResponseEntity.created(URI.create("/merchant/home"))
                              .header(HttpHeaders.SET_COOKIE, cookieHeader.toString())
                              .body(AccessTokenDTO(accessToken = jwtTokens.accessToken))
     }
@@ -41,7 +41,7 @@ class MerchantAuthController(
         logger.info("event=merchant_login_request_received")
         val jwtTokens: JwtTokens = merchantAuthService.loginMerchant(req)
         val cookieHeader: String = createCookie(jwtTokens.refreshToken)
-        return ResponseEntity.ok()
+        return ResponseEntity.created(URI.create("/merchant/home"))
                              .header(HttpHeaders.SET_COOKIE, cookieHeader.toString())
                              .body(AccessTokenDTO(accessToken = jwtTokens.accessToken))
     }

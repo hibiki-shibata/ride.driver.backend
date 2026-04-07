@@ -29,7 +29,7 @@ class ConsumerProfile(
     @Column(name = "id", updatable = false, nullable = false, unique = true)
     val id: UUID? = null,
 
-    @Column(name = "name", nullable = false, length = 20)
+    @Column(name = "name", nullable = false, length = 50)
     var name: String,
 
     @Column(name = "email_address", unique = true, nullable = false, length = 50)
