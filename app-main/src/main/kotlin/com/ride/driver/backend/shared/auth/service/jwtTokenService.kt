@@ -19,16 +19,16 @@ import com.ride.driver.backend.shared.exception.InvalidJwtTokenException
 
 @Service
 open class JwtTokenService(
-    @Value("\${security.jwt.access-token-validity-ms:36000000}")
-    private val accessTokenValidityInMilliseconds: Long,
+    @Value("\${security.jwt.access-token-validity-ms}")
+    private val accessTokenValidityInMilliseconds: String,
 
-    @Value("\${security.jwt.refresh-token-validity-ms:86400000}")
-    private val refreshTokenValidityInMilliseconds: Long,
+    @Value("\${security.jwt.refresh-token-validity-ms}")
+    private val refreshTokenValidityInMilliseconds: String,
 
     @Value("\${security.jwt.secret-string}")
     signingKeyString: String,
 
-    @Value("\${security.jwt.issuer:ride-backend}")
+    @Value("\${security.jwt.issuer}")
     private val issuer: String,
     
     private val signingKey: Key = Keys.hmacShaKeyFor(signingKeyString.toByteArray(StandardCharsets.UTF_8)),
@@ -64,7 +64,7 @@ open class JwtTokenService(
             .setClaims(additionalClaims)
             .setSubject(accessTokenClaim.accountId.toString())
             .setIssuedAt(Date(now))
-            .setExpiration(Date(now + accessTokenValidityInMilliseconds))
+            .setExpiration(Date(now + accessTokenValidityInMilliseconds.toLong()))
             .signWith(signingKey)
             .compact()
     }
@@ -81,7 +81,7 @@ open class JwtTokenService(
         return Jwts.builder()
             .setClaims(additionalClaims)
             .setIssuedAt(Date(now))
-            .setExpiration(Date(now + refreshTokenValidityInMilliseconds))
+            .setExpiration(Date(now + refreshTokenValidityInMilliseconds.toLong()))
             .signWith(signingKey)
             .compact()
     }
