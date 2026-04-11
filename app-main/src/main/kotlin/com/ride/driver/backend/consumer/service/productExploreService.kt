@@ -32,12 +32,14 @@ class ProductExploreService(
     fun getMerchantProfile(
         merchantId: String
     ): MerchantProfileResDTO {
+        logger.info("event=get_merchant_profile_started merchantId={}", merchantId)
         val merchantProfile: MerchantProfile = merchantProfileRepository.findById(UUID.fromString(merchantId))
             .orElseThrow { AccountNotFoundException("Merchant with ID $merchantId not found") }
         return merchantProfile.toMerchantProfileResDTO()
     }
 
     fun getProductsByMerchant(merchantId: String): List<MerchantProductResDTO> {
+        logger.info("event=get_products_by_merchant_started merchantId={}", merchantId)
         val merchantItems: List<MerchantItem> = merchantItemRepository.findByMerchantProfile_Id(UUID.fromString(merchantId))
         return merchantItems.map { it.toMerchantProductResDTO() }
     }
