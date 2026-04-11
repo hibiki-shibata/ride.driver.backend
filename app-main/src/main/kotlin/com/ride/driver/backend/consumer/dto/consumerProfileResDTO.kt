@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank
 import org.springframework.format.annotation.DateTimeFormat
 import com.ride.driver.backend.shared.model.Coordinate
 import jakarta.validation.constraints.Size
-import java.util.UUID
 
 data class ConsumerProfileResDTO(
     @field:NotBlank
