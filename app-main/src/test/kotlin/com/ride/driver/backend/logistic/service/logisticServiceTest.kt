@@ -5,6 +5,7 @@ import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.logistic.dto.CreateTaskDTO
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
 import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
+import com.ride.driver.backend.logistic.dto.SelectedItemDTO
 import com.ride.driver.backend.logistic.mapper.toOrderedItem
 import com.ride.driver.backend.logistic.mapper.toTaskDataDTO
 import com.ride.driver.backend.logistic.model.OrderedItem
@@ -156,7 +157,10 @@ class LogisticsServiceTest {
 
         every { consumerDetails.accountId } returns consumerId
         every { createTaskDTO.merchantID } returns merchantId
-        every { createTaskDTO.orderedItemIDs } returns listOf(itemId1.toString(), itemId2.toString())
+        every { createTaskDTO.selectedItems } returns listOf(
+            SelectedItemDTO(itemId1.toString(), 2),
+            SelectedItemDTO(itemId2.toString(), 3)
+        )
 
         every { consumerProfileRepository.findById(consumerId) } returns Optional.of(consumerProfile)
         every { merchantProfileRepository.findById(merchantId) } returns Optional.of(merchantProfile)
@@ -183,7 +187,7 @@ class LogisticsServiceTest {
 
         verify(atLeast = 1) { consumerDetails.accountId }
         verify(atLeast = 1) { createTaskDTO.merchantID }
-        verify(atLeast = 1) { createTaskDTO.orderedItemIDs }
+        verify(atLeast = 1) { createTaskDTO.selectedItems }
         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
         verify(exactly = 1) { merchantProfileRepository.findById(merchantId) }
         verify(exactly = 1) {
@@ -262,7 +266,10 @@ class LogisticsServiceTest {
 
         every { consumerDetails.accountId } returns consumerId
         every { createTaskDTO.merchantID } returns merchantId
-        every { createTaskDTO.orderedItemIDs } returns listOf(itemId1.toString(), itemId2.toString())
+        every { createTaskDTO.selectedItems } returns listOf(
+            SelectedItemDTO(itemId1.toString(), 2),
+            SelectedItemDTO(itemId2.toString(), 3)
+        )
 
         every { consumerProfileRepository.findById(consumerId) } returns Optional.of(consumerProfile)
         every { merchantProfileRepository.findById(merchantId) } returns Optional.of(merchantProfile)
@@ -283,7 +290,7 @@ class LogisticsServiceTest {
         )
         verify(exactly = 1) { consumerDetails.accountId }
         verify(atLeast = 1) { createTaskDTO.merchantID }
-        verify(atLeast = 1) { createTaskDTO.orderedItemIDs }
+        verify(atLeast = 1) { createTaskDTO.selectedItems }
         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
         verify(exactly = 1) { merchantProfileRepository.findById(merchantId) }
         verify(exactly = 1) {
