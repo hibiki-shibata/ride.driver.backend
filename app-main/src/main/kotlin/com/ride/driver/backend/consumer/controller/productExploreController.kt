@@ -25,7 +25,7 @@ class ProductExploreController (
     private val logger = LoggerFactory.getLogger(ProductExploreController::class.java)
 
 // pagination
-    @GetMapping("/merchants/all/{page}/{size}")
+    @GetMapping("/merchant/{page}/{size}")
     fun getAvailableMerchants(
         @AuthenticationPrincipal consumerDetails: AccessTokenClaim,
         @PathVariable page: Int,
