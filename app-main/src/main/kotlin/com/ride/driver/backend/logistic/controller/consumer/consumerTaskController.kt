@@ -36,11 +36,11 @@ class ConsumerTaskController (
     }
 
     @GetMapping("/status")
-    fun getTaskStatus(
+    fun getActiveTaskStatus(
         @AuthenticationPrincipal consumerDetails: AccessTokenClaim
-    ): ResponseEntity<TaskDataDTO> {
+    ): ResponseEntity<List<TaskDataDTO>> {
         logger.info("event=consumer_get_task_status_request_received consumerId={}", consumerDetails.accountId)
-        val taskStatus: TaskDataDTO = logisticsService.getTaskStatus(consumerDetails)
+        val taskStatus: List<TaskDataDTO> = logisticsService.getActiveTaskStatus(consumerDetails)
         return ResponseEntity.ok(taskStatus)
     }
 }
