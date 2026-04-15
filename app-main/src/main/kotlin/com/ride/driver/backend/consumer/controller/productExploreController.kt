@@ -18,7 +18,7 @@ import com.ride.driver.backend.consumer.dto.MerchantProfileResDTO
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 
 @RestController
-@RequestMapping("api/v1/consumer/product")
+@RequestMapping("api/v1/consumer/explore")
 class ProductExploreController ( 
     private val productExploreService: ProductExploreService
 ){

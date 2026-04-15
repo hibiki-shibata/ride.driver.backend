@@ -49,6 +49,14 @@ class LogisticsService(
         return savedTask.toTaskDataDTO()
     }
 
+    fun getActiveTaskStatus(consumerDetails: AccessTokenClaim): TaskDataDTO {
+        val activeTask: Task = taskRepository.findByConsumerProfile_IdAndTaskStatusIn(
+            consumerDetails.accountId,
+            listOf(TaskStatus.CREATED, TaskStatus.READY_FOR_ASSIGNMENT, TaskStatus.ASSIGNED_TO_COURIER, TaskStatus.IN_PICKUP, TaskStatus.IN_DROPOFF)
+        ).firstOrNull() ?: throw TaskNotFoundException("No active task found for consumer with ID: ${consumerDetails.accountId}")
+        return activeTask.toTaskDataDTO()
+    }
+
     @Transactional
     fun createTask(
         createTaskDTO: CreateTaskDTO,

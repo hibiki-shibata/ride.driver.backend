@@ -1,6 +1,7 @@
 package com.ride.driver.backend.logistic.controller
 
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -32,5 +33,14 @@ class ConsumerTaskController (
             consumerDetails = consumerDetails
         )
         return ResponseEntity.ok(createdTask)
+    }
+
+    @GetMapping("/status")
+    fun getTaskStatus(
+        @AuthenticationPrincipal consumerDetails: AccessTokenClaim
+    ): ResponseEntity<TaskDataDTO> {
+        logger.info("event=consumer_get_task_status_request_received consumerId={}", consumerDetails.accountId)
+        val taskStatus: TaskDataDTO = logisticsService.getTaskStatus(consumerDetails)
+        return ResponseEntity.ok(taskStatus)
     }
 }
