@@ -5,6 +5,7 @@ data class TaskDataDTO(
     val consumerName: String,
     val consumerEmailaddress: String,
     val merchantName: String,
+    val taskStatus: String,
     val pickupAddress: String,
     val pickupLatitude: Double,
     val pickupLongitude: Double,

@@ -9,6 +9,7 @@ fun Task.toTaskDataDTO(): TaskDataDTO {
         consumerName = consumerProfile?.name ?: "Unknown Consumer",
         consumerEmailaddress = consumerProfile?.emailAddress ?: "Unknown Phone Number",
         merchantName = merchantProfile?.name ?: "Unknown Merchant",
+        taskStatus = taskStatus.name,
         pickupAddress = merchantProfile?.merchantAddress ?: "Unknown Pickup Address",
         pickupLatitude = merchantProfile?.merchantAddressCoordinate?.latitude ?: 0.0,
         pickupLongitude = merchantProfile?.merchantAddressCoordinate?.longitude ?: 0.0,
