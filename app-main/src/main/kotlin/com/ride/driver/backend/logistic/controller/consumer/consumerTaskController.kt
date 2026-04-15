@@ -35,7 +35,7 @@ class ConsumerTaskController (
         return ResponseEntity.ok(createdTask)
     }
 
-    @GetMapping("/status")
+    @GetMapping("/active")
     fun getActiveTasks(
         @AuthenticationPrincipal consumerDetails: AccessTokenClaim
     ): ResponseEntity<List<TaskDataDTO>> {
