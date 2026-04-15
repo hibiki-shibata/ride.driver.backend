@@ -6,14 +6,23 @@ import java.util.UUID
 
 data class CreateTaskDTO(
     @field:NotBlank
-    val merchantID: UUID,
+    val merchantId: UUID,
 
     @field:NotEmpty
-    val selectedItems: List<SelectedItemDTO>
+    val selectedItems: List<CartItem>
 )
 
 
-data class SelectedItemDTO(
-    val itemID: String,
+data class CartItem(
+    @field:NotBlank
+    val itemId: String,
+
+    @field:NotBlank
+    val name: String,
+
+    @field:NotBlank
+    val price: Double,
+
+    @field:NotBlank
     val quantity: Int
 )

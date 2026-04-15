@@ -5,7 +5,7 @@ import com.ride.driver.backend.consumer.repository.ConsumerProfileRepository
 import com.ride.driver.backend.logistic.dto.CreateTaskDTO
 import com.ride.driver.backend.logistic.dto.TaskDataDTO
 import com.ride.driver.backend.logistic.dto.TaskStatusActionDTO
-import com.ride.driver.backend.logistic.dto.SelectedItemDTO
+import com.ride.driver.backend.logistic.dto.CartItem
 import com.ride.driver.backend.logistic.mapper.toOrderedItem
 import com.ride.driver.backend.logistic.mapper.toTaskDataDTO
 import com.ride.driver.backend.logistic.model.OrderedItem
@@ -156,10 +156,10 @@ class LogisticsServiceTest {
         val taskSlot = slot<Task>()
 
         every { consumerDetails.accountId } returns consumerId
-        every { createTaskDTO.merchantID } returns merchantId
+        every { createTaskDTO.merchantId } returns merchantId
         every { createTaskDTO.selectedItems } returns listOf(
-            SelectedItemDTO(itemId1.toString(), 2),
-            SelectedItemDTO(itemId2.toString(), 3)
+            CartItem(itemId1.toString(), "Item 1", 10.0, 2),
+            CartItem(itemId2.toString(), "Item 2", 20.0, 3)
         )
 
         every { consumerProfileRepository.findById(consumerId) } returns Optional.of(consumerProfile)
@@ -186,7 +186,7 @@ class LogisticsServiceTest {
         assertEquals(listOf(orderedItem1, orderedItem2), taskSlot.captured.orderedItems)
 
         verify(atLeast = 1) { consumerDetails.accountId }
-        verify(atLeast = 1) { createTaskDTO.merchantID }
+        verify(atLeast = 1) { createTaskDTO.merchantId }
         verify(atLeast = 1) { createTaskDTO.selectedItems }
         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
         verify(exactly = 1) { merchantProfileRepository.findById(merchantId) }
@@ -229,7 +229,7 @@ class LogisticsServiceTest {
         val consumerProfile = mockk<ConsumerProfile>()
 
         every { consumerDetails.accountId } returns consumerId
-        every { createTaskDTO.merchantID } returns merchantId
+        every { createTaskDTO.merchantId } returns merchantId
         every { consumerProfileRepository.findById(consumerId) } returns Optional.of(consumerProfile)
         every { merchantProfileRepository.findById(merchantId) } returns Optional.empty()
 
@@ -240,7 +240,7 @@ class LogisticsServiceTest {
         assertEquals("Merchant not found with ID: $merchantId", exception.message)
         verify(exactly = 1) { consumerDetails.accountId }
         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
-        verify(atLeast = 1) { createTaskDTO.merchantID }
+        verify(atLeast = 1) { createTaskDTO.merchantId }
         verify(exactly = 1) { merchantProfileRepository.findById(merchantId) }
         confirmVerified(
             consumerDetails,
@@ -265,10 +265,10 @@ class LogisticsServiceTest {
         val merchantItem1 = mockk<MerchantItem>()
 
         every { consumerDetails.accountId } returns consumerId
-        every { createTaskDTO.merchantID } returns merchantId
+        every { createTaskDTO.merchantId } returns merchantId
         every { createTaskDTO.selectedItems } returns listOf(
-            SelectedItemDTO(itemId1.toString(), 2),
-            SelectedItemDTO(itemId2.toString(), 3)
+            CartItem(itemId1.toString(), "Item 1", 10.0, 2),
+            CartItem(itemId2.toString(), "Item 2", 20.0, 3)
         )
 
         every { consumerProfileRepository.findById(consumerId) } returns Optional.of(consumerProfile)
@@ -289,7 +289,7 @@ class LogisticsServiceTest {
             exception.message
         )
         verify(exactly = 1) { consumerDetails.accountId }
-        verify(atLeast = 1) { createTaskDTO.merchantID }
+        verify(atLeast = 1) { createTaskDTO.merchantId }
         verify(atLeast = 1) { createTaskDTO.selectedItems }
         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
         verify(exactly = 1) { merchantProfileRepository.findById(merchantId) }

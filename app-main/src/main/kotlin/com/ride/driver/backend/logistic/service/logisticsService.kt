@@ -57,14 +57,14 @@ class LogisticsService(
         val consumerProfile: ConsumerProfile = consumerProfileRepository.findById(consumerDetails.accountId).orElseThrow { 
             AccountNotFoundException("Consumer not found with ID: ${consumerDetails.accountId}")
         }
-        val merchantProfile: MerchantProfile = merchantProfileRepository.findById(createTaskDTO.merchantID).orElseThrow { 
-            AccountNotFoundException("Merchant not found with ID: ${createTaskDTO.merchantID}")
+        val merchantProfile: MerchantProfile = merchantProfileRepository.findById(createTaskDTO.merchantId).orElseThrow { 
+            AccountNotFoundException("Merchant not found with ID: ${createTaskDTO.merchantId}")
         }
         val merchantItems: List<MerchantItem> = merchantItemRepository.findByIdInAndMerchantProfile_Id(
-                createTaskDTO.selectedItems.map { UUID.fromString(it.itemID) },
-                createTaskDTO.merchantID
+                createTaskDTO.selectedItems.map { UUID.fromString(it.itemId) },
+                createTaskDTO.merchantId
         )
-        if (merchantItems.size != createTaskDTO.selectedItems.size) throw ItemNotFoundException("One or more ordered items not found for the given merchant with ID: ${createTaskDTO.merchantID}")
+        if (merchantItems.size != createTaskDTO.selectedItems.size) throw ItemNotFoundException("One or more ordered items not found for the given merchant with ID: ${createTaskDTO.merchantId}")
         val orderedItems: List<OrderedItem> = merchantItems.map { it.toOrderedItem() }
         val createdTask: Task = taskRepository.save(
             Task(
@@ -74,7 +74,7 @@ class LogisticsService(
                 orderedItems = orderedItems,
             )
         )
-        logger.info("event=task_created taskId={} consumerId={} merchantId={}", createdTask.id, consumerDetails.accountId, createTaskDTO.merchantID)
+        logger.info("event=task_created taskId={} consumerId={} merchantId={}", createdTask.id, consumerDetails.accountId, createTaskDTO.merchantId)
         return createdTask.toTaskDataDTO()
     }
 
