@@ -13,6 +13,6 @@ import java.util.UUID
 interface MerchantProfileRepository : JpaRepository<MerchantProfile, UUID> {
    fun existsByPhoneNumber(phoneNumber: String): Boolean
    fun findByPhoneNumber(phoneNumber: String): MerchantProfile?
-   fun findByMerchantStatus(merchantStatus: MerchantStatus, pageable: Pageable): Page<MerchantProfile>
+   fun findByMerchantStatusIn(merchantStatus: List<MerchantStatus>, pageable: Pageable): Page<MerchantProfile>
    fun findByName(merchantName: String, pageable: Pageable): Page<MerchantProfile>
 }

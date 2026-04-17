@@ -7,7 +7,7 @@ import com.ride.driver.backend.shared.exception.AccountInvalidValuesException
 fun MerchantItem.toMerchantProductResDTO(): MerchantProductResDTO {
     return MerchantProductResDTO(
         id = this.id?.toString() ?: throw AccountInvalidValuesException("Merchant Item ID is null"),
-        itemName = this.name,
+        name = this.name,
         productDescription = this.description,
         price = this.price,
         enabled = this.enabled

@@ -11,7 +11,7 @@ class MerchantProductResDTO(
     val id: String,
 
     @field:NotBlank
-    val itemName: String,
+    val name: String,
 
     @field:NotBlank
     val productDescription: String?,

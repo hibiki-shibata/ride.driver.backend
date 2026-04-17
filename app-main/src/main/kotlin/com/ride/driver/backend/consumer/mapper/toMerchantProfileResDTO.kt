@@ -11,6 +11,7 @@ fun MerchantProfile.toMerchantProfileResDTO(): MerchantProfileResDTO {
         phoneNumber = this.phoneNumber,
         merchantComments = this.merchantComments,
         merchantAddress = this.merchantAddress,
+        merchantStatus = this.merchantStatus.name,
         merchantAddressCoordinate = this.merchantAddressCoordinate
     )
 }

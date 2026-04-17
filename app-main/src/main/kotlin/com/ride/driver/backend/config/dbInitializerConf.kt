@@ -84,7 +84,7 @@ class DemoDBDataInitializerConfig {
                 MerchantProfile(
                     name = (i % 2 == 0).let { if (it) "KFC $i" else "Five Guys $i" },
                     phoneNumber = "111-222-33${String.format("%02d", i)}",
-                    merchantStatus = MerchantStatus.OPEN,
+                    merchantStatus = (i % 3 == 0).let { if (it) MerchantStatus.CLOSED else MerchantStatus.OPEN },
                     merchantAddress = "${i} St, Shibuya, Tokyo",
                     merchantAddressCoordinate = Coordinate(latitude = 35.0 + i * 0.1, longitude = 139.0 + i * 0.1),
                     passwordHash = "hashed_password_$i",
@@ -100,10 +100,11 @@ class DemoDBDataInitializerConfig {
                 merchantItemRepository.save(
                     MerchantItem(
                         name = "Burger set $j for ${merchantProfile.name}",
-                        description = "Dip potate with fuckin ketchap $j of ${merchantProfile.name}",
+                        description = "Dip in fuckin Mayo $j of ${merchantProfile.name}",
                         // random price
                         price = (0..30).random().toDouble(),
-                        merchantProfile = merchantProfile
+                        merchantProfile = merchantProfile,
+                        enabled = (j % 5 == 0).let { if (it) false else true },
                     )
                 )
             }

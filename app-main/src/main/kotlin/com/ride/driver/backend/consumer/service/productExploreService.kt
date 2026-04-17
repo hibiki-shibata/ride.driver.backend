@@ -23,12 +23,13 @@ class ProductExploreService(
 ){
     val logger: Logger = LoggerFactory.getLogger(ProductExploreService::class.java)
 
-    fun getAvailableMerchants(
+    fun getPublishedMerchants(
         page: Int,
         size: Int
     ): List<MerchantProfileResDTO> {
         val pageable = PageRequest.of(page, size)
-        val savedMerchantProfiles: List<MerchantProfile> = merchantProfileRepository.findByMerchantStatus(MerchantStatus.OPEN, pageable).content
+        val savedMerchantProfiles: List<MerchantProfile>
+             = merchantProfileRepository.findByMerchantStatusIn(listOf(MerchantStatus.OPEN, MerchantStatus.CLOSED), pageable).content
         return savedMerchantProfiles.map { it.toMerchantProfileResDTO() }
     }
 

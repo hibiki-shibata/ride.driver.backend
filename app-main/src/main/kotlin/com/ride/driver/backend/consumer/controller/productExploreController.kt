@@ -31,7 +31,7 @@ class ProductExploreController (
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int        
     ): ResponseEntity<List<MerchantProfileResDTO>> {
-        val merchantProducts: List<MerchantProfileResDTO> = productExploreService.getAvailableMerchants(page, size)
+        val merchantProducts: List<MerchantProfileResDTO> = productExploreService.getPublishedMerchants(page, size)
         return ResponseEntity.ok(merchantProducts)
     }
 
