@@ -3,6 +3,7 @@ package com.ride.driver.backend.consumer.service
 import java.util.UUID
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.stereotype.Service
 import org.springframework.data.domain.PageRequest
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.merchant.repository.MerchantItemRepository
@@ -14,6 +15,7 @@ import com.ride.driver.backend.consumer.dto.MerchantProductResDTO
 import com.ride.driver.backend.consumer.dto.MerchantProfileResDTO
 import com.ride.driver.backend.shared.exception.AccountNotFoundException
 
+@Service
 class ProductExploreService(
     private val merchantProfileRepository: MerchantProfileRepository,
     private val merchantItemRepository: MerchantItemRepository
