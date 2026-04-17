@@ -19,7 +19,7 @@ import com.ride.driver.backend.consumer.dto.MerchantProfileResDTO
 import com.ride.driver.backend.shared.auth.domain.AccessTokenClaim
 
 @RestController
-@RequestMapping("api/v1/consumer/explore")
+@RequestMapping("api/v1/explore")
 class ProductExploreController ( 
     private val productExploreService: ProductExploreService
 ){
@@ -28,7 +28,6 @@ class ProductExploreController (
 // pagination
     @GetMapping("/merchants")
     fun getAvailableMerchants(
-        @AuthenticationPrincipal consumerDetails: AccessTokenClaim,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "20") size: Int        
     ): ResponseEntity<List<MerchantProfileResDTO>> {
@@ -38,7 +37,6 @@ class ProductExploreController (
 
     @GetMapping("/merchant/{merchantId}")
     fun getMerchantProfile(
-        @AuthenticationPrincipal consumerDetails: AccessTokenClaim,
         @PathVariable merchantId: String
     ): ResponseEntity<MerchantProfileResDTO> { 
         val merchantProfile: MerchantProfileResDTO = productExploreService.getMerchantProfile(merchantId)
@@ -47,7 +45,6 @@ class ProductExploreController (
 
     @GetMapping("/merchant/{merchantId}/products")
     fun getProductsByMerchant(
-        @AuthenticationPrincipal consumerDetails: AccessTokenClaim,
         @PathVariable merchantId: String
     ): ResponseEntity<List<MerchantProductResDTO>> { 
         val merchantProducts: List<MerchantProductResDTO> = productExploreService.getProductsByMerchant(merchantId)

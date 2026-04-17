@@ -55,6 +55,15 @@ class ConsumerAuthController(
                              .body(AccessTokenDTO(accessToken = jwtTokens.accessToken))
     }
 
+    @PostMapping("/logout")
+    fun logout(): ResponseEntity<Void> {
+        logger.info("event=consumer_logout_request_received")
+        val cookieHeader: String =  createCookie("") // Clear the cookie by setting an empty value and maxAge=0
+        return ResponseEntity.noContent()
+                             .header(HttpHeaders.SET_COOKIE, cookieHeader)
+                             .build()
+    }
+
     private fun createCookie(refreshToken: String): String {
         return ResponseCookie.from("refreshToken", refreshToken)
             .httpOnly(true)
