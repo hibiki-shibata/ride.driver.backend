@@ -84,11 +84,11 @@ class DemoDBDataInitializerConfig {
                 MerchantProfile(
                     name = (i % 2 == 0).let { if (it) "KFC $i" else "Five Guys $i" },
                     phoneNumber = "111-222-33${String.format("%02d", i)}",
-                    merchantStatus = (i % 3 == 0).let { if (it) MerchantStatus.CLOSED else MerchantStatus.OPEN },
+                    merchantStatus = (i % 5 == 0).let { if (it) MerchantStatus.CLOSED else MerchantStatus.OPEN },
                     merchantAddress = "${i} St, Shibuya, Tokyo",
                     merchantAddressCoordinate = Coordinate(latitude = 35.0 + i * 0.1, longitude = 139.0 + i * 0.1),
                     passwordHash = "hashed_password_$i",
-                    merchantComments = "Hi! Please Order from our restaurant $i"
+                    merchantComment = "Hi! Please Order from our restaurant $i"
                 )
             )
         }

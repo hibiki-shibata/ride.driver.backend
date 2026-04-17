@@ -9,7 +9,7 @@ fun MerchantProfile.toMerchantProfileResDTO(): MerchantProfileResDTO {
         id = this.id?.toString() ?: throw AccountInvalidValuesException("Merchant ID is null"),
         name = this.name,
         phoneNumber = this.phoneNumber,
-        merchantComments = this.merchantComments,
+        merchantComment = this.merchantComment,
         merchantAddress = this.merchantAddress,
         merchantStatus = this.merchantStatus.name,
         merchantAddressCoordinate = this.merchantAddressCoordinate

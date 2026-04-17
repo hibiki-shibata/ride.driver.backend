@@ -46,7 +46,7 @@ class MerchantProfileService (
             name = req.name;
             phoneNumber = req.phoneNumber;
             merchantAddress = req.merchantAddress;
-            merchantComments = req.merchantComments;
+            merchantComment = req.merchantComment;
             merchantAddressCoordinate = req.merchantAddressCoordinate
         }
         val updatedProfile: MerchantProfile = merchantProfileRepository.save(savedMerchant)

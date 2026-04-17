@@ -24,7 +24,7 @@ data class MerchantProfileResDTO(
     val merchantAddress: String,
 
     @field:Size(max = 50, message = "Name must not exceed 100 characters")
-    val merchantComments: String? = null,
+    val merchantComment: String? = null,
 
     @field:NotBlank
     val merchantStatus: String,

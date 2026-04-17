@@ -51,7 +51,7 @@ class MerchantProfile(
     var merchantAddress: String,
 
     @Column(name = "mx_comments", nullable = true)
-    var merchantComments: String? = null,
+    var merchantComment: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "mx_status", nullable = false)
