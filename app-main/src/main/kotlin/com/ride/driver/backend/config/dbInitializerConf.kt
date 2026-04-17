@@ -27,239 +27,138 @@ import org.springframework.data.domain.PageRequest
 
 @Configuration
 @Profile("demo", "test", "local", "staging", "development", "dev")
-class DbDemoDataInitializerConfig{
+class DemoDBDataInitializerConfig {
 	@Bean
 	fun databaseInitializer(
+            consumerProfileRepository: ConsumerProfileRepository,
             courierProfileRepository: CourierProfileRepository, 
-            operationAreaRepository: OperationAreaRepository,
-            taskRepository: TaskRepository,
             merchantProfileRepository: MerchantProfileRepository,
             merchantItemRepository: MerchantItemRepository,
-            consumerProfileRepository: ConsumerProfileRepository
+            operationAreaRepository: OperationAreaRepository,
+            taskRepository: TaskRepository
     ) = ApplicationRunner {
-        // Initialize the database with some default data
-        // page size for pagination
-        if (operationAreaRepository.findByName("Tokyo") == null) {
-            val savedArea = operationAreaRepository.save(
-                OperationArea(
-                    name = "Tokyo")
+        // Operation Areas
+        for (i in 1..5) {
+                if (operationAreaRepository.findByName("Area $i") == null) {
+                    operationAreaRepository.save(
+                        OperationArea(
+                            name = "Area $i"
+                        )
+                    )
+                }
+            }
+
+        // Courier Profiles
+        for (i in 1..10) {
+            courierProfileRepository.save(
+                CourierProfile(
+                    name = "Courier $i",
+                    phoneNumber = "123-456-78${String.format("%02d", i)}",
+                    vehicleType = VehicleType.BICYCLE,
+                    passwordHash = "hashed_password_$i",
+                    cpRate = 4.0 + (i % 5) * 0.5, // Varying ratings between 4.0 and 4.5
+                    cpStatus = (i % 2 == 0).let { if (it) CourierStatus.ONLINE else CourierStatus.OFFLINE },
+                    currentLocation = Coordinate(latitude = 35.0 + i * 0.1, longitude = 139.0 + i * 0.1),
+                    operationArea = operationAreaRepository.findByName("Area ${(i % 5) + 1}") ?: throw Exception("Operation area not found"),
+                    cpComments = "Courier number $i"
+                )
+            )
+        }
+        
+        // Consumer Profiles
+        for (i in 1..10) {
+            consumerProfileRepository.save(
+                ConsumerProfile(
+                    name = "Consumer $i",
+                    emailAddress = "$i" + "_test@gmail.com",
+                    passwordHash = "hashed_password_$i",
+                    consumerAddress = "St ${i}, Alexanderplatz, Berlin",
+                    consumerAddressCoordinate = Coordinate(latitude = 35.0 + i * 0.1, longitude = 139.0 + i * 0.1),
+                )
             )
         }
 
-// Courier Profiles
-        val courierJohn: CourierProfile = courierProfileRepository.save(
-            CourierProfile(
-                name = "John Doe",
-                phoneNumber = "123-456-7890",
-                vehicleType = VehicleType.MOTORCYCLE,
-                passwordHash = "hashed_password",
-                cpRate = 4.5,
-                cpStatus = CourierStatus.ONLINE,
-                currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
-                operationArea = operationAreaRepository.findByName("Tokyo"),
-                cpComments = "Reliable courier",
+        // merchant Profiles
+        for (i in 1..10) {
+            merchantProfileRepository.save(
+                MerchantProfile(
+                    name = (i % 2 == 0).let { if (it) "KFC $i" else "Five Guys $i" },
+                    phoneNumber = "111-222-33${String.format("%02d", i)}",
+                    merchantStatus = MerchantStatus.OPEN,
+                    merchantAddress = "${i} St, Shibuya, Tokyo",
+                    merchantAddressCoordinate = Coordinate(latitude = 35.0 + i * 0.1, longitude = 139.0 + i * 0.1),
+                    passwordHash = "hashed_password_$i",
+                    merchantComments = "Hi! Please Order from our restaurant $i"
+                )
             )
-        )
-
-        val courierJane: CourierProfile = courierProfileRepository.save(
-            CourierProfile(
-                name = "Jane Smith",
-                phoneNumber = "987-654-3210",
-                vehicleType = VehicleType.CAR,
-                passwordHash = "another_hashed_password",
-                cpRate = 4.8,
-                cpStatus = CourierStatus.ONLINE,
-                currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
-                operationArea = operationAreaRepository.findByName("Tokyo"),
-                cpComments = "Fast and efficient"
-            )
-        )
-
-        val courierAlice: CourierProfile = courierProfileRepository.save(
-            CourierProfile(
-                name = "Alice Johnson",
-                phoneNumber = "555-123-4567",
-                vehicleType = VehicleType.BICYCLE,
-                passwordHash = "alice_hashed_password",
-                cpRate = 4.2,
-                cpStatus = CourierStatus.ONLINE,
-                currentLocation = Coordinate(latitude = 0.0, longitude = 0.0),
-                operationArea = operationAreaRepository.findByName("Tokyo"),
-                cpComments = "New courier"
-            )
-        )
-        
-    // Consumer Profiles
-        val consumerAlice: ConsumerProfile = consumerProfileRepository.save(
-            ConsumerProfile(
-                name = "Alice Smith",
-                emailAddress = "alicesmith@gmail.com",
-                passwordHash = "hashed_password",
-                consumerAddress = "123 Main St, Tokyo",
-                consumerAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
-            )
-        )
-        val consumerBob: ConsumerProfile = consumerProfileRepository.save(
-            ConsumerProfile(
-                name = "Bob Johnson",
-                emailAddress = "bobjonhson@gmail.com",
-                passwordHash = "another_hashed_password",
-                consumerAddress = "456 Elm St, Tokyo",
-                consumerAddressCoordinate = Coordinate(latitude = 0.0, longitude = 0.0),
-            )
-        )
-
-    // merchant Profiles
-        val merchantKfc: MerchantProfile = merchantProfileRepository.save(
-            MerchantProfile(
-                name = "KFC",
-                phoneNumber = "111-222-3333",
-                merchantStatus = MerchantStatus.OPEN,
-                merchantAddress = "123 Fried Chicken St, Tokyo",
-                merchantAddressCoordinate = Coordinate(latitude = 35.6895, longitude = 139.6917),
-                passwordHash = "kfc_hashed_password",
-                merchantComments = "Famous fried chicken restaurant"
-            )
-        )
-
-        val merchantFiveGuys: MerchantProfile = merchantProfileRepository.save(
-            MerchantProfile(
-                name = "Five Guys",
-                phoneNumber = "444-555-6666",
-                merchantStatus = MerchantStatus.OPEN,
-                merchantAddress = "456 Burger Ave, Tokyo",
-                merchantAddressCoordinate = Coordinate(latitude = 35.6762, longitude = 139.6503),                
-                passwordHash = "fiveguys_hashed_password",
-                merchantComments = "Popular burger joint"
-            )
-        )
+        }
 
         // Merchant Items
-        val kfcMenuItem1: MerchantItem = merchantItemRepository.save(
-            MerchantItem(
-                name = "Original Recipe Chicken",
-                description = "Classic KFC chicken with 11 herbs and spices",
-                price = 5.99,
-                merchantProfile = merchantKfc
-            )
-        )
-
-        val kfcMenuItem2: MerchantItem = merchantItemRepository.save(
-            MerchantItem(
-                name = "Extra Crispy Chicken",
-                description = "Crispy fried chicken with a crunchy coating",
-                price = 6.49,
-                merchantProfile = merchantKfc
-            )
-        )
-
-        val fiveGuysMenuItem1: MerchantItem = merchantItemRepository.save(
-            MerchantItem(
-                name = "Bacon Cheeseburger",
-                description = "Juicy burger with crispy bacon and melted cheese",
-                price = 8.99,
-                merchantProfile = merchantFiveGuys
-            )
-        )
-
-        val fiveGuysMenuItem2: MerchantItem = merchantItemRepository.save(
-            MerchantItem(
-                name = "Fries",
-                description = "Crispy golden fries",
-                price = 3.49,
-                merchantProfile = merchantFiveGuys
-            )
-        )
+        val merchantProfiles: List<MerchantProfile> = merchantProfileRepository.findAll()
+        for (merchantProfile in merchantProfiles) {
+            for (j in 1..30) {
+                merchantItemRepository.save(
+                    MerchantItem(
+                        name = "Burger set $j for ${merchantProfile.name}",
+                        description = "Dip potate with fuckin ketchap $j of ${merchantProfile.name}",
+                        // random price
+                        price = (0..30).random().toDouble(),
+                        merchantProfile = merchantProfile
+                    )
+                )
+            }
+        }
 
         // Tasks
-        val firstTask: Task = taskRepository.save(
-            Task(
-                consumerProfile = consumerAlice,
-                merchantProfile = merchantKfc,          
-                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT,
-                orderedItems = listOf(
-                    OrderedItem(
-                        itemId = kfcMenuItem1.id ?: throw Exception("Menu item ID is null"),
-                        name = kfcMenuItem1.name,
-                        description = kfcMenuItem1.description,
-                        price = kfcMenuItem1.price,
-                        merchantId = kfcMenuItem1.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
-                    ),
-                    OrderedItem(
-                        itemId = kfcMenuItem2.id ?: throw Exception("Menu item ID is null"),
-                        name = kfcMenuItem2.name,
-                        description = kfcMenuItem2.description,
-                        price = kfcMenuItem2.price,
-                        merchantId = kfcMenuItem2.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+        val consumerProfiles: List<ConsumerProfile> = consumerProfileRepository.findAll()
+        val merchantItems: List<MerchantItem> = merchantItemRepository.findAll()
+        for (i in 1..20) {
+            taskRepository.save(
+                Task(
+                    consumerProfile = consumerProfiles[i % consumerProfiles.size],
+                    merchantProfile = merchantItems[i % merchantItems.size].merchantProfile,          
+                    taskStatus = TaskStatus.READY_FOR_ASSIGNMENT,
+                    orderedItems = listOf(
+                        OrderedItem(
+                            itemId = merchantItems[i % merchantItems.size].id ?: throw Exception("Menu item ID is null"),
+                            name = merchantItems[i % merchantItems.size].name,
+                            description = merchantItems[i % merchantItems.size].description,
+                            price = merchantItems[i % merchantItems.size].price,
+                            merchantId = merchantItems[i % merchantItems.size].merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                        ),
+                        OrderedItem(
+                            itemId = merchantItems[(i + 1) % merchantItems.size].id ?: throw Exception("Menu item ID is null"),
+                            name = merchantItems[(i + 1) % merchantItems.size].name,
+                            description = merchantItems[(i + 1) % merchantItems.size].description,
+                            price = merchantItems[(i + 1) % merchantItems.size].price,
+                            merchantId = merchantItems[(i + 1) % merchantItems.size].merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+                        )
                     )
                 )
             )
-        )
-
-        val secondTask: Task = taskRepository.save(
-            Task(
-                consumerProfile = consumerBob,
-                merchantProfile = merchantFiveGuys,
-                taskStatus = TaskStatus.READY_FOR_ASSIGNMENT,
-                orderedItems = listOf(
-                    OrderedItem(
-                        itemId = fiveGuysMenuItem1.id ?: throw Exception("Menu item ID is null"),
-                        name = fiveGuysMenuItem1.name,
-                        description = fiveGuysMenuItem1.description,
-                        price = fiveGuysMenuItem1.price,
-                        merchantId = fiveGuysMenuItem1.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
-                    ),
-                    OrderedItem(
-                        itemId = fiveGuysMenuItem2.id ?: throw Exception("Menu item ID is null"),
-                        name = fiveGuysMenuItem2.name,
-                        description = fiveGuysMenuItem2.description,
-                        price = fiveGuysMenuItem2.price,
-                        merchantId = fiveGuysMenuItem2.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
-                    )
-                )
-             )
-         )
-
-        val thirdTask: Task = taskRepository.save(
-            Task(
-                consumerProfile = consumerBob,
-                merchantProfile = merchantFiveGuys,
-                taskStatus = TaskStatus.CREATED,
-                orderedItems = listOf(
-                    OrderedItem(
-                        itemId = fiveGuysMenuItem1.id ?: throw Exception("Menu item ID is null"),
-                        name = fiveGuysMenuItem1.name,
-                        description = fiveGuysMenuItem1.description,
-                        price = fiveGuysMenuItem1.price,
-                        merchantId = fiveGuysMenuItem1.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
-                    )
-                )
-             )
-         )
-
-        val forthTask: Task = taskRepository.save(
-        Task(
-            consumerProfile = consumerAlice,
-            merchantProfile = merchantFiveGuys,
-            taskStatus = TaskStatus.DELIVERED,
-            courierProfile = courierJohn,
-            orderedItems = listOf(
-                OrderedItem(
-                    itemId = fiveGuysMenuItem2.id ?: throw Exception("Menu item ID is null"),
-                    name = fiveGuysMenuItem2.name,
-                    description = fiveGuysMenuItem2.description,
-                    price = fiveGuysMenuItem2.price,
-                    merchantId = fiveGuysMenuItem2.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
-                ),
-                OrderedItem(
-                    itemId = fiveGuysMenuItem1.id ?: throw Exception("Menu item ID is null"),
-                    name = fiveGuysMenuItem1.name,
-                    description = fiveGuysMenuItem1.description,
-                    price = fiveGuysMenuItem1.price,
-                    merchantId = fiveGuysMenuItem1.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
-                )
-            )
-         )
-        )
+        }
+        // val firstTask: Task = taskRepository.save(
+        //     Task(
+        //         consumerProfile = consumerAlice,
+        //         merchantProfile = merchantKfc,          
+        //         taskStatus = TaskStatus.READY_FOR_ASSIGNMENT,
+        //         orderedItems = listOf(
+        //             OrderedItem(
+        //                 itemId = kfcMenuItem1.id ?: throw Exception("Menu item ID is null"),
+        //                 name = kfcMenuItem1.name,
+        //                 description = kfcMenuItem1.description,
+        //                 price = kfcMenuItem1.price,
+        //                 merchantId = kfcMenuItem1.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+        //             ),
+        //             OrderedItem(
+        //                 itemId = kfcMenuItem2.id ?: throw Exception("Menu item ID is null"),
+        //                 name = kfcMenuItem2.name,
+        //                 description = kfcMenuItem2.description,
+        //                 price = kfcMenuItem2.price,
+        //                 merchantId = kfcMenuItem2.merchantProfile.id ?: throw Exception("Merchant profile ID is null")
+        //             )
+        //         )
+        //     )
+        // )
     }
 } 
