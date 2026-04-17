@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest
 import com.ride.driver.backend.merchant.repository.MerchantProfileRepository
 import com.ride.driver.backend.merchant.repository.MerchantItemRepository
 import com.ride.driver.backend.merchant.model.MerchantProfile
+import com.ride.driver.backend.merchant.model.MerchantStatus
 import com.ride.driver.backend.merchant.model.MerchantItem
 import com.ride.driver.backend.consumer.mapper.toMerchantProfileResDTO
 import com.ride.driver.backend.consumer.mapper.toMerchantProductResDTO
@@ -27,7 +28,7 @@ class ProductExploreService(
         size: Int
     ): List<MerchantProfileResDTO> {
         val pageable = PageRequest.of(page, size)
-        val savedMerchantProfiles: List<MerchantProfile> = merchantProfileRepository.findByMerchantStatus("ACTIVE", pageable).content
+        val savedMerchantProfiles: List<MerchantProfile> = merchantProfileRepository.findByMerchantStatus(MerchantStatus.OPEN, pageable).content
         return savedMerchantProfiles.map { it.toMerchantProfileResDTO() }
     }
 
