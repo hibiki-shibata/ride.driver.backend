@@ -80,6 +80,7 @@ open class JwtTokenService(
         )
         return Jwts.builder()
             .setClaims(additionalClaims)
+            .setSubject(refreshTokenClaim.accountId.toString())
             .setIssuedAt(Date(now))
             .setExpiration(Date(now + refreshTokenValidityInMilliseconds.toLong()))
             .signWith(signingKey)
