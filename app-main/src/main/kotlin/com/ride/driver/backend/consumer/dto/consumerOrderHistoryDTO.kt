@@ -6,13 +6,39 @@ import jakarta.validation.constraints.Size
 
 data class ConsumerOrderHistoryDTO(
     @field:NotBlank
-    @field:Size(max = 100, message = "Merchant name must not exceed 100 characters")
+    val taskId: String,
+
+    @field:NotBlank
     val merchantName: String,
 
-    @field:DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    @field:NotBlank 
+    @field:NotBlank
+    val taskStatus: String,
+
+    @field:NotBlank
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     val orderTime: String,
 
     @field:NotBlank
-    val orderStatus: String,
+    val pickupAddress: String,
+
+    @field:NotBlank
+    val pickupLatitude: Double,
+
+    @field:NotBlank
+    val pickupLongitude: Double,
+
+    @field:NotBlank
+    val dropoffAddress: String,
+
+    @field:NotBlank
+    val dropoffLatitude: Double,
+
+    @field:NotBlank
+    val dropoffLongitude: Double,
+
+    @field:NotBlank
+    val itemNames: List<String>,
+
+    @field:NotBlank
+    val totalPrice: Double
 )

@@ -99,7 +99,7 @@ class CourierTaskControllerTest {
         every { courierDetails.accountId } returns courierId
         every { taskStatusActionDTO.taskId } returns taskId
         every {
-            logisticsService.acceptAssignedToCourierTask(
+            logisticsService.startPickupTask(
                 taskStatusActionDTO = taskStatusActionDTO,
                 courierDetails = courierDetails
             )
@@ -113,7 +113,7 @@ class CourierTaskControllerTest {
         verify(exactly = 1) { courierDetails.accountId }
         verify(exactly = 1) { taskStatusActionDTO.taskId }
         verify(exactly = 1) {
-            logisticsService.acceptAssignedToCourierTask(
+            logisticsService.startPickupTask(
                 taskStatusActionDTO = taskStatusActionDTO,
                 courierDetails = courierDetails
             )
@@ -132,7 +132,7 @@ class CourierTaskControllerTest {
         every { courierDetails.accountId } returns courierId
         every { taskStatusActionDTO.taskId } returns taskId
         every {
-            logisticsService.acceptAssignedToCourierTask(
+            logisticsService.startPickupTask(
                 taskStatusActionDTO = taskStatusActionDTO,
                 courierDetails = courierDetails
             )
@@ -147,7 +147,7 @@ class CourierTaskControllerTest {
         verify(exactly = 1) { courierDetails.accountId }
         verify(exactly = 1) { taskStatusActionDTO.taskId }
         verify(exactly = 1) {
-            logisticsService.acceptAssignedToCourierTask(
+            logisticsService.startPickupTask(
                 taskStatusActionDTO = taskStatusActionDTO,
                 courierDetails = courierDetails
             )

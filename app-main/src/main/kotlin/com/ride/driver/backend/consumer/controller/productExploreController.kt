@@ -47,7 +47,7 @@ class ProductExploreController (
     fun getProductsByMerchant(
         @PathVariable merchantId: String
     ): ResponseEntity<List<MerchantProductResDTO>> { 
-        val merchantProducts: List<MerchantProductResDTO> = productExploreService.getProductsByMerchant(merchantId)
+        val merchantProducts: List<MerchantProductResDTO> = productExploreService.getProductsByMerchantId(merchantId)
         return ResponseEntity.ok(merchantProducts)
     }   
 }

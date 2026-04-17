@@ -99,7 +99,7 @@ class DemoDBDataInitializerConfig {
             for (j in 1..30) {
                 merchantItemRepository.save(
                     MerchantItem(
-                        name = "Burger set $j for ${merchantProfile.name}",
+                        name = "Burger set $j",
                         description = "Dip in fuckin Mayo $j of ${merchantProfile.name}",
                         // random price
                         price = (0..30).random().toDouble(),

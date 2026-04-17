@@ -42,7 +42,7 @@ class ProductExploreService(
         return merchantProfile.toMerchantProfileResDTO()
     }
 
-    fun getProductsByMerchant(merchantId: String): List<MerchantProductResDTO> {
+    fun getProductsByMerchantId(merchantId: String): List<MerchantProductResDTO> {
         logger.info("event=get_products_by_merchant_started merchantId={}", merchantId)
         val merchantItems: List<MerchantItem> = merchantItemRepository.findByMerchantProfile_Id(UUID.fromString(merchantId))
         return merchantItems.map { it.toMerchantProductResDTO() }

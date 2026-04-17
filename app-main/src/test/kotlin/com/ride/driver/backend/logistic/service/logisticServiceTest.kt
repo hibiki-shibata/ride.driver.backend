@@ -389,7 +389,7 @@ class LogisticsServiceTest {
     }
 
     @Test
-    fun `acceptAssignedToCourierTask should update task status to IN_PICKUP and return mapped response`() {
+    fun `startPickupTask should update task status to IN_PICKUP and return mapped response`() {
         val courierId = UUID.randomUUID()
         val taskId = UUID.randomUUID()
 
@@ -412,7 +412,7 @@ class LogisticsServiceTest {
         every { taskRepository.save(savedTask) } returns updatedTask
         every { updatedTask.toTaskDataDTO() } returns taskDataDTO
 
-        val result = logisticsService.acceptAssignedToCourierTask(taskStatusActionDTO, courierDetails)
+        val result = logisticsService.startPickupTask(taskStatusActionDTO, courierDetails)
 
         assertSame(taskDataDTO, result)
         verify(atLeast = 1) { taskStatusActionDTO.taskId }
@@ -431,7 +431,7 @@ class LogisticsServiceTest {
     }
 
     @Test
-    fun `acceptAssignedToCourierTask should throw TaskNotFoundException when task does not exist`() {
+    fun `startPickupTask should throw TaskNotFoundException when task does not exist`() {
         val courierId = UUID.randomUUID()
         val taskId = UUID.randomUUID()
 
@@ -449,7 +449,7 @@ class LogisticsServiceTest {
         } returns null
 
         val exception = assertThrows(TaskNotFoundException::class.java) {
-            logisticsService.acceptAssignedToCourierTask(taskStatusActionDTO, courierDetails)
+            logisticsService.startPickupTask(taskStatusActionDTO, courierDetails)
         }
 
         assertEquals("Task not found with ID: $taskId for the given courier", exception.message)
