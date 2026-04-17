@@ -9,7 +9,7 @@ data class CreateTaskDTO(
     val merchantId: UUID,
 
     @field:NotEmpty
-    val selectedItems: List<CartItem>
+    val cartItems: List<CartItem>
 )
 
 

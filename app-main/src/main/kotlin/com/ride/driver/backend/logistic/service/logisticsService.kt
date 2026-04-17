@@ -70,10 +70,10 @@ class LogisticsService(
             AccountNotFoundException("Merchant not found with ID: ${createTaskDTO.merchantId}")
         }
         val merchantItems: List<MerchantItem> = merchantItemRepository.findByIdInAndMerchantProfile_Id(
-                createTaskDTO.selectedItems.map { UUID.fromString(it.itemId) },
+                createTaskDTO.cartItems.map { UUID.fromString(it.itemId) },
                 createTaskDTO.merchantId
         )
-        if (merchantItems.size != createTaskDTO.selectedItems.size) throw ItemNotFoundException("One or more ordered items not found for the given merchant with ID: ${createTaskDTO.merchantId}")
+        if (merchantItems.size != createTaskDTO.cartItems.size) throw ItemNotFoundException("One or more ordered items not found for the given merchant with ID: ${createTaskDTO.merchantId}")
         val orderedItems: List<OrderedItem> = merchantItems.map { it.toOrderedItem() }
         val createdTask: Task = taskRepository.save(
             Task(
