@@ -1,6 +1,80 @@
+# name: CI
+
+# on:
+#   pull_request:
+#   push:
+#     branches: [main]
+
+# jobs:
+#   backend:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: .
+#     steps:
+#       - uses: actions/checkout@v5
+
+#       - uses: actions/setup-java@v5
+#         with:
+#           distribution: temurin
+#           java-version: 21
+
+#       - uses: gradle/actions/setup-gradle@v4
+
+#       - run: chmod +x ./gradlew
+#       - run: ./gradlew test
+#       - run: ./gradlew bootJar
+
+#       - name: Docker build check
+#         run: docker build -t spring-portfolio .
 
 
-# Keep in mind to set profile to prod in production
-#  SPRING_PROFILES_ACTIVE=prod java -jar app-main/build/libs/app-main-0.0.1-SNAPSHOT.jar
 
-# export PROFILE=d 
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ vars.GCP_PROJECT_ID }}
+          workload_identity_provider: ${{ vars.WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ vars.GCP_REGION }}-docker.pkg.dev --quiet
+
+      - name: Build and push image
+        run: |
+          IMAGE="${{ vars.GCP_REGION }}-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/${{ vars.GAR_REPOSITORY }}/${{ vars.CLOUD_RUN_SERVICE }}:${{ github.sha }}"
+          docker build -t "$IMAGE" .
+          docker push "$IMAGE"
+          echo "IMAGE=$IMAGE" >> $GITHUB_ENV
+
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v3
+        with:
+          service: ${{ vars.CLOUD_RUN_SERVICE }}
+          region: ${{ vars.GCP_REGION }}
+          image: ${{ env.IMAGE }}
+          flags: >-
+            --service-account=cloudrun-runtime@${{ vars.GCP_PROJECT_ID }}.iam.gserviceaccount.com
+            --allow-unauthenticated
