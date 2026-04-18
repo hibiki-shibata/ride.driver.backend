@@ -14,7 +14,7 @@ Google Cloud Run is used for deployment. The deployment process is automated usi
 
 2. gcloud config set project [PROJECT_ID] (e.g. hibiki-portfolio)
 
-3. Enable Cloud Run API: 
+3. Enable required API: 
 ```sh
 gcloud services enable run.googleapis.com
 gcloud services enable artifactregistry.googleapis.com
@@ -36,51 +36,54 @@ gcloud iam service-accounts create [RUNTIME_SERVICE_ACCOUNT_NAME] --display-name
     (e.g. runtime-sa, Runtime Service Account)
 ```
 
-6. Grant Permissions To Service Account:
+6. Configure project to provide necessary permissions to the service account:
 ```sh
 gcloud projects add-iam-policy-binding [PROJECT_ID] --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/run.admin"
 gcloud projects add-iam-policy-binding [PROJECT_ID] --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser"
 gcloud projects add-iam-policy-binding [PROJECT_ID] --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/artifactregistry.writer"
 ```
 
-7. Get Project ID:
-```sh
-gcloud projects describe [PROJECT_NAME]
-```
-
-8. Create Identity Pool. 
+7. Create Identity Pool:
 This pool is a gate for external services and GCP
 ```sh
 gcloud iam workload-identity-pools create [POOL_NAME] --location="global" --display-name="[DISPLAY_NAME]" 
     (e.g. github-pool, Github Pool)
 ```
 
-9. Create Identity Provider to trust request(token) from Github
+8. Create Identity Provider to trust request(token) from Github
 Token is issued when Github Actions is triggered and used for authentication to GCP
 ```sh
-gcloud iam workload-identity-pools providers create-oidc [PROVIDER_NAME] --location="global" --workload-identity-pool="[POOL_NAME]" --display-name="[DISPLAY_NAME]" --issuer-uri="https://token.actions.githubusercontent.com" --allowed-audiences="[AUDIENCE]"
-     (e.g. github-provider, Github Provider, github-audience)
+gcloud iam workload-identity-pools providers create-oidc [PROVIDER_NAME] \
+     --location="global" \
+     --workload-identity-pool="[POOL_NAME]" \
+     --issuer-uri="https://token.actions.githubusercontent.com" \
+     --allowed-audiences="[AUDIENCE]"
+     --display-name="[DISPLAY_NAME]" \
 ```
+(e.g. github-provider, Github Provider, github-audience)
 
-10. Allow the deployer service account to be impersonated by Github Actions via Workload Identity Federations
+9. Allow Service Account to be impersonated by Github Actions via Workload Identity Federations
 ```sh
 gcloud iam service-accounts add-iam-policy-binding [SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com --member="principalSet://iam.googleapis.com/projects/[PROJECT_NUMBER]/locations/global/workloadIdentityPools/[POOL_NAME]/attribute.repository/[GITHUB_REPOSITORY]" --role="roles/iam.workloadIdentityUser" 
-    (e.g. cloud-run-sa, [PROJECT_NAME], github-pool, hibikishibata/ride-driver-backend)
 ```
+(e.g. cloud-run-sa, [PROJECT_NAME], github-pool, hibikishibata/ride-driver-backend)
+*Project policy roles ≠ Service account policy roles
 
-11. Let Deployer Use Runtime Service Account
+10. Let Deployer Use Runtime Service Account
 ```sh
-gcloud iam service-accounts add-iam-policy-binding [RUNTIME_SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser" (e.g. runtime-sa, cloud-run-sa, [PROJECT_NAME])
+gcloud iam service-accounts add-iam-policy-binding [RUNTIME_SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser" 
 ```
+(e.g. runtime-sa, cloud-run-sa, [PROJECT_NAME])
 
-12. Github Secrets Setup
+11. Github Secrets Setup
 ```sh
 WIF_PROVIDER: projects/[PROJECT_NUMBER]/locations/global/workloadIdentityPools/[POOL_NAME]/providers/[PROVIDER_NAME] 
     (e.g. projects/123456789012/locations/global/workloadIdentityPools/github-pool/providers/github-provider)
-GCP_SERVICE_ACCOUNT: [SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com (e.g. cloud-run-sa, [PROJECT_NAME])
+GCP_SERVICE_ACCOUNT: [SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com 
 ```
+(e.g. cloud-run-sa, [PROJECT_NAME])
 
-13. Prepare deploy file:
+12. Prepare deploy file:
 ```yaml
 name: CI/CD to Cloud Run
 
@@ -129,3 +132,4 @@ jobs:
 Utility commands
 - Check logs: gcloud run logs read [SERVICE_NAME] --region [REGION] (e.g. my-backend, us-central1)
 - Check deployed services: gcloud run services list --region [REGION] (e.g. us-central1)
+- Get Project ID: gcloud projects describe [PROJECT_NAME]
