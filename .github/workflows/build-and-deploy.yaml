@@ -74,3 +74,4 @@ jobs:
             --region us-central1 \
             --platform managed \
             --allow-unauthenticated
+            --service-account hibicloud-runtime@ride-backend-portfolio.iam.gserviceaccount.com
