@@ -1,8 +1,10 @@
+# Build stage
 FROM gradle:8.10.2-jdk21 AS build
 WORKDIR /builds
 COPY . /builds
 RUN ./gradlew bootJar --no-daemon
 
+# Run time environment
 FROM eclipse-temurin:21
 RUN addgroup --system hibiki-portfolio && adduser --system --ingroup hibiki-portfolio spring
 WORKDIR /app
