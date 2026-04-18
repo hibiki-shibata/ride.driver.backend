@@ -157,7 +157,7 @@ class LogisticsServiceTest {
 
         every { consumerDetails.accountId } returns consumerId
         every { createTaskDTO.merchantId } returns merchantId
-        every { createTaskDTO.selectedItems } returns listOf(
+        every { createTaskDTO.cartItems } returns listOf(
             CartItem(itemId1.toString(), "Item 1", 10.0, 2),
             CartItem(itemId2.toString(), "Item 2", 20.0, 3)
         )
@@ -187,7 +187,7 @@ class LogisticsServiceTest {
 
         verify(atLeast = 1) { consumerDetails.accountId }
         verify(atLeast = 1) { createTaskDTO.merchantId }
-        verify(atLeast = 1) { createTaskDTO.selectedItems }
+        verify(atLeast = 1) { createTaskDTO.cartItems }
         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
         verify(exactly = 1) { merchantProfileRepository.findById(merchantId) }
         verify(exactly = 1) {
@@ -266,7 +266,7 @@ class LogisticsServiceTest {
 
         every { consumerDetails.accountId } returns consumerId
         every { createTaskDTO.merchantId } returns merchantId
-        every { createTaskDTO.selectedItems } returns listOf(
+        every { createTaskDTO.cartItems } returns listOf(
             CartItem(itemId1.toString(), "Item 1", 10.0, 2),
             CartItem(itemId2.toString(), "Item 2", 20.0, 3)
         )
@@ -290,7 +290,7 @@ class LogisticsServiceTest {
         )
         verify(exactly = 1) { consumerDetails.accountId }
         verify(atLeast = 1) { createTaskDTO.merchantId }
-        verify(atLeast = 1) { createTaskDTO.selectedItems }
+        verify(atLeast = 1) { createTaskDTO.cartItems }
         verify(exactly = 1) { consumerProfileRepository.findById(consumerId) }
         verify(exactly = 1) { merchantProfileRepository.findById(merchantId) }
         verify(exactly = 1) {

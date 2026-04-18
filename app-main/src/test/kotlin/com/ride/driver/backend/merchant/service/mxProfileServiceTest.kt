@@ -110,7 +110,7 @@ class MerchantProfileServiceTest {
         every { req.name } returns "updated-name"
         every { req.phoneNumber } returns "01012345678"
         every { req.merchantAddress } returns "updated-address"
-        every { req.merchantComments } returns "updated-comments"
+        every { req.merchantComment } returns "updated-comments"
         every { req.merchantAddressCoordinate } returns coordinate
 
         every { merchantProfileRepository.findById(merchantId) } returns Optional.of(merchantProfile)
@@ -118,7 +118,7 @@ class MerchantProfileServiceTest {
         every { merchantProfile.name = any() } just Runs
         every { merchantProfile.phoneNumber = any() } just Runs
         every { merchantProfile.merchantAddress = any() } just Runs
-        every { merchantProfile.merchantComments = any() } just Runs
+        every { merchantProfile.merchantComment = any() } just Runs
         every { merchantProfile.merchantAddressCoordinate = any() } just Runs
         every { merchantProfileRepository.save(merchantProfile) } returns merchantProfile
         every { merchantProfile.toMerchantProfileResDto() } returns merchantProfileResDTO
@@ -131,12 +131,12 @@ class MerchantProfileServiceTest {
         verify(exactly = 1) { req.name }
         verify(exactly = 1) { req.phoneNumber }
         verify(exactly = 1) { req.merchantAddress }
-        verify(exactly = 1) { req.merchantComments }
+        verify(exactly = 1) { req.merchantComment }
         verify(exactly = 1) { req.merchantAddressCoordinate }
         verify(exactly = 1) { merchantProfile.name = "updated-name" }
         verify(exactly = 1) { merchantProfile.phoneNumber = "01012345678" }
         verify(exactly = 1) { merchantProfile.merchantAddress = "updated-address" }
-        verify(exactly = 1) { merchantProfile.merchantComments = "updated-comments" }
+        verify(exactly = 1) { merchantProfile.merchantComment = "updated-comments" }
         verify(exactly = 1) { merchantProfile.merchantAddressCoordinate = coordinate }
         verify(exactly = 1) { merchantProfileRepository.save(merchantProfile) }
         verify(exactly = 1) { merchantProfile.id }
