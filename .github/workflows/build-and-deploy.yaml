@@ -73,5 +73,5 @@ jobs:
             --image us-central1-docker.pkg.dev/ride-backend-portfolio/hibiki-portfolio-repo/app:${{ github.sha }} \
             --region us-central1 \
             --platform managed \
-            --allow-unauthenticated
-            --service-account hibicloud-runtime@ride-backend-portfolio.iam.gserviceaccount.com
+            --allow-unauthenticated \
+            --service-account cloudrun-runtime@ride-backend-portfolio.iam.gserviceaccount.com
