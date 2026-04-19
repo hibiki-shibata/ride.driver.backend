@@ -13,7 +13,8 @@ jobs:
       id-token: write # To get OIDC token
 
     steps:
-      # - uses: actions/checkout@v4 
+      - uses: actions/checkout@v4 
+      
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
         uses: google-github-actions/auth@v3 # To authenticate to Google Cloud using the OIDC token from Github Actions
