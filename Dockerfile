@@ -10,6 +10,5 @@ RUN addgroup --system hibiki-portfolio && adduser --system --ingroup hibiki-port
 WORKDIR /app
 COPY --from=build /builds/app-main/build/libs/*.jar /app/app.jar
 EXPOSE 8080:8080
-
 USER spring:hibiki-portfolio
 ENTRYPOINT ["java","-jar","/app/app.jar"]
