@@ -45,7 +45,7 @@ jobs:
         uses: 'google-github-actions/deploy-cloudrun@v3'
         with: 
           service: 'ride-driver-backend'
-          image: 'us-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}'
+          image: 'us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}'
           region: 'us-central1'
           flags: '--service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}'
           secrets: |-
