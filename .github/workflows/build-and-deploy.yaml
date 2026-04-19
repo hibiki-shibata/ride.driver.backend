@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4 
-      
+
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
-        uses: google-github-actions/auth@v3 # To authenticate to Google Cloud using the OIDC token from Github Actions
+        uses: google-github-actions/auth@v2 # To authenticate to Google Cloud using the OIDC token from Github Actions
         with:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
