@@ -3,9 +3,8 @@
 Google Cloud Run is used for deployment. The deployment process is automated using Github Actions.
 
 ### Major flow
-1. Either push or merge to main branch
-2. Github Actions as CI/CD will be triggered
-3. Build the Docker image and push it to Google Container Registry (GCR)
+2. Github Actions authenticates to GCP using OIDC token issued by Github when triggered - use: google-github-actions/auth@v2
+3. Build the Docker image and push it to Google Container Registry (GCR) - use: google-github-actions/setup-gcloud@v2
 4. Deploy the new image to Google Cloud Run
 
 
@@ -62,16 +61,16 @@ gcloud iam workload-identity-pools providers create-oidc [PROVIDER_NAME] \
 ```
 (e.g. github-provider, Github Provider, github-audience)
 
-9. Allow Service Account to be impersonated by Github Actions via Workload Identity Federations
+9. Configure the service account to trust the Identity Pool and allow it to impersonate the service account
 ```sh
-gcloud iam service-accounts add-iam-policy-binding [SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com --member="principalSet://iam.googleapis.com/projects/[PROJECT_NUMBER]/locations/global/workloadIdentityPools/[POOL_NAME]/attribute.repository/[GITHUB_REPOSITORY]" --role="roles/iam.workloadIdentityUser" 
+gcloud iam service-accounts add-iam-policy-binding [SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com --member="principalSet://iam.googleapis.com/projects/[PROJECT_NUMBER]/locations/global/workloadIdentityPools/[POOL_NAME]/attribute.repository/[GITHUB_USERNAME]/[GITHUB_REPOSITORY_NAME]" --role="roles/iam.workloadIdentityUser" 
 ```
 (e.g. cloud-run-sa, [PROJECT_NAME], github-pool, hibikishibata/ride-driver-backend)
 *Project policy roles ≠ Service account policy roles
 
-10. Let Deployer Use Runtime Service Account
+10. Configure so that Deployer Service Account can use Runtime Service Account to run the Cloud Run service
 ```sh
-gcloud iam service-accounts add-iam-policy-binding [RUNTIME_SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser" 
+gcloud iam service-accounts add-iam-policy-binding [RUNTIME_SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser"
 ```
 (e.g. runtime-sa, cloud-run-sa, [PROJECT_NAME])
 
@@ -109,7 +108,8 @@ jobs:
 
   uses: google-github-actions/setup-gcloud@v2 # To set up gcloud CLI
  
-  run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet # 
+  name: Authenticate Docker to Google Cloud Artifact Registry
+    run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet 
 
   name: Build image
         run: |
@@ -133,3 +133,18 @@ Utility commands
 - Check logs: gcloud run logs read [SERVICE_NAME] --region [REGION] (e.g. my-backend, us-central1)
 - Check deployed services: gcloud run services list --region [REGION] (e.g. us-central1)
 - Get Project ID: gcloud projects describe [PROJECT_NAME]
+
+
+GCP Concepts:
+- Service Account: 
+An identity used by non-human like applications or services to interact with GCP resources.
+The permissions/roles - what the service account can do - are defined by resources where its used.
+Need to be configured to allow external services to impersonate it and access GCP resources.
+
+Identity Pool: 
+- A pool that defines a set of identities from external identity providers (e.g. Github, AWS, Azure). It acts as a gate for external services to access GCP resources.
+
+Identity Provider: 
+- A provider that defines the trust relationship between GCP and an external identity provider. 
+It specifies the "issuer URI" and "allowed audiences" for authentication.
+
