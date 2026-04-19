@@ -29,9 +29,6 @@ jobs:
           service: 'ride-driver-backend'
           image: 'us-docker.pkg.dev/cloudrun/container/hello:latest'
           region: 'us-central1'
-          platform: 'managed'
-          allow_unauthenticated: true
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
           secrets: |-
             DB_PASSWORD=${{ secrets.GCM_PATH }}
             DB_USERNAME=${{ secrets.GCM_PATH }}
