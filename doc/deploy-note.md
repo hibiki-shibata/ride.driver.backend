@@ -152,12 +152,3 @@ Identity Provider:
 - A provider that defines the trust relationship between GCP and an external identity provider. 
 It specifies the "issuer URI" and "allowed audiences" for authentication.
 
-
-
-
-gcloud iam workload-identity-pools providers create-oidc github-identity-provider \
-     --location="global" \
-     --workload-identity-pool="github-identity-pool" \
-     --issuer-uri="https://token.actions.githubusercontent.com" \
-     --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
-     --display-name="Github Identity Provider" 
