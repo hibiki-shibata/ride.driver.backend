@@ -22,6 +22,16 @@ jobs:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
+      - id: 'setup-gcloud'
+        name: 'Set up Cloud SDK for Docker authentication'
+        uses: 'google-github-actions/setup-gcloud@v3'
+        with:
+          version: '>= 363.0.0'
+
+      - name: Authenticate Docker to Artifact Registry
+        run: |
+          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet          
+
       - name: Build image
         run: |
           docker build -t us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }} .
@@ -47,16 +57,6 @@ jobs:
             DB_NAME=${{ secrets.GCM_PATH }}
             SPRING_PROFILES_ACTIVE=${{ secrets.GCM_PATH }}
           
-      # - id: 'setup-gcloud'
-      #   name: 'Set up Cloud SDK for Docker authentication'
-      #   uses: 'google-github-actions/setup-gcloud@v3'
-      #   with:
-      #     version: '>= 363.0.0'
-
-
-      # - name: Authenticate Docker to Artifact Registry
-      #   run: |
-      #     gcloud auth configure-docker us-central1-docker.pkg.dev --quiet 
 
       # - name: Deploy Cloud Run
       #   run: |
