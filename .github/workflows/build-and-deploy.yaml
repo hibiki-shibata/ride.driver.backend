@@ -1,4 +1,4 @@
-name: CI/CD to Cloud Run
+name: CI/CD to Google Cloud Run
 
 on:
   push:
@@ -13,28 +13,52 @@ jobs:
       id-token: write # To get OIDC token
 
     steps:
-      - uses: actions/checkout@v4 # 
+      # - uses: actions/checkout@v4 
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: google-github-actions/auth@v3 # To authenticate to Google Cloud using the OIDC token from Github Actions
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-      - uses: google-github-actions/auth@v2 # To authenticate to Google Cloud using the OIDC token from Github Actions
-            with:
-              workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
-              service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+      - id: 'deploy'
+        name: 'Build and Deploy to Cloud Run'
+        uses: 'google-github-actions/deploy-cloudrun@v3'
+        with: 
+          service: 'ride-driver-backend'
+          image: 'us-docker.pkg.dev/cloudrun/container/hello:latest'
+          region: 'us-central1'
+          platform: 'managed'
+          allow_unauthenticated: true
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          secrets: |-
+            DB_PASSWORD=projects/[PROJECT_ID]/secrets/[SECRET_NAME]:latest
+            DB_USERNAME=projects/[PROJECT_ID]/secrets/[SECRET_NAME]:latest
+            DB_HOST=projects/[PROJECT_ID]/secrets/[SECRET_NAME]:latest
+            DB_PORT=projects/[PROJECT_ID]/secrets/[SECRET_NAME]:latest
+            DB_NAME=projects/[PROJECT_ID]/secrets/[SECRET_NAME]:latest
+            SPRING_PROFILES_ACTIVE=projects/[PROJECT_ID]/secrets/[SECRET_NAME]:latest
+          
+      - id: 'setup-gcloud'
+        name: 'Set up Cloud SDK for Docker authentication'
+        uses: 'google-github-actions/setup-gcloud@v3'
+        with:
+          version: '>= 363.0.0'
 
-      - uses: google-github-actions/setup-gcloud@v2 # To set up gcloud CLI
- 
-  name: Authenticate Docker to Artifact Registry
+
+      - name: Authenticate Docker to Artifact Registry
         run: |
-         gcloud auth configure-docker us-central1-docker.pkg.dev --quiet 
+          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet 
 
-  name: Build image
+      - name: Build image
         run: |
           docker build -t us-central1-docker.pkg.dev/[PROJECT_NAME]/[ARTIFACT_REGISTRY_NAME]/app:${{ github.sha }} .
 
-  name: Push image
+      - name: Push image
         run: |
           docker push us-central1-docker.pkg.dev/[PROJECT_NAME]/[ARTIFACT_REGISTRY_NAME]/app:${{ github.sha }}
 
-  name: Deploy Cloud Run
+      - name: Deploy Cloud Run
         run: |
           gcloud run deploy my-backend \
             --image us-central1-docker.pkg.dev/[PROJECT_NAME]/[ARTIFACT_REGISTRY_NAME]/app:${{ github.sha }} \
@@ -42,3 +66,4 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --service-account [SERVICE_ACCOUNT_NAME]@[PROJECT_NAME].iam.gserviceaccount.com
+

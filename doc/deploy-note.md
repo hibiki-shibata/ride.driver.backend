@@ -40,6 +40,8 @@ gcloud iam service-accounts create [RUNTIME_SERVICE_ACCOUNT_NAME] --display-name
 gcloud projects add-iam-policy-binding [PROJECT_ID] --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/run.admin"
 gcloud projects add-iam-policy-binding [PROJECT_ID] --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/iam.serviceAccountUser"
 gcloud projects add-iam-policy-binding [PROJECT_ID] --member="serviceAccount:[SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/artifactregistry.writer"
+# To use secret manager 
+gcloud projects add-iam-policy-binding [PROJECT_ID] --member="serviceAccount:[RUNTIME_SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com" --role="roles/secretmanager.secretAccessor"
 ```
 
 7. Create Identity Pool:
@@ -52,12 +54,13 @@ gcloud iam workload-identity-pools create [POOL_NAME] --location="global" --disp
 8. Create Identity Provider to trust request(token) from Github
 Token is issued when Github Actions is triggered and used for authentication to GCP
 ```sh
-gcloud iam workload-identity-pools providers create-oidc [PROVIDER_NAME] \
-     --location="global" \
-     --workload-identity-pool="[POOL_NAME]" \
-     --issuer-uri="https://token.actions.githubusercontent.com" \
-     --allowed-audiences="[AUDIENCE]"
-     --display-name="[DISPLAY_NAME]" \
+gcloud iam workload-identity-pools providers create-oidc github-identity-provider \
+  --location="global" \
+  --workload-identity-pool="github-identity-pool" \
+  --issuer-uri="https://token.actions.githubusercontent.com" \
+  --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
+  --attribute-condition="assertion.repository=='[GITHUB_USERNAME]/[GITHUB_REPOSITORY_NAME]'" \
+  --display-name="Github Identity Provider"
 ```
 (e.g. github-provider, Github Provider, github-audience)
 
@@ -83,6 +86,7 @@ GCP_SERVICE_ACCOUNT: [SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com
 (e.g. cloud-run-sa, [PROJECT_NAME])
 
 12. Prepare deploy file:
+(Google Github Action Doc)[https://github.com/google-github-actions/setup-gcloud]
 ```yaml
 name: CI/CD to Cloud Run
 
@@ -148,3 +152,12 @@ Identity Provider:
 - A provider that defines the trust relationship between GCP and an external identity provider. 
 It specifies the "issuer URI" and "allowed audiences" for authentication.
 
+
+
+
+gcloud iam workload-identity-pools providers create-oidc github-identity-provider \
+     --location="global" \
+     --workload-identity-pool="github-identity-pool" \
+     --issuer-uri="https://token.actions.githubusercontent.com" \
+     --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
+     --display-name="Github Identity Provider" 
