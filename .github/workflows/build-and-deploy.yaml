@@ -17,7 +17,7 @@ jobs:
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'
-        uses: google-github-actions/auth@v2 # To authenticate to Google Cloud using the OIDC token from Github Actions
+        uses: google-github-actions/auth@v3 # To authenticate to Google Cloud using the OIDC token from Github Actions
         with:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
@@ -27,7 +27,7 @@ jobs:
         uses: 'google-github-actions/deploy-cloudrun@v3'
         with: 
           service: 'ride-driver-backend'
-          image: 'us-docker.pkg.dev/cloudrun/container/hello:latest'
+          image: 'us-docker.pkg.dev/cloudrun/container/ride-driver-backend-im:latest'
           region: 'us-central1'
           secrets: |-
             DB_PASSWORD=${{ secrets.GCM_PATH }}
