@@ -57,6 +57,9 @@ jobs:
             DB_HOST=db-host:latest
             DB_NAME=db-name:latest
 
+          env_vars_update_strategy: overwrite
+          secrets_update_strategy: overwrite
+
       # - name: Deploy Cloud Run
       #   run: |
       #     gcloud run deploy my-backend \
