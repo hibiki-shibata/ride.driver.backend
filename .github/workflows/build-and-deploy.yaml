@@ -48,13 +48,14 @@ jobs:
           image: 'us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}'
           region: 'us-central1'
           flags: '--service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}'
+          env-vars: |-
+             SPRING_PROFILES_ACTIVE=prod
+             DB_PORT=5432
           secrets: |-
-            DB_PASSWORD=${{ secrets.GCM_PATH }}
-            DB_USERNAME=${{ secrets.GCM_PATH }}
-            DB_HOST=${{ secrets.GCM_PATH }}
-            DB_PORT=${{ secrets.GCM_PATH }}
-            DB_NAME=${{ secrets.GCM_PATH }}
-            SPRING_PROFILES_ACTIVE=${{ secrets.GCM_PATH }}
+            DB_PASSWORD=db-password:latest
+            DB_USERNAME=db-username:latest
+            DB_HOST=db-host:latest
+            DB_NAME=db-name:latest
           
 
       # - name: Deploy Cloud Run
