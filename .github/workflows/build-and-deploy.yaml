@@ -22,13 +22,21 @@ jobs:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
+      - name: Build image
+        run: |
+          docker build -t us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }} .
+
+      - name: Push image to Google Artifact Registry
+        run: |
+          docker push us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}
+
+
       - id: 'deploy'
         name: 'Build and Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v3'
         with: 
           service: 'ride-driver-backend'
-          # source: '.'
-          image: 'us-docker.pkg.dev/cloudrun/container/ride-driver-backend:latest'
+          image: 'us-docker.pkg.dev/cloudrun/container/ride-driver-backend:${{ github.sha }}'
           region: 'us-central1'
           flags: '--service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}'
           secrets: |-
@@ -49,14 +57,6 @@ jobs:
       # - name: Authenticate Docker to Artifact Registry
       #   run: |
       #     gcloud auth configure-docker us-central1-docker.pkg.dev --quiet 
-
-      # - name: Build image
-      #   run: |
-      #     docker build -t us-central1-docker.pkg.dev/ride-backend-portfolio/ride-backearide-artifact-repositorynd-portfolio/ride-driver-backend:${{ github.sha }} .
-
-      # - name: Push image
-      #   run: |
-      #     docker push us-central1-docker.pkg.dev/ride-backend-portfolio/ride-backearide-artifact-repositorynd-portfolio/ride-driver-backend:${{ github.sha }}
 
       # - name: Deploy Cloud Run
       #   run: |
