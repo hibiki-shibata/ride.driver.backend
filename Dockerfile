@@ -1,5 +1,5 @@
 # Build stage
-FROM gradle:8.10.2-jdk21 AS build
+FROM gradle:jdk21-noble AS build
 WORKDIR /builds
 COPY . /builds
 RUN ./gradlew bootJar --no-daemon
