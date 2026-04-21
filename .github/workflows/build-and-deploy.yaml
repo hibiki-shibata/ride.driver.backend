@@ -22,8 +22,8 @@ jobs:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-      - id: 'setup-gcloud'
-        name: 'Set up Cloud SDK for Docker authentication'
+      - name: 'Set up Cloud SDK for Docker authentication'
+        id: 'setup-gcloud'
         uses: 'google-github-actions/setup-gcloud@v3'
         with:
           version: '>= 363.0.0'
@@ -40,8 +40,8 @@ jobs:
         run: |
           docker push us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}
 
-      - id: 'deploy'
-        name: 'Deploy to Cloud Run'
+      - name: 'Deploy to Cloud Run'
+        id: 'deploy'
         uses: 'google-github-actions/deploy-cloudrun@v3'
         with: 
           service: 'ride-driver-backend'
