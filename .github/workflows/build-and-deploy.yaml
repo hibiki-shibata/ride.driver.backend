@@ -47,7 +47,10 @@ jobs:
           service: 'ride-driver-backend'
           image: 'us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}'
           region: 'us-central1'
-          flags: '--service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}'
+          flags: |-
+            --allow-unauthenticated
+            --service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}
+            --add-cloudsql-instances=ride-postgres-instance
           env_vars: |-
              SPRING_PROFILES_ACTIVE=prod
              DB_PORT=5432
