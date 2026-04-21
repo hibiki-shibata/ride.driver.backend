@@ -49,7 +49,7 @@ jobs:
           region: 'us-central1'
           flags: '--service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}'
           env-vars: |-
-             SPRING_PROFILES_ACTIVE=dev
+             SPRING_PROFILES_ACTIVE=prod
              DB_PORT=5432
           secrets: |-
             DB_PASSWORD=db-password:latest
