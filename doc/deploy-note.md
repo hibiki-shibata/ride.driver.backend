@@ -16,9 +16,10 @@ Google Cloud Run is used for deployment. The deployment process is automated usi
 3. Enable required API: 
 ```sh
 gcloud services enable run.googleapis.com
-gcloud services enable artifactregistry.googleapis.com
-gcloud services enable iamcredentials.googleapis.com
+gcloud services enable artifactregistry.googleapis.com # For Artifact Registry
+gcloud services enable iamcredentials.googleapis.com 
 gcloud services enable cloudresourcemanager.googleapis.com
+gcloud services enable sqladmin.googleapis.com # For Cloud SQL
 ```
 
 4. Create Artifact Registry: 
