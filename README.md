@@ -35,6 +35,10 @@ docker run -p 5432:5432 -d \
 ```
 ./gradrew bootRun
 ```
+or
+```
+docker run --network=host -e "SPRING_PROFILES_ACTIVE=prod" -e "DB_USERNAME=postgres" -e "DB_PASSWORD=postgres" -e "DB_PORT=5432" -e "DB_HOST=localhost" -e "DB_NAME=postgres" 
+`
 
 Tips💡
 You can use command `make help` to learn simplified CLI ops.
