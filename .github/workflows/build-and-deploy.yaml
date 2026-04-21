@@ -41,7 +41,7 @@ jobs:
           docker push us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}
 
       - id: 'deploy'
-        name: 'Build and Deploy to Cloud Run'
+        name: 'Deploy to Cloud Run'
         uses: 'google-github-actions/deploy-cloudrun@v3'
         with: 
           service: 'ride-driver-backend'
@@ -52,10 +52,10 @@ jobs:
              SPRING_PROFILES_ACTIVE=prod
              DB_PORT=5432
           secrets: |-
-            DB_PASSWORD=db-password:latest
-            DB_USERNAME=db-username:latest
-            DB_HOST=db-host:latest
-            DB_NAME=db-name:latest
+            DB_PASSWORD=db-password
+            DB_USERNAME=db-username
+            DB_HOST=db-host
+            DB_NAME=db-name
 
           env_vars_update_strategy: overwrite
           secrets_update_strategy: overwrite
