@@ -50,7 +50,7 @@ jobs:
           flags: |-
             --allow-unauthenticated
             --service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}
-            --add-cloudsql-instances=ride-postgres-instance
+            --add-cloudsql-instances=ride-backend-portfolio:us-central1:ride-postgres-instance
           env_vars: |-
              SPRING_PROFILES_ACTIVE=prod
              DB_PORT=5432
