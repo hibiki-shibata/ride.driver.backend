@@ -52,10 +52,10 @@ jobs:
              SPRING_PROFILES_ACTIVE=prod
              DB_PORT=5432
           secrets: |-
-            DB_PASSWORD=db-password
-            DB_USERNAME=db-username
-            DB_HOST=db-host
-            DB_NAME=db-name
+            DB_PASSWORD=db-password:latest
+            DB_USERNAME=db-username:latest
+            DB_HOST=db-host:latest
+            DB_NAME=db-name:latest
 
           env_vars_update_strategy: overwrite
           secrets_update_strategy: overwrite
