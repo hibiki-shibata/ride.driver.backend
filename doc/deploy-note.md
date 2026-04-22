@@ -159,4 +159,5 @@ docker --network=host run -e "SPRING_PROFILES_ACTIVE=prod" -e "DB_USERNAME=postg
 
 https://docs.cloud.google.com/sql/docs/postgres/connect-run#private-ip
 https://docs.cloud.google.com/sql/docs/postgres/connect-run
-https://docs.cloud.google.com/sql/docs/mysql/connect-instance-cloud-run
+https://docs.cloud.google.com/sql/docs/postgres/connect-instance-cloud-run
+https://codelabs.developers.google.com/connecting-to-private-cloudsql-from-cloud-run#3
