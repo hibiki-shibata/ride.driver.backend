@@ -3,10 +3,17 @@
 Google Cloud Run is used for deployment. The deployment process is automated using Github Actions.
 
 ### Major flow
-2. Github Actions authenticates to GCP using OIDC token issued by Github when triggered - use: google-github-actions/auth@v2
-3. Build the Docker image and push it to Google Container Registry (GCR) - use: google-github-actions/setup-gcloud@v2
-4. Deploy the new image to Google Cloud Run
-
+1. Authenticate gcloud CLI
+2. Enable required API in GCP to use its services
+3. Create Artifact Registry for images
+4. Create Secret Manager for secrets
+5. Create Cloud SQL instance for database
+6. Create VPC connector for private connection between Cloud Run and Cloud SQL
+7. Create Service Account to let Github Actions to deploy to GCP
+8. Bind necessary permissions to the service accounts within the project
+9. Create Identity Pool and Provider to allow Github Actions to authenticate to GCP using OIDC token
+10. Configure Github Secrets to store sensitive information such as service account email and OIDC provider details
+11. Prepare Github Actions workflow file to automate the build and deploy process
 
 ### Setup Google Cloud Run
 1. gcloud auth login
@@ -154,10 +161,8 @@ Identity Provider:
 It specifies the "issuer URI" and "allowed audiences" for authentication.
 
 
-
-docker --network=host run -e "SPRING_PROFILES_ACTIVE=prod" -e "DB_USERNAME=postgres" -e "DB_PASSWORD=postgres" -e "DB_PORT=5432" -e "DB_HOST=localhost" spring-test  
-
-https://docs.cloud.google.com/sql/docs/postgres/connect-run#private-ip
-https://docs.cloud.google.com/sql/docs/postgres/connect-run
+# Setup Cloud SQL connection for Cloud Run with Private IP
 https://docs.cloud.google.com/sql/docs/postgres/connect-instance-cloud-run
+
+### Setup Private IP for Cloud Run to connect to Cloud SQL
 https://codelabs.developers.google.com/connecting-to-private-cloudsql-from-cloud-run#3
