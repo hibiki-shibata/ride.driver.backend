@@ -13,7 +13,7 @@ jobs:
       id-token: write # To get OIDC token
 
     steps:
-      - uses: actions/checkout@v4 
+      - uses: actions/checkout@v6.0.0
 
       - id: 'auth'
         name: 'Authenticate to Google Cloud'

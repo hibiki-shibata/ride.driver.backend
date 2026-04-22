@@ -1,12 +1,29 @@
 # Architecture
 
 ## Frontend
-The frontend was built with React. I used reusable components to separate concerns such as task forms, task lists, and filters.
+- Tech Stack
+    - React
+    - TypeScript
+    - Tailwind CSS
+    - Vite
+    - GitHub Pages for hosting
+I used reusable components to separate concerns such as task forms, task lists, and filters.
 
 ## Backend
-The backend was built with Spring Boot and Kotlin. It provides RESTful APIs for managing users, tasks, and authentication. The backend handles business logic and data persistence.
+- Tech Stack
+    - Spring Boot
+    - Kotlin
+    - PostgreSQL
+    - JPA/Hibernate
+    - Docker for containerization
+    - Google Cloud Run for hosting
+It provides RESTful APIs for managing users, tasks, and authentication. The backend handles business logic and data persistence.
 
 ## Database
+- Tech Stack
+    - PostgreSQL
+    - JPA/Hibernate for ORM
+    - Google Cloud SQL for managed database hosting
 PostgreSQL stores consumers, couriers, merchants, tasks, and menu items. I used JPA/Hibernate for ORM and Flyway for database migrations.
 
 ## Why This Structure
