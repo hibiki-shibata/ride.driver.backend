@@ -59,6 +59,7 @@ jobs:
             DB_USERNAME=db-username:latest
             DB_HOST=db-host:latest
             DB_NAME=db-name:latest
+            CLOUD_SQL_CONNECTION_NAME=cloud-sql-connection-name:latest
 
           env_vars_update_strategy: overwrite
           secrets_update_strategy: overwrite

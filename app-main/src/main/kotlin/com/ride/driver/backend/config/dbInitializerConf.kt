@@ -26,7 +26,7 @@ import java.util.UUID
 import org.springframework.data.domain.PageRequest
 
 @Configuration
-@Profile("demo", "test", "local", "staging", "development", "dev")
+@Profile("demo", "test", "local", "staging", "development", "dev", "prod")
 class DemoDBDataInitializerConfig {
 	@Bean
 	fun databaseInitializer(
