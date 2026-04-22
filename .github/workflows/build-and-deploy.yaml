@@ -61,6 +61,7 @@ jobs:
             DB_HOST=db-host:latest
             DB_NAME=db-name:latest
             CLOUD_SQL_CONNECTION_NAME=cloud-sql-connection-name:latest
+            JWT_SECRET_STRING=jwt-secret-string:latest
 
           env_vars_update_strategy: overwrite
           secrets_update_strategy: overwrite
