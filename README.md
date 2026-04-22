@@ -1,5 +1,11 @@
 # Ride App Backend
 
+Link to more detailed documentation:
+- [Architecture](doc/architecture.md)
+- [Challenges and Learnings](doc/challenges-and-learnings.md)
+- [Features](doc/deploy-note.md)
+- [Deployment Notes](doc/deploy-note.md)
+
 ## Overview
 A backend service for a Ride app, built with Spring Boot and Kotlin. It provides APIs for managing consumers, couriers, delivery tasks, and authentication.
 

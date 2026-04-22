@@ -62,7 +62,11 @@ jobs:
             DB_NAME=db-name:latest
             CLOUD_SQL_CONNECTION_NAME=cloud-sql-connection-name:latest
             JWT_SECRET_STRING=jwt-secret-string:latest
-
+            --min-instances=0
+            --max-instances=2
+            --memory=512Mi
+            --cpu=1
+            --cpu-throttling
           env_vars_update_strategy: overwrite
           secrets_update_strategy: overwrite
 
