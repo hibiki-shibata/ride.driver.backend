@@ -32,6 +32,9 @@ dependencies {
     implementation("org.flywaydb:flyway-core:11.20.1")
     implementation("org.flywaydb:flyway-database-postgresql:11.20.1")
 
+    implementation("com.google.cloud.sql:postgres-socket-factory:1.21.0")
+
+
     // ✅ Bean Validation provider (fixes NoProviderFoundException warning)
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
