@@ -156,3 +156,5 @@ It specifies the "issuer URI" and "allowed audiences" for authentication.
 
 
 docker --network=host run -e "SPRING_PROFILES_ACTIVE=prod" -e "DB_USERNAME=postgres" -e "DB_PASSWORD=postgres" -e "DB_PORT=5432" -e "DB_HOST=localhost" spring-test  
+
+https://docs.cloud.google.com/sql/docs/postgres/connect-run#private-ip
