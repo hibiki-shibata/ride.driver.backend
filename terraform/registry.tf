@@ -3,6 +3,13 @@ resource "google_artifact_registry_repository" "ride_artifact_repository" {
   location      = var.region
   format        = "DOCKER"
   description   = "Docker repository for ride backend"
+  cleanup_policies {
+    id = "keep-recent-versions"
+    action = "DELETE"
+    most_recent_versions {
+      keep_count = 5
+    }
+  }
 
   depends_on = [google_project_service.apis]
 }
