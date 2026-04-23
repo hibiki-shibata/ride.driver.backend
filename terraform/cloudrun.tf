@@ -1,5 +1,10 @@
 resource "google_cloud_run_v2_service" "cloud_run_service" {
-  depends_on = [google_vpc_access_connector.vpc_connector, google_project_service.apis] 
+  depends_on = [
+    google_vpc_access_connector.vpc_connector,
+    google_project_iam_member.cloud_run_sa_roles,
+    google_project_service.apis
+  ] 
+  deletion_protection = false
   name     = "${var.app_name}-run-service"
   location = var.region
 

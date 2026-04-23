@@ -14,7 +14,12 @@ resource "google_sql_database_instance" "postgres_instance" {
   }
 
   deletion_protection = false
-  depends_on          = [google_service_networking_connection.private_vpc_connection, google_compute_global_address.private_ip_range]
+  depends_on          = [
+    google_service_networking_connection.private_vpc_connection,
+    google_compute_global_address.private_ip_range,
+    google_vpc_access_connector.vpc_connector
+
+    ]
 }
 
 resource "google_sql_database" "postgres_db" {
