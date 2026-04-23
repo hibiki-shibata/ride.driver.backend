@@ -52,6 +52,10 @@ jobs:
             --service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}
             --add-cloudsql-instances=ride-backend-portfolio:us-central1:ride-postgres-instance
             --vpc-connector=ride-vpc-connector
+            --min-instances=0
+            --max-instances=2
+            --memory=512Mi
+            --cpu=1
           env_vars: |-
              SPRING_PROFILES_ACTIVE=prod
              DB_PORT=5432
@@ -62,11 +66,6 @@ jobs:
             DB_NAME=db-name:latest
             CLOUD_SQL_CONNECTION_NAME=cloud-sql-connection-name:latest
             JWT_SECRET_STRING=jwt-secret-string:latest
-            --min-instances=0
-            --max-instances=2
-            --memory=512Mi
-            --cpu=1
-            --cpu-throttling
           env_vars_update_strategy: overwrite
           secrets_update_strategy: overwrite
 
