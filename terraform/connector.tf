@@ -1,4 +1,4 @@
-resource "google_vpc_access_connector" "vpc-connector" {
+resource "google_vpc_access_connector" "vpc_connector" {
   name          = "${var.app_name}-connector"
   region        = var.region
   network       = "default"

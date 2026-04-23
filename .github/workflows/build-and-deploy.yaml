@@ -2,7 +2,7 @@ name: CI/CD to Google Cloud Run
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   deploy:
