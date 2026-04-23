@@ -10,6 +10,8 @@ terraform -chdir=terraform apply -var-file="environments/production.tfvars"
 # Fails due to missing versions of db user/password & secrets. 
 gcloud sql users set-password [DB_USER] --instance=[CLOUD_SQL_INSTANCE_NAME] --password=[DB_PASSWORD]
 # Go to > GCP console > Secret Manager > [SECRET_NAME] > Add new version > Add value > Save
+gcloud iam workload-identity-pools providers describe [PROVIDER_NAME] --workload-identity-pool=[POOL_NAME] --location="global" # Get WIF provider resource ID for Github Actions secrets
+# Setup github actions secrets/env: WIF_PROVIDER, GCP_SERVICE_ACCOUNT, DOCKER_IMAGE_PATH
 ```
 ### Major flow
 1. Authenticate gcloud CLI
