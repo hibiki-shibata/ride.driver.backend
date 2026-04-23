@@ -10,7 +10,7 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
 
     # --add-cloudsql-instances
     volumes {
-      name = "cloudsql-instance"
+      name = "cloudsql"
       cloud_sql_instance {
         instances = [
           "${google_sql_database_instance.postgres_instance.connection_name}"
@@ -30,7 +30,7 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
     }
 
     containers {
-      image = "us-central1-docker.pkg.dev/ride-app-project/ride-app-artifact-repository/ride-app-service:latest"      
+      image = var.base_docler_image_url
       resources {
         limits = {
           memory = "512Mi"
@@ -102,7 +102,7 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
         }
       }
       volume_mounts {
-        name       = "cloudsql-instance"
+        name       = "cloudsql"
         mount_path = "/cloudsql"
       }
     }
