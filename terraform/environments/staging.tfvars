@@ -1,6 +1,3 @@
 project_id = "ride-backend-portfolio"
 region     = "us-central1"
-app_name   = "ride-driver-backend"
-db_name    = "i-will-change-this-later"
-db_user    = "i-will-change-this-later"
-image      = "gcr.io/hibikiProject/hibikiApp:latest"
+app_name   = "ride-backend"

@@ -1,29 +1,21 @@
-resource "google_compute_network" "vpc" {
-  name                    = "${var.app_name}-vpc"
-  auto_create_subnetworks = false
-  depends_on              = [google_project_service.apis]
+# network.tf
+data "google_compute_network" "default" {
+  name = "default"
 }
 
-resource "google_compute_subnetwork" "subnet" {
-  name          = "${var.app_name}-subnet"
-  ip_cidr_range = "10.0.0.0/24"
-  region        = var.region
-  network       = google_compute_network.vpc.id
-}
-
-# Reserve IP range for Cloud SQL private IP
+# Reserve IP range (For later use with VPC peering for Cloud SQL private IP)
 resource "google_compute_global_address" "private_ip_range" {
   name          = "${var.app_name}-private-ip-range"
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   prefix_length = 16
-  network       = google_compute_network.vpc.id
+  network       =  data.google_compute_network.default.id
+  depends_on    = [google_project_service.apis]
 }
 
-# Enable private service connection
+# Create peering connection between VPC and Cloud SQL
 resource "google_service_networking_connection" "private_vpc_connection" {
-  network                 = google_compute_network.vpc.id
+  network                 =  data.google_compute_network.default.id 
   service                 = "servicenetworking.googleapis.com"
   reserved_peering_ranges = [google_compute_global_address.private_ip_range.name]
-  depends_on              = [google_project_service.apis]
 }

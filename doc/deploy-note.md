@@ -2,6 +2,11 @@
 
 Google Cloud Run is used for deployment. The deployment process is automated using Github Actions.
 
+### Simplest way - terrraform
+```sh
+terraform -chdir=terraform plan -var-file="environments/production.tfvars"
+```
+
 ### Major flow
 1. Authenticate gcloud CLI
 2. Enable required API in GCP to use its services

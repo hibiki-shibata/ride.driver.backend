@@ -22,6 +22,10 @@ postgres:
 prodrun:
 	./gradlew clean && ./gradlew build && java -jar build/libs/app.jar --spring.profiles.active=prod
 
+.PHONY: terraform import
+terraform-import:
+	terraform import -chdir=terraform -var-file="terraform/environments/production.tfvars" google_secret_manager_secret.db_password projects/ride-backend-portfolio/secrets/db-password
+
 
 .PHONY: help
 help:
