@@ -1,4 +1,5 @@
 resource "google_cloud_run_v2_service" "cloud_run_service" {
+  depends_on = [google_vpc_access_connector.vpc_connector] 
   name     = "ride-driver-backend"
   location = var.region
 
@@ -17,7 +18,7 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
 
     # --vpc-connector
     vpc_access {
-      connector = "projects/${var.project_id}/locations/${var.region}/connectors/ride-vpc-connector"
+      connector = google_vpc_access_connector.vpc_connector.id 
       egress    = "PRIVATE_RANGES_ONLY"
     }
 
