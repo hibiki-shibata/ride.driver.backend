@@ -4,6 +4,10 @@ on:
   push:
     branches: [master]
 
+env:
+    DOCKER_IMAGE_PATH: us-central1-docker.pkg.dev/ride-app-project-id/ride-app-artifact-repository/ride-app-img
+    GCP_SERVICE_ACCOUNT: ride-app-run-sa@ride-app-project-id.iam.gserviceaccount.com
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -11,9 +15,6 @@ jobs:
     permissions:
       contents: read
       id-token: write # To get OIDC token
-  env:
-    DOCKER_IMAGE_PATH: us-central1-docker.pkg.dev/ride-app-project-id/ride-app-artifact-repository/ride-app-img
-    GCP_SERVICE_ACCOUNT: ride-app-run-sa@ride-app-project-id.iam.gserviceaccount.com
 
     steps:
       - uses: actions/checkout@v6.0.0
