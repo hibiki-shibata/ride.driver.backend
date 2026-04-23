@@ -4,6 +4,6 @@ output "cloud_run_url" {
 }
 
 output "db_private_ip" {
-  value     = google_sql_database_instance.postgres-instance.private_ip_address
+  value     = google_sql_database_instance.postgres_instance.private_ip_address
   sensitive = true
 }

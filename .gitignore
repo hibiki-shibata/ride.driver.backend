@@ -38,3 +38,8 @@ out/
 ### Kotlin ###
 .kotlin
 test.txt
+
+### Terraform ###
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
