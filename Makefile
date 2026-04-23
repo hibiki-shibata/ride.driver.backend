@@ -4,21 +4,13 @@ SHELL = /bin/zsh #
 run:
 	./gradlew clean && ./gradlew bootRun
 
-
-
 .PHONY: test
 test:
 	./gradlew clean && ./gradlew test
 
-
-
-
 .PHONY: clean
 clean:
 	./gradlew clean
-
-
-
 
 .PHONY: postgres
 postgres:
@@ -26,11 +18,13 @@ postgres:
 	@echo "ATTENTION: PostgreSQL password is krakenkey"
 	psql -h localhost -p 5432 -U krakenadmin -d krakendb
 
-
 .PHONY: prodrun
 prodrun:
 	./gradlew clean && ./gradlew build && java -jar build/libs/app.jar --spring.profiles.active=prod
 
+.PHONY: terraform import
+terraform-import:
+	terraform import -chdir=terraform -var-file="terraform/environments/production.tfvars" google_secret_manager_secret.db_password projects/ride-backend-portfolio/secrets/db-password
 
 
 .PHONY: help
@@ -42,3 +36,4 @@ help:
 	@echo "  Postgres  - Start PostgreSQL and connect to it"
 	@echo "  help      - Show this help message"
 	@echo "  prodrun   - Build and run the application in production mode"
+

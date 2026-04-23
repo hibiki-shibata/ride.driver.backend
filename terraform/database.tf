@@ -1,0 +1,25 @@
+resource "google_sql_database_instance" "postgres-instance" {
+  name             = "${var.app_name}-db"
+  database_version = "POSTGRES_15"
+  region           = var.region
+
+  settings {
+    tier = "db-f1-micro" #
+
+    ip_configuration {
+      ipv4_enabled                                  = false  # Private IP only
+      private_network                               = data.google_compute_network.default.id
+      enable_private_path_for_google_cloud_services = true
+    }
+  }
+
+  deletion_protection = true
+  depends_on          = [google_service_networking_connection.private_vpc_connection]
+}
+
+resource "google_sql_database" "database" {
+  name     = "ride-driver-prod-db"
+  instance = google_sql_database_instance.postgres-instance.name
+}
+
+# Create a user and credential for the database manually!!!
