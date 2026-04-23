@@ -50,27 +50,27 @@ jobs:
         uses: 'google-github-actions/deploy-cloudrun@v3'
         with: 
           service: 'ride-driver-backend'
-          image: 'us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}'
+          image: '${{ env.DOCKER_IMAGE_PATH }}:${{ github.sha }}'
           region: 'us-central1'
-          flags: |-
-            --allow-unauthenticated
-            --service-account=${{ env.GCP_SERVICE_ACCOUNT }}
-            --add-cloudsql-instances=ride-backend-portfolio:us-central1:ride-postgres-instance
-            --vpc-connector=ride-vpc-connector
-            --min-instances=0
-            --max-instances=2
-            --memory=512Mi
-            --cpu=1
-          env_vars: |-
-             SPRING_PROFILES_ACTIVE=prod
-             DB_PORT=5432
-          secrets: |-
-            DB_PASSWORD=db-password:latest
-            DB_USERNAME=db-username:latest
-            DB_HOST=db-host:latest
-            DB_NAME=db-name:latest
-            CLOUD_SQL_CONNECTION_NAME=cloud-sql-connection-name:latest
-            JWT_SECRET_STRING=jwt-secret-string:latest
+          # flags: |-
+          #   --allow-unauthenticated
+          #   --service-account=${{ env.GCP_SERVICE_ACCOUNT }}
+          #   --add-cloudsql-instances=ride-backend-portfolio:us-central1:ride-postgres-instance
+          #   --vpc-connector=ride-vpc-connector
+          #   --min-instances=0
+          #   --max-instances=2
+          #   --memory=512Mi
+          #   --cpu=1
+          # env_vars: |-
+          #    SPRING_PROFILES_ACTIVE=prod
+          #    DB_PORT=5432
+          # secrets: |-
+          #   DB_PASSWORD=db-password:latest
+          #   DB_USERNAME=db-username:latest
+          #   DB_HOST=db-host:latest
+          #   DB_NAME=db-name:latest
+          #   CLOUD_SQL_CONNECTION_NAME=cloud-sql-connection-name:latest
+          #   JWT_SECRET_STRING=jwt-secret-string:latest
           env_vars_update_strategy: overwrite
           secrets_update_strategy: overwrite
 
