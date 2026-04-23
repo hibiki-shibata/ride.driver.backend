@@ -40,7 +40,7 @@ jobs:
         run: |
           docker build -t ${{ env.DOCKER_IMAGE_PATH }}:${{ github.sha }} .
 
-      - name: Push image to Google Artifact Registry
+      - name: Push image
         run: |
           docker push ${{ env.DOCKER_IMAGE_PATH }}:${{ github.sha }}
           docker push us-central1-docker.pkg.dev/ride-app-project-id/ride-app-artifact-repository/ride-app-img:${{ github.sha }}
