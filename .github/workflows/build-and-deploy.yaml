@@ -49,7 +49,7 @@ jobs:
         id: 'deploy'
         uses: 'google-github-actions/deploy-cloudrun@v3'
         with: 
-          service: 'ride-driver-backend'
+          service: 'ride-app-run-service'
           image: '${{ env.DOCKER_IMAGE_PATH }}:${{ github.sha }}'
           region: 'us-central1'
           # flags: |-
