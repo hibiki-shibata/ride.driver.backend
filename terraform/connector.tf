@@ -1,5 +1,5 @@
 resource "google_vpc_access_connector" "vpc_connector" {
-  name          = "${var.app_name}-connector"
+  name          = "${var.app_name}-vpc-connector"
   region        = var.region
   network       = "default"
   min_instances = 2

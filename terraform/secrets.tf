@@ -1,6 +1,5 @@
-# Checked
-resource "google_secret_manager_secret" "db_password" {
-  secret_id = "db-password"
+resource "google_secret_manager_secret" "db_name" {
+  secret_id = "db-name"
   replication {
     auto {}
   }
@@ -11,17 +10,17 @@ resource "google_secret_manager_secret" "db_host" {
   replication {
     auto {}
   }
-}
+} # Is not used but created for future use when we need to connect to DB with specific host
 
-resource "google_secret_manager_secret" "db_name" {
-  secret_id = "db-name"
+resource "google_secret_manager_secret" "db_username" {
+  secret_id = "db-username"
   replication {
     auto {}
   }
 }
 
-resource "google_secret_manager_secret" "db_username" {
-  secret_id = "db-username"
+resource "google_secret_manager_secret" "db_password" {
+  secret_id = "db-password"
   replication {
     auto {}
   }

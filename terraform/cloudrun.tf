@@ -1,7 +1,7 @@
 resource "google_cloud_run_v2_service" "cloud_run_service" {
 
   depends_on = [google_vpc_access_connector.vpc_connector] 
-  name     = "ride-driver-backend"
+  name     = "${var.app_name}-run-service"
   location = var.region
 
   ingress = "INGRESS_TRAFFIC_ALL"
@@ -11,9 +11,11 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
 
     # --add-cloudsql-instances
     volumes {
-      name = "cloudsql"
+      name = "cloudsql-instance"
       cloud_sql_instance {
-        instances = ["ride-backend-portfolio:us-central1:ride-postgres-instance"]
+        instances = [
+          "${google_sql_database_instance.postgres-instance.connection_name}"
+        ]
       }
     }
 
@@ -23,16 +25,13 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
       egress    = "PRIVATE_RANGES_ONLY"
     }
 
-    # --min-instances, --max-instances
     scaling {
       min_instance_count = 0
       max_instance_count = 2
     }
 
     containers {
-      image = "us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:latest"
-
-      # --memory, --cpu
+      image = "us-central1-docker.pkg.dev/ride-app-project/ride-app-artifact-repository/ride-app-service:latest"      
       resources {
         limits = {
           memory = "512Mi"
@@ -40,8 +39,6 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
         }
         cpu_idle = true  # --cpu-throttling
       }
-
-      # env_vars
       env {
         name  = "SPRING_PROFILES_ACTIVE"
         value = "prod"
@@ -50,7 +47,6 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
         name  = "DB_PORT"
         value = "5432"
       }
-
       # secrets
       env {
         name = "DB_PASSWORD"
@@ -106,9 +102,8 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
           }
         }
       }
-
       volume_mounts {
-        name       = "cloudsql"
+        name       = "cloudsql-instance"
         mount_path = "/cloudsql"
       }
     }
@@ -116,10 +111,10 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
 }
 
 # --allow-unauthenticated
-resource "google_cloud_run_v2_service_iam_member" "public" {
+resource "google_cloud_run_v2_service_iam_member" "cloud_run_service_iam" {
   project  = var.project_id
   location = var.region
   name     = google_cloud_run_v2_service.cloud_run_service.name
-  role     = "roles/run.invoker"
+  role     = "roles/viewer"
   member   = "allUsers"
 }
