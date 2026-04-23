@@ -71,8 +71,8 @@ jobs:
           #   DB_NAME=db-name:latest
           #   CLOUD_SQL_CONNECTION_NAME=cloud-sql-connection-name:latest
           #   JWT_SECRET_STRING=jwt-secret-string:latest
-          env_vars_update_strategy: overwrite
-          secrets_update_strategy: overwrite
+          # env_vars_update_strategy: overwrite
+          # secrets_update_strategy: overwrite
 
       # - name: Deploy Cloud Run
       #   run: |
