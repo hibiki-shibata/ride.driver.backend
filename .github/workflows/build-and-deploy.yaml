@@ -20,7 +20,7 @@ jobs:
         uses: google-github-actions/auth@v3 # To authenticate to Google Cloud using the OIDC token from Github Actions
         with:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
 
       - name: 'Set up Cloud SDK for Docker authentication'
         id: 'setup-gcloud'
@@ -34,11 +34,11 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -t us-central1-docker.pkg.dev/ride-app-project-id/ride-app-artifact-repository/ride-app-img:${{ github.sha }} .
+          docker build -t ${{ env.DOCKER_IMAGE_PATH }}:${{ github.sha }} .
 
       - name: Push image to Google Artifact Registry
         run: |
-          docker push us-central1-docker.pkg.dev/ride-app-project-id/ride-app-artifact-repository/ride-app-img:${{ github.sha }}
+          docker push ${{ env.DOCKER_IMAGE_PATH }}:${{ github.sha }}
 
       - name: 'Deploy to Cloud Run'
         id: 'deploy'
@@ -49,7 +49,7 @@ jobs:
           region: 'us-central1'
           flags: |-
             --allow-unauthenticated
-            --service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}
+            --service-account=${{ env.GCP_SERVICE_ACCOUNT }}
             --add-cloudsql-instances=ride-backend-portfolio:us-central1:ride-postgres-instance
             --vpc-connector=ride-vpc-connector
             --min-instances=0

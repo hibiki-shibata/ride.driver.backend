@@ -13,8 +13,3 @@ variable "app_name" {
   description = "Application name"
   type        = string
 }
-
-variable "base_docler_image_url" {
-  description = "Base Docker image URL for Cloud Run service"
-  type        = string
-}

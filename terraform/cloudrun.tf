@@ -30,7 +30,8 @@ resource "google_cloud_run_v2_service" "cloud_run_service" {
     }
 
     containers {
-      image = var.base_docler_image_url
+      image = "us-docker.pkg.dev/cloudrun/container/hello:latest"  #place holder
+
       resources {
         limits = {
           memory = "512Mi"

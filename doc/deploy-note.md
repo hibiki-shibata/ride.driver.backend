@@ -4,9 +4,12 @@ Google Cloud Run is used for deployment. The deployment process is automated usi
 
 ### Simplest way - terrraform
 ```sh
-cd terraform
+terraform -chdir=terraform import -var-file="environments/production.tfvars [RESOURCE_TYPE.[RESOURCE_NAME] [RESOURCE_PATH]"
 terraform -chdir=terraform plan -var-file="environments/production.tfvars"
 terraform -chdir=terraform apply -var-file="environments/production.tfvars"
+# Fails due to missing versions of db user/password & secrets. 
+gcloud sql users set-password [DB_USER] --instance=[CLOUD_SQL_INSTANCE_NAME] --password=[DB_PASSWORD]
+# Go to > GCP console > Secret Manager > [SECRET_NAME] > Add new version > Add value > Save
 ```
 ### Major flow
 1. Authenticate gcloud CLI
