@@ -2,6 +2,10 @@
 
 Google Cloud Run is used for deployment. The deployment process is automated using Github Actions.
 
+### Simplest way - terrraform
+```sh
+terraform -chdir=terraform plan -var-file="environments/production.tfvars"
+```
 ### Major flow
 1. Authenticate gcloud CLI
 2. Enable required API in GCP to use its services
@@ -96,11 +100,11 @@ GCP_SERVICE_ACCOUNT: [SERVICE_ACCOUNT_NAME]@[PROJECT_ID].iam.gserviceaccount.com
 12. Prepare deploy file:
 (Google Github Action Doc)[https://github.com/google-github-actions/setup-gcloud]
 ```yaml
-name: CI/CD to Cloud Run
+name: CI/CD to Google Cloud Run
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   deploy:
@@ -111,41 +115,63 @@ jobs:
       id-token: write # To get OIDC token
 
     steps:
-  uses: actions/checkout@v4 # 
+      - uses: actions/checkout@v6.0.0
 
-  uses: google-github-actions/auth@v2 # To authenticate to Google Cloud using the OIDC token from Github Actions
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: google-github-actions/auth@v3 # To authenticate to Google Cloud using the OIDC token from Github Actions
         with:
           workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-  uses: google-github-actions/setup-gcloud@v2 # To set up gcloud CLI
- 
-  name: Authenticate Docker to Google Cloud Artifact Registry
-    run: gcloud auth configure-docker us-central1-docker.pkg.dev --quiet 
+      - name: 'Set up Cloud SDK for Docker authentication'
+        id: 'setup-gcloud'
+        uses: 'google-github-actions/setup-gcloud@v3'
+        with:
+          version: '>= 363.0.0'
 
-  name: Build image
+      - name: Authenticate Docker to Artifact Registry
         run: |
-          docker build -t us-central1-docker.pkg.dev/[PROJECT_NAME]/[ARTIFACT_REGISTRY_NAME]/app:${{ github.sha }} .
+          gcloud auth configure-docker us-central1-docker.pkg.dev --quiet          
 
-  name: Push image
+      - name: Build image
         run: |
-          docker push us-central1-docker.pkg.dev/[PROJECT_NAME]/[ARTIFACT_REGISTRY_NAME]/app:${{ github.sha }}
+          docker build -t us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }} .
 
-  name: Deploy Cloud Run
+      - name: Push image to Google Artifact Registry
         run: |
-          gcloud run deploy my-backend \
-            --image us-central1-docker.pkg.dev/[PROJECT_NAME]/[ARTIFACT_REGISTRY_NAME]/app:${{ github.sha }} \
-            --region us-central1 \
-            --platform managed \
-            --allow-unauthenticated \
-            --service-account [SERVICE_ACCOUNT_NAME]@[PROJECT_NAME].iam.gserviceaccount.com
+          docker push us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}
+
+      - name: 'Deploy to Cloud Run'
+        id: 'deploy'
+        uses: 'google-github-actions/deploy-cloudrun@v3'
+        with: 
+          service: 'ride-driver-backend'
+          image: 'us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}'
+          region: 'us-central1'
+          flags: |-
+            --allow-unauthenticated
+            --service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}
+            --add-cloudsql-instances=ride-backend-portfolio:us-central1:ride-postgres-instance
+            --vpc-connector=ride-vpc-connector
+          env_vars: |-
+             SPRING_PROFILES_ACTIVE=prod
+             DB_PORT=5432
+          secrets: |-
+            DB_PASSWORD=db-password:latest
+            DB_USERNAME=db-username:latest
+            DB_HOST=db-host:latest
+            DB_NAME=db-name:latest
+            CLOUD_SQL_CONNECTION_NAME=cloud-sql-connection-name:latest
+            JWT_SECRET_STRING=jwt-secret-string:latest
+            --min-instances=0
+            --max-instances=2
+            --memory=512Mi
+            --cpu=1
+            --cpu-throttling
+          env_vars_update_strategy: overwrite
+          secrets_update_strategy: overwrite
 ```            
-
-Utility commands
-- Check logs: gcloud run logs read [SERVICE_NAME] --region [REGION] (e.g. my-backend, us-central1)
-- Check deployed services: gcloud run services list --region [REGION] (e.g. us-central1)
-- Get Project ID: gcloud projects describe [PROJECT_NAME]
-
 
 GCP Concepts:
 - Service Account: 

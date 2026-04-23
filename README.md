@@ -16,7 +16,6 @@ A backend service for a Ride app, built with Spring Boot and Kotlin. It provides
 - Flyway for database migrations
 - Docker for containerization
 
-
 ## Quick Start
 1. Get Postgres image
 ```bash

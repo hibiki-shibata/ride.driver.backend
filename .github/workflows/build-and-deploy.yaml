@@ -2,7 +2,7 @@ name: CI/CD to Google Cloud Run
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   deploy:
@@ -34,24 +34,28 @@ jobs:
 
       - name: Build image
         run: |
-          docker build -t us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }} .
+          docker build -t us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:latest .
 
       - name: Push image to Google Artifact Registry
         run: |
-          docker push us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}
+          docker push us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:latest
 
       - name: 'Deploy to Cloud Run'
         id: 'deploy'
         uses: 'google-github-actions/deploy-cloudrun@v3'
         with: 
           service: 'ride-driver-backend'
-          image: 'us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:${{ github.sha }}'
+          image: 'us-central1-docker.pkg.dev/ride-backend-portfolio/ride-artifact-repository/ride-driver-backend:latest'
           region: 'us-central1'
           flags: |-
             --allow-unauthenticated
             --service-account=${{ secrets.GCP_SERVICE_ACCOUNT }}
             --add-cloudsql-instances=ride-backend-portfolio:us-central1:ride-postgres-instance
             --vpc-connector=ride-vpc-connector
+            --min-instances=0
+            --max-instances=2
+            --memory=512Mi
+            --cpu=1
           env_vars: |-
              SPRING_PROFILES_ACTIVE=prod
              DB_PORT=5432
@@ -62,7 +66,6 @@ jobs:
             DB_NAME=db-name:latest
             CLOUD_SQL_CONNECTION_NAME=cloud-sql-connection-name:latest
             JWT_SECRET_STRING=jwt-secret-string:latest
-
           env_vars_update_strategy: overwrite
           secrets_update_strategy: overwrite
 
