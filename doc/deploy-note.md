@@ -192,6 +192,9 @@ Identity Provider:
 It specifies the "issuer URI" and "allowed audiences" for authentication.
 
 
+# Setup github actions to deploy to Google Cloud Run
+https://cloud.google.com/blog/products/devops-sre/deploy-to-cloud-run-with-github-actions
+
 # Setup Cloud SQL connection for Cloud Run with Private IP
 https://docs.cloud.google.com/sql/docs/postgres/connect-instance-cloud-run
 
