@@ -4,6 +4,8 @@ Google Cloud Run is used for deployment. The deployment process is automated usi
 
 ### Simplest way - terrraform
 ```sh
+gcloud auth login
+gcloud config set project [PROJECT_ID] 
 terraform -chdir=terraform import -var-file="environments/production.tfvars [RESOURCE_TYPE.[RESOURCE_NAME] [RESOURCE_PATH]"
 terraform -chdir=terraform plan -var-file="environments/production.tfvars"
 terraform -chdir=terraform apply -var-file="environments/production.tfvars"
@@ -13,6 +15,18 @@ gcloud sql users set-password [DB_USER] --instance=[CLOUD_SQL_INSTANCE_NAME] --p
 gcloud iam workload-identity-pools providers describe [PROVIDER_NAME] --workload-identity-pool=[POOL_NAME] --location="global" # Get WIF provider resource ID for Github Actions secrets
 # Setup github actions secrets/env: WIF_PROVIDER, GCP_SERVICE_ACCOUNT, DOCKER_IMAGE_PATH
 ```
+
+### Setup github actions to deploy to Google Cloud Run
+https://cloud.google.com/blog/products/devops-sre/deploy-to-cloud-run-with-github-actions
+
+### Setup Cloud SQL connection for Cloud Run with Private IP
+https://docs.cloud.google.com/sql/docs/postgres/connect-instance-cloud-run
+
+### Setup Private IP for Cloud Run to connect to Cloud SQL
+https://codelabs.developers.google.com/connecting-to-private-cloudsql-from-cloud-run#3
+
+## -- Note -- just ignore
+
 ### Major flow
 1. Authenticate gcloud CLI
 2. Enable required API in GCP to use its services
@@ -192,13 +206,3 @@ Identity Pool:
 Identity Provider: 
 - A provider that defines the trust relationship between GCP and an external identity provider. 
 It specifies the "issuer URI" and "allowed audiences" for authentication.
-
-
-# Setup github actions to deploy to Google Cloud Run
-https://cloud.google.com/blog/products/devops-sre/deploy-to-cloud-run-with-github-actions
-
-# Setup Cloud SQL connection for Cloud Run with Private IP
-https://docs.cloud.google.com/sql/docs/postgres/connect-instance-cloud-run
-
-### Setup Private IP for Cloud Run to connect to Cloud SQL
-https://codelabs.developers.google.com/connecting-to-private-cloudsql-from-cloud-run#3

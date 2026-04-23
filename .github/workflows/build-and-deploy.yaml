@@ -2,7 +2,7 @@ name: CI/CD to Google Cloud Run
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 env:
     DOCKER_IMAGE_PATH: us-central1-docker.pkg.dev/ride-app-project-id/ride-app-artifact-repository/ride-app-img
