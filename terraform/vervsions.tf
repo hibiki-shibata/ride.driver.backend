@@ -8,9 +8,9 @@ terraform {
     }
   }
 
-#   # Store state remotely in GCS (recommended)
+#   # Store state remotely in GCS
 #   backend "gcs" {
-#     bucket = "your-tf-state-bucket"
+#     bucket = "ride-tf-state-bucket"
 #     prefix = "terraform/state"
 #   }
 }
